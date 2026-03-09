@@ -81,9 +81,9 @@ function Navbar() {
                   </motion.li>
                 ))}
               </ul>
-              <button className="bg-white text-black py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+              <a href="#contact" className="bg-white text-black py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
                 Hire Me <span className="grayscale">😉</span>
-              </button>
+              </a>
             </motion.div>
           )}
         </AnimatePresence>

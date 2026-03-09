@@ -53,12 +53,24 @@ function Hero() {
           </AnimatePresence>
         </div>
 
-        {/* MOUNDIR - GÉANT ET FIT AU TÉLÉPHONE */}
         <motion.h1 
-          className="font-cartoon text-start text-black text-[24vw] md:text-[18vw] leading-[0.75] uppercase select-none break-all"
-        >
-          Moundir
-        </motion.h1>
+  className="font-cartoon text-start text-black uppercase select-none"
+>
+  {/* --- FORMAT PHONE (Celui qu'on a créé pour être imposant) --- */}
+  <div className="flex flex-col md:hidden leading-[0.8]">
+    <span className="text-[32vw] tracking-tighter">
+      Moun
+    </span>
+    <span className="text-[32vw] tracking-tighter mt-[-2vh]">
+      dir
+    </span>
+  </div>
+
+  {/* --- TON ANCIEN CODE (Strictement identique pour le PC) --- */}
+  <div className="hidden md:block text-[18vw] leading-[0.75] break-all">
+    Moundir
+  </div>
+</motion.h1>
       </motion.div>
 
       {/* CONTENU BAS */}

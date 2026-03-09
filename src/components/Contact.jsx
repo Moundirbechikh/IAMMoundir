@@ -206,11 +206,11 @@ function Contact() {
                   <p className="text-white/60 font-black text-xs uppercase tracking-tighter">Oran, DZ</p>
                </div>
 
-               <div className="bg-white/[0.01] border border-white/5 rounded-[2.5rem] p-6 flex flex-col items-center justify-center">
+               <div className="bg-white/[0.01] border  border-white/5 rounded-[2.5rem] sm:p-6 p-1 flex flex-col items-center justify-center">
                   <div className="flex gap-3">
-                    <a href="https://github.com/Moundirbechikh" className="p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#fff] hover:bg-[#333] transition-all"><Github size={18} /></a>
-                    <a href="https://wa.me/213782638109" target="_blank" rel="noreferrer" className="p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-all"><MessageCircle size={18} /></a>
-                    <a href="https://www.instagram.com/moundir_bech?igsh=c25yaGl3dGM5NTFz" className="p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#E4405F] hover:bg-[#E4405F]/10 transition-all"><Instagram size={18} /></a>
+                    <a href="https://github.com/Moundirbechikh" className="p-2 sm:p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#fff] hover:bg-[#333] transition-all"><Github size={18} /></a>
+                    <a href="https://wa.me/213782638109" target="_blank" rel="noreferrer" className="p-2 sm:p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-all"><MessageCircle size={18} /></a>
+                    <a href="https://www.instagram.com/moundir_bech?igsh=c25yaGl3dGM5NTFz" className="p-2 sm:p-3 bg-white/5 rounded-xl text-white/20 hover:text-[#E4405F] hover:bg-[#E4405F]/10 transition-all"><Instagram size={18} /></a>
                   </div>
                   <p className="text-[9px] font-black text-white/10 uppercase tracking-widest mt-4">Connect</p>
                </div>
