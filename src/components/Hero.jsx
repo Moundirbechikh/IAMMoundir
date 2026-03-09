@@ -57,11 +57,11 @@ function Hero() {
   className="font-cartoon text-start text-black uppercase select-none"
 >
   {/* --- FORMAT PHONE (Celui qu'on a créé pour être imposant) --- */}
-  <div className="flex flex-col md:hidden leading-[0.8]">
-    <span className="text-[32vw] tracking-tighter">
+  <div className="flex flex-col md:hidden leading-[0.8] ">
+    <span className="text-[36vw] tracking-tighter break-all">
       Moun
     </span>
-    <span className="text-[32vw] tracking-tighter mt-[-2vh]">
+    <span className="text-[36vw] tracking-tighter mt-[-1.3vh]">
       dir
     </span>
   </div>
