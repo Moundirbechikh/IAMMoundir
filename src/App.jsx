@@ -10,9 +10,7 @@ import Evolution from "./components/Evolution";
 function App() {
 
   return (
-
     <div className="flex flex-col min-h-screen bg-[#050505] selection:bg-yellow-500 selection:text-black">
-
       <Navbar />
 
       <main className="flex-grow">
@@ -32,13 +30,16 @@ function App() {
           <ProjectsHolder />
         </section>
 
-        {/* ARCHIVES (SECTION INDÉPENDANTE) */}
-        <section id="archives" className="border-t border-white/5">
+        {/* ARCHIVES - Masqué sur Phone/Tablette, visible sur Desktop uniquement */}
+        <section id="archives" className="hidden lg:block border-t border-white/5">
           <ArchiveHolder />
         </section>
+
+        {/* EVOLUTION */}
         <section id="evolution" className="border-t border-white/5">
           <Evolution/>
         </section>
+
         {/* CONTACT */}
         <section id="contact">
           <Contact />
@@ -47,9 +48,7 @@ function App() {
       </main>
 
       <Footer />
-
     </div>
-
   );
 }
 
