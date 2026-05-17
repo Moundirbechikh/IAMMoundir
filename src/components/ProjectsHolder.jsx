@@ -116,8 +116,8 @@ function ProjectsHolder() {
       desc: "Academic attendance system utilizing dynamic QR generation and GPS verification, featuring centralized administrative control for course management.",
       link: "https://unicheck-drab.vercel.app",
       font: "'Manrope', sans-serif",
-      colors: { accent: "#dc2626", titleColor: "#ffffff" }, // Rouge dominant
-      assets: { logo: logo14, backImg: back14, back14Vid, phoneImg: phone14, phoneVid: null }
+      colors: { accent: "green-500", titleColor: "#ffffff" }, // Rouge dominant
+      assets: { logo: logo14, backImg: back14, backVid:back14Vid, phoneImg: phone14, phoneVid: null }
     }
   ];
 
