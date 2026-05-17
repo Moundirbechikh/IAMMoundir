@@ -36,8 +36,9 @@ import back44 from "../assets/back4-4.jpg";
 // --- IMPORTS UNICHECK ---
 import logo14 from "../assets/logo14.png"; // ou .jpg
 import back14 from "../assets/back14.jpg";
-import phone14 from "../assets/phone2.jpg";
+import phone14 from "../assets/phone14.jpg";
 import back14Vid from "../assets/back14.mp4"; // Si disponible
+import phone14Vid from "../assets/phone14.mp4"; 
 // S'il n'y a pas de vidéo pour Unicheck, on laissera null. Sinon importe back14Vid et phone14Vid.
 
 const translations = [
@@ -116,8 +117,8 @@ function ProjectsHolder() {
       desc: "Academic attendance system utilizing dynamic QR generation and GPS verification, featuring centralized administrative control for course management.",
       link: "https://unicheck-drab.vercel.app",
       font: "'Manrope', sans-serif",
-      colors: { accent: "#10b981", titleColor: "#ffffff" }, // Rouge dominant
-      assets: { logo: logo14, backImg: back14, backVid:back14Vid, phoneImg: phone14, phoneVid: null }
+      colors: { accent: "#022017", titleColor: "#ffffff" }, // Rouge dominant
+      assets: { logo: logo14, backImg: back14, backVid:back14Vid, phoneImg: phone14, phoneVid: phone14Vid }
     }
   ];
 
