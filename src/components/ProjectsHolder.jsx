@@ -2,7 +2,7 @@ import ProjectCard from "./ProjectCard";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
-// --- IMPORTS ASSETS ---
+// --- IMPORTS ASSETS EXISTANTS ---
 import logo1 from "../assets/logo1.jpg";
 import back1 from "../assets/back1.jpg";
 import back1Vid from "../assets/back1.mp4";
@@ -16,27 +16,29 @@ import phone2 from "../assets/phone2.jpg";
 import phone2Vid from "../assets/phone2.mp4";
 
 import logo3 from "../assets/logo.png";
-// Assets LIME (Garçon)
 import backve from "../assets/back.jpg"; 
 import backveVid from "../assets/backve.mp4";
 import phoneve from "../assets/phoneve.jpg";
 import phoneveVid from "../assets/phoneve.mp4";
 
-// Assets PURPLE (Fille)
 import backv from "../assets/backv.jpg"; 
 import backvVid from "../assets/backv.mp4";
 import phonev from "../assets/phonev.jpg";
 import phonevVid from "../assets/phonev.mp4";
 
-// Assets PROJET 04 (GREEN TECH)
 import back5 from "../assets/back5.jpg"; 
 import logo4 from "../assets/logo4.png";
 import back4Vid from "../assets/back4.mp4";
 import back41 from "../assets/back4-1.jpg";
-import back42 from "../assets/back4-2.jpg"; // Si c'est un mp4
 import back43 from "../assets/back4-3.jpg";
 import back44 from "../assets/back4-4.jpg";
-// Si c'est un mp4
+
+// --- IMPORTS UNICHECK ---
+import logo14 from "../assets/logo14.png"; // ou .jpg
+import back14 from "../assets/back14.jpg";
+import phone14 from "../assets/phone2.jpg";
+import back14Vid from "../assets/back14.mp4"; // Si disponible
+// S'il n'y a pas de vidéo pour Unicheck, on laissera null. Sinon importe back14Vid et phone14Vid.
 
 const translations = [
   { text: "Live Projects", lang: "EN" },
@@ -48,9 +50,8 @@ function ProjectsHolder() {
   const containerRef = useRef(null);
   const [index, setIndex] = useState(0);
   
-  // États pour les animations cycliques
   const [isPurpleMode, setIsPurpleMode] = useState(false);
-  const [greenCycle, setGreenCycle] = useState(0); // 0, 1, 2 pour alterner back4_1, 4_2, 4_3
+  const [greenCycle, setGreenCycle] = useState(0);
 
   const { scrollYProgress } = useScroll({ target: containerRef });
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "-25%"]);
@@ -59,15 +60,13 @@ function ProjectsHolder() {
     const interval = setInterval(() => {
       setIndex((i) => (i + 1) % translations.length);
       setIsPurpleMode((prev) => !prev);
-      setGreenCycle((prev) => (prev + 1) % 3); // Alterne entre les 3 images/vidéos du projet 4
+      setGreenCycle((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // Logique pour le projet 04 (Green Cycle)
-  const greenAccents = ["#22c55e", "#10b981", "#84cc16", "#14b8a6"]; // green, emerald, lime, teal
-  const greenBacks = [back5,back41,back43,back44]; // Images
-
+  const greenAccents = ["#22c55e", "#10b981", "#84cc16", "#14b8a6"];
+  const greenBacks = [back5, back41, back43, back44];
 
   const projects = [
     {
@@ -97,17 +96,8 @@ function ProjectsHolder() {
       desc: "Architecting a better future through digital organization and lifestyle management.",
       link: "https://my-new-life-blond.vercel.app/",
       font: "'Lobster', cursive",
-      colors: { 
-        accent: isPurpleMode ? "#6b21a8" : "#365314", 
-        titleColor: "#fff" 
-      },
-      assets: { 
-        logo: logo3, 
-        backImg: isPurpleMode ? backv : backve, 
-        backVid: isPurpleMode ? backvVid : backveVid, 
-        phoneImg: isPurpleMode ? phonev : phoneve, 
-        phoneVid: isPurpleMode ? phonevVid : phoneveVid 
-      }
+      colors: { accent: isPurpleMode ? "#6b21a8" : "#365314", titleColor: "#fff" },
+      assets: { logo: logo3, backImg: isPurpleMode ? backv : backve, backVid: isPurpleMode ? backvVid : backveVid, phoneImg: isPurpleMode ? phonev : phoneve, phoneVid: isPurpleMode ? phonevVid : phoneveVid }
     },
     {
       id: "04",
@@ -116,17 +106,18 @@ function ProjectsHolder() {
       desc: "A sustainable tech interface exploring fluid transitions between green environments.",
       link: "#",
       font: "cursive",
-      colors: { 
-        accent: greenAccents[greenCycle % 4], // Alterne entre les 4 nuances de vert
-        titleColor: "#fff" 
-      },
-      assets: { 
-        logo: logo4, // Tu peux changer par un logo spécifique
-        backImg: greenBacks[greenCycle], 
-        backVid: back4Vid,
-        phoneImg: back41, // Pas de phone spécifique, on réutilise une image green
-        phoneVid: null 
-      }
+      colors: { accent: greenAccents[greenCycle % 4], titleColor: "#fff" },
+      assets: { logo: logo4, backImg: greenBacks[greenCycle], backVid: back4Vid, phoneImg: back41, phoneVid: null }
+    },
+    {
+      id: "05",
+      title: "Unicheck",
+      tech: "React / Tailwind / SPring Boot / postgreSQL",
+      desc: "Academic attendance system utilizing dynamic QR generation and GPS verification, featuring centralized administrative control for course management.",
+      link: "https://unicheck-drab.vercel.app",
+      font: "'Manrope', sans-serif",
+      colors: { accent: "#dc2626", titleColor: "#ffffff" }, // Rouge dominant
+      assets: { logo: logo14, backImg: back14, back14Vid, phoneImg: phone14, phoneVid: null }
     }
   ];
 
