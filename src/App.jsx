@@ -22,8 +22,6 @@ function App() {
         `}
       </style>
 
-      <Navbar />
-
       <main className="flex-grow">
         <section id="hero"><Hero /></section>
         <section id="about"><About /></section>
