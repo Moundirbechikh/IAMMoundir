@@ -43,40 +43,42 @@ export default function Hero() {
   };
 
   // ============================================================
-  // PARALLAX TACTILE + SCROLL — MOBILE / TABLETTE (AMÉLIORÉ)
+  // PARALLAX TACTILE ET CONTRAINTES — MOBILE (CORRIGÉ & CENTRÉ)
   // ============================================================
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
   const rawPlaqueYM = useMotionValue(0);
   
-  // Ressorts optimisés pour fluidité
   const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 45, damping: 14, mass: 0.6 });
   const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.6 });
   
   const followEnabledM = useRef(false);
 
   useEffect(() => {
+    // Activé seulement quand toute la timeline d'introduction est finie
     const timer = setTimeout(() => {
       followEnabledM.current = true;
-    }, 1000);
+    }, 2400);
     return () => clearTimeout(timer);
   }, []);
 
   const handlePointerMoveMobile = (e) => {
     if (!followEnabledM.current || !mobileSectionRef.current) return;
     const rect = mobileSectionRef.current.getBoundingClientRect();
+    
+    // Calcul de l'écart depuis le centre exact de l'écran
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // La plaque fait 52% de large et 22% de haut.
-    // Limites mathématiques pour l'empêcher de sortir de l'écran:
-    // Largeur dispo : (100 - 52) / 2 = 24% | Hauteur dispo : (100 - 22) / 2 = 39%
-    const maxX = rect.width * 0.22; // Marge de sécurité (ne dépasse pas 24%)
-    const maxY = rect.height * 0.37; // Marge de sécurité (ne dépasse pas 39%)
+    // Plaque mobile : w-[52%] et h-[22%]
+    // Marge max pour rester dans l'écran à partir du centre :
+    // Horizontal = (100 - 52) / 2 = 24% | Vertical = (100 - 22) / 2 = 39%
+    const maxX = rect.width * 0.24;
+    const maxY = rect.height * 0.39;
 
-    // On maintient un bon suivi (1.2) mais bloqué strictement aux limites maxX/maxY
-    rawPlaqueXM.set(clamp(dx * 1.2, maxX));
-    rawPlaqueYM.set(clamp(dy * 1.2, maxY));
+    // Suivi direct 1:1 bridé au pixel près aux frontières de l'écran
+    rawPlaqueXM.set(clamp(dx, maxX));
+    rawPlaqueYM.set(clamp(dy, maxY));
   };
 
   const { scrollYProgress: scrollProgressM } = useScroll({
@@ -87,34 +89,29 @@ export default function Hero() {
   const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -2]);
 
   // ============================================================
-  // VARIANTS D'ANIMATION (TYPEWRITER) — DESKTOP
+  // VARIANTS D'ANIMATION DESKTOP
   // ============================================================
   const typewriterLeft = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04 } },
   };
-
   const typewriterMiddle = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.6 } },
   };
-
   const typewriterJourney = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.0 } },
   };
-
   const typewriterRight = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.4 } },
   };
-
   const letterAnimation = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } },
   };
 
-  // STABILO COUPE-DE-PINCEAU (desktop)
   const Highlight = ({ children, delay }) => (
     <span className="relative inline-block z-30">
       <motion.span
@@ -134,9 +131,6 @@ export default function Hero() {
     hover: { opacity: 1, y: 0, pointerEvents: "auto" },
   };
 
-  // ============================================================
-  // DONNÉES DES CARTES (partagées desktop + mobile)
-  // ============================================================
   const cardsData = {
     about: {
       title: "qui suis je",
@@ -168,7 +162,6 @@ export default function Hero() {
     <>
       {/* ============================================================
           ================   VERSION DESKTOP (>= lg)   ================
-          ================   INCHANGÉ — NE PAS MODIFIER   =============
           ============================================================ */}
       <section
         ref={sectionRef}
@@ -177,7 +170,6 @@ export default function Hero() {
       >
         <div className="absolute w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-[150px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* CÔTÉ GAUCHE : INTRODUCTION */}
         <div className="relative z-10 w-[58vw] flex flex-col items-start justify-center text-left space-y-3 pl-[1vw]">
           <motion.div variants={typewriterLeft} initial="hidden" animate="visible" className="text-7xl tracking-tight uppercase opacity-80 h-[1.2em]">
             {introLeft.split("").map((char, index) => (
@@ -221,7 +213,6 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* BLOC CENTRAL HAUT : MES PROJETS (ROUGE) */}
         <motion.div
           initial="rest"
           whileHover="hover"
@@ -270,7 +261,6 @@ export default function Hero() {
           </motion.a>
         </motion.div>
 
-        {/* BLOC CENTRAL BAS : MON PARCOURS (VERT) */}
         <motion.div
           initial="rest"
           whileHover="hover"
@@ -320,7 +310,6 @@ export default function Hero() {
           </motion.a>
         </motion.div>
 
-        {/* CÔTÉ DROIT : QUI SUIS-JE (JAUNE) */}
         <motion.div initial="rest" whileHover="hover" className="relative w-[32vw] flex flex-col items-start justify-center p-10">
           <AnimatedFrame hoverColor="#facc15" />
           <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-10">
@@ -376,7 +365,7 @@ export default function Hero() {
       </section>
 
       {/* ============================================================
-          ================   MOBILE / TABLETTE (< lg)   ================
+          ================   VERSION MOBILE / TABLETTE (< lg)   ========
           ============================================================ */}
       <section
         ref={mobileSectionRef}
@@ -386,40 +375,36 @@ export default function Hero() {
       >
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* Plaque blanche tactile — bloquée dans les bords de l'écran */}
+        {/* TIMING ÉTAPE 2 : Plaque blanche tactile corrigée & recentrée parfaitement */}
         <motion.div
           style={{ x: plaqueXM, y: plaqueYM, rotate: plaqueTiltM }}
-          initial={{ opacity: 0, scale: 0.2, x: -140, rotate: -25 }}
+          initial={{ opacity: 0, scale: 0.2 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.6 }}
-          className="absolute z-20 top-[11%] left-[4%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
+          transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.5 }}
+          className="absolute z-20 top-[39%] left-[24%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
         />
 
-        {/* ---------- ROW 1 : bonjour je suis + Mes projets ---------- */}
+        {/* ---------- ROW 1 : Bonjour je suis (AGRANDI) & Mes projets ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
           <div className="w-[52%] flex flex-col justify-center items-start pl-1">
+            {/* TIMING ÉTAPE 1 : Apparaît instantanément */}
             <motion.div
-              variants={typewriterLeft}
-              initial="hidden"
-              animate="visible"
-              className="text-[8.5vw] sm:text-[5.6vw] md:text-[4.4vw] leading-[0.95] tracking-tight uppercase opacity-90"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0 }}
+              className="text-[10.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left"
             >
-              {introLeft.split(" ").map((word, wi) => (
-                <span key={wi} className="block">
-                  {word.split("").map((char, index) => (
-                    <motion.span key={index} variants={letterAnimation} className="inline-block">
-                      {char}
-                    </motion.span>
-                  ))}
-                </span>
-              ))}
+              Bonjour
+              <br />
+              je suis
             </motion.div>
           </div>
 
+          {/* TIMING ÉTAPE 5 : Les deux derniers blocs en dernier */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.0, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: 2.1, duration: 0.5, ease: "easeOut" }}
             className="w-[48%] h-full"
           >
             <MobileCard cardData={cardsData.projets}>
@@ -435,14 +420,15 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* ---------- ROW 2 : MOUNDIR — immense, deux lignes ---------- */}
+        {/* ---------- ROW 2 : MOUNDIR ---------- */}
         <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 40%" }}>
+          {/* TIMING ÉTAPE 2 : Apparaît avec la plaque à 0.5s */}
           <motion.h1
             initial={{ opacity: 0, scale: 0.75, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: [0, 0, -4, 0] }}
             transition={{
-              opacity: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
-              scale: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
+              opacity: { type: "spring", stiffness: 50, damping: 12, delay: 0.5 },
+              scale: { type: "spring", stiffness: 50, damping: 12, delay: 0.5 },
               y: { duration: 5, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
             }}
             className="font-cartoon tracking-tight uppercase text-white text-center leading-[0.8] text-[32vw] sm:text-[20vw] md:text-[17vw]"
@@ -453,12 +439,14 @@ export default function Hero() {
           </motion.h1>
         </div>
 
-        {/* ---------- ROW 3 : qui suis je (grande carte) | bienvenue + parcours ---------- */}
+        {/* ---------- ROW 3 : Qui suis je (grande carte) | Bienvenue + Parcours ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3 flex-1 min-h-0">
+          
+          {/* TIMING ÉTAPE 4 : Apparaît à 1.6s */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.8, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: 1.6, duration: 0.5, ease: "easeOut" }}
             className="w-[58%] h-full"
           >
             <MobileCard
@@ -470,22 +458,23 @@ export default function Hero() {
                   qui suis je ?
                 </span>
                 <span className="block text-[5.8vw] sm:text-[3vw] md:text-[2vw] font-light uppercase tracking-tight text-white leading-tight px-1 text-center">
-                  Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
-                  <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
-                  <MiniHighlight delay={2.4}>Oran</MiniHighlight>
+                  Je suis <MiniHighlight delay={1.8}>développeur fullstack</MiniHighlight> de{" "}
+                  <MiniHighlight delay={1.95}>23 ans</MiniHighlight>, habite à{" "}
+                  <MiniHighlight delay={2.1}>Oran</MiniHighlight>
                 </span>
               </div>
             </MobileCard>
           </motion.div>
 
           <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
+            {/* TIMING ÉTAPE 3 : Apparaît à 1.1s */}
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.5 }}
+              transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.1 }}
               className="flex-[0.55] flex flex-col items-center justify-center text-center"
             >
-              <span className="text-[6.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-white">
+              <span className="text-[9.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-white">
                 bienvenue
                 <br />
                 dans mon
@@ -494,10 +483,11 @@ export default function Hero() {
               </span>
             </motion.div>
 
+            {/* TIMING ÉTAPE 5 : Apparaît en dernier à 2.1s */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.2, duration: 0.5, ease: "easeOut" }}
+              transition={{ delay: 2.1, duration: 0.5, ease: "easeOut" }}
               className="flex-1 min-h-0"
             >
               <MobileCard cardData={cardsData.parcours}>
@@ -540,7 +530,7 @@ function AnimatedFrame({ hoverColor = "#ffffff" }) {
 }
 
 // ============================================================
-// MINI STABILO — version mobile du composant Highlight desktop
+// MINI STABILO MOBILE
 // ============================================================
 function MiniHighlight({ children, delay = 0 }) {
   return (
@@ -559,7 +549,7 @@ function MiniHighlight({ children, delay = 0 }) {
 }
 
 // ============================================================
-// CARTE MOBILE — MAJ: Taille du texte d'ouverture légèrement réduit
+// CARTE MOBILE
 // ============================================================
 function MobileCard({ cardData, children, revealContent, topTitle, centerBody }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -575,7 +565,6 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
       style={{ borderStyle: "dashed", borderWidth: "1.5px" }}
       className="relative w-full h-full text-left overflow-hidden rounded-[14px] bg-[#0c0c0c] flex flex-col justify-center items-center cursor-pointer select-none"
     >
-      {/* Remplissage couleur au clic (diagonale) */}
       <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-0">
         <div className="absolute w-[260%] h-[260%] top-[-80%] left-[-80%] rotate-[-35deg] flex flex-col">
           <motion.div animate={{ scaleY: isOpen ? 1 : 0 }} transition={{ duration: 0.45, ease: "easeInOut" }} className={`w-full h-[25%] ${cardData.barColorClass} origin-top`} />
@@ -585,14 +574,12 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
         </div>
       </div>
 
-      {/* Indicateur "c'est cliquable" — label flou (uniquement fermé) */}
       {!isOpen && (
         <div className="absolute top-1.5 right-1.5 z-20 rounded-md border border-white/10 bg-white/10 backdrop-blur-md px-2 py-1 text-[2.6vw] sm:text-[1.3vw] md:text-[0.85vw] uppercase tracking-wider text-white/90">
           Appuyer
         </div>
       )}
 
-      {/* Titre + teaser (devient flou et s'estompe quand ouvert) */}
       <motion.div
         animate={{ filter: isOpen ? "blur(6px)" : "blur(0px)", opacity: isOpen ? 0.25 : 1 }}
         transition={{ duration: 0.3 }}
@@ -610,7 +597,6 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
         )}
       </motion.div>
 
-      {/* Contenu détaillé + bouton révélés par le clic */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -620,7 +606,6 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
             transition={{ duration: 0.3, delay: 0.15 }}
             className="absolute inset-0 z-20 flex flex-col items-center justify-center p-3 text-center"
           >
-            {/* TAILLE DU TEXTE RÉDUITE ICI (3.2vw au lieu de 3.8vw) + leading-tight */}
             <div className="text-[3.2vw] sm:text-[1.9vw] md:text-[1.3vw] leading-tight uppercase text-white font-medium drop-shadow-md line-clamp-4 mb-2">
               {revealContent ?? cardData.content}
             </div>
