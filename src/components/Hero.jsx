@@ -48,8 +48,8 @@ export default function Hero() {
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
   const rawPlaqueYM = useMotionValue(0);
-  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 45, damping: 14, mass: 0.7 });
-  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.7 });
+  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 38, damping: 16, mass: 0.9 });
+  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 38, damping: 16, mass: 0.9 });
   const followEnabledM = useRef(false);
 
   useEffect(() => {
@@ -65,12 +65,12 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // amplitude large : la plaque doit pouvoir voyager entre "bonjour", "Moundir" et "bienvenue"
-    const maxX = rect.width * 0.22;
-    const maxY = rect.height * 0.1;
+    // amplitude alignée sur le desktop : la plaque parcourt (presque) tout l'écran
+    const maxX = rect.width * 0.32;
+    const maxY = rect.height * 0.14;
 
-    rawPlaqueXM.set(clamp(dx * 0.5, maxX));
-    rawPlaqueYM.set(clamp(dy * 0.5, maxY));
+    rawPlaqueXM.set(clamp(dx * 0.55, maxX));
+    rawPlaqueYM.set(clamp(dy * 0.55, maxY));
   };
 
   const { scrollYProgress: scrollProgressM } = useScroll({
@@ -370,7 +370,7 @@ export default function Hero() {
       <section
         ref={mobileSectionRef}
         onPointerMove={handlePointerMoveMobile}
-        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-1.5 sm:gap-2 font-cartoon text-white overflow-hidden"
+        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-0.5 sm:gap-1 md:gap-1.5 font-cartoon text-white overflow-hidden"
       >
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
@@ -417,7 +417,7 @@ export default function Hero() {
                 <br />
                 projets ?
               </span>
-              <span className="block mt-1 text-[2.7vw] sm:text-[1.8vw] md:text-[1.2vw] font-light uppercase tracking-tight text-white/60 text-center leading-snug px-1">
+              <span className="block mt-1 text-[2.7vw] sm:text-[1.8vw] md:text-[1.2vw] font-light uppercase tracking-tight text-white text-center leading-snug px-1">
                 {cardsData.projets.teaser}
               </span>
             </MobileCard>
@@ -453,16 +453,19 @@ export default function Hero() {
             <MobileCard
               cardData={cardsData.about}
               revealContent="Je propulse vos idées en expériences visuelles radicales."
-            >
-              <span className="block font-cartoon uppercase tracking-tight text-white text-[7.5vw] sm:text-[4.4vw] md:text-[3.4vw] leading-[1.05] text-center mb-1.5">
-                qui suis je ?
-              </span>
-              <span className="block text-[3.3vw] sm:text-[1.9vw] md:text-[1.25vw] font-light uppercase tracking-tight text-white/85 text-center leading-snug px-2">
-                Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
-                <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
-                <MiniHighlight delay={2.4}>Oran</MiniHighlight>
-              </span>
-            </MobileCard>
+              topTitle={
+                <span className="block font-cartoon uppercase tracking-tight text-white text-[8.5vw] sm:text-[4.8vw] md:text-[3.6vw] leading-[1.02]">
+                  qui suis je ?
+                </span>
+              }
+              centerBody={
+                <span className="block text-[4.2vw] sm:text-[2.3vw] md:text-[1.55vw] font-light uppercase tracking-tight text-white leading-snug px-2 text-center">
+                  Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
+                  <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
+                  <MiniHighlight delay={2.4}>Oran</MiniHighlight>
+                </span>
+              }
+            />
           </motion.div>
 
           <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
@@ -470,9 +473,9 @@ export default function Hero() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.5 }}
-              className="flex-[0.55] flex flex-col items-end justify-center text-right pr-1"
+              className="flex-[0.55] flex flex-col items-center justify-center text-center"
             >
-              <span className="text-[4.6vw] sm:text-[2.6vw] md:text-[1.8vw] leading-[1.1] tracking-tight uppercase text-white/80">
+              <span className="text-[6.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-white">
                 bienvenue
                 <br />
                 dans mon
@@ -491,7 +494,7 @@ export default function Hero() {
                 <span className="block font-cartoon uppercase tracking-tight text-white text-[6.5vw] sm:text-[4vw] md:text-[3vw] leading-none text-center">
                   parcours ?
                 </span>
-                <span className="block mt-1 text-[2.6vw] sm:text-[1.7vw] md:text-[1.1vw] font-light uppercase tracking-tight text-white/60 text-center leading-snug px-1">
+                <span className="block mt-1 text-[2.6vw] sm:text-[1.7vw] md:text-[1.1vw] font-light uppercase tracking-tight text-white text-center leading-snug px-1">
                   {cardsData.parcours.teaser}
                 </span>
               </MobileCard>
@@ -552,7 +555,7 @@ function MiniHighlight({ children, delay = 0 }) {
 // CARTE MOBILE — bordure CSS fiable, teaser toujours visible,
 // label "Appuyer" flouté, contenu détaillé (ou revealContent) au clic.
 // ============================================================
-function MobileCard({ cardData, children, revealContent }) {
+function MobileCard({ cardData, children, revealContent, topTitle, centerBody }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -589,9 +592,16 @@ function MobileCard({ cardData, children, revealContent }) {
       <motion.div
         animate={{ filter: isOpen ? "blur(6px)" : "blur(0px)", opacity: isOpen ? 0.25 : 1 }}
         transition={{ duration: 0.3 }}
-        className="relative z-10 flex flex-col items-center justify-center w-full h-full p-2"
+        className="relative z-10 flex flex-col w-full h-full p-2"
       >
-        {children}
+        {topTitle ? (
+          <>
+            <div className="w-full text-center pt-1">{topTitle}</div>
+            <div className="flex-1 flex items-center justify-center w-full">{centerBody}</div>
+          </>
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center">{children}</div>
+        )}
       </motion.div>
 
       {/* Contenu détaillé + bouton révélés par le clic */}
