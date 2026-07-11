@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Hand, Smile } from "lucide-react";
 
 export default function Hero() {
   const introLeft = "Bonjour je suis";
@@ -10,7 +11,12 @@ export default function Hero() {
   const clamp = (value, max) => Math.max(-max, Math.min(max, value));
 
   // ============================================================
-  // PARALLAX SOURIS — DESKTOP UNIQUEMENT (inchangé)
+  // COULEUR DE FOND — utilisée pour l'astuce des emojis cachés
+  // ============================================================
+  const BG = "#080808";
+
+  // ============================================================
+  // PARALLAX SOURIS — DESKTOP (range of motion augmenté)
   // ============================================================
   const rawPlaqueX = useMotionValue(0);
   const rawPlaqueY = useMotionValue(0);
@@ -35,27 +41,27 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    const maxX = rect.width * 0.32;
-    const maxY = rect.height * 0.14;
+    // AUGMENTÉ : la plaque peut maintenant aller beaucoup plus haut/bas
+    const maxX = rect.width * 0.36;
+    const maxY = rect.height * 0.42;
 
     rawPlaqueX.set(clamp(dx * 0.55, maxX));
-    rawPlaqueY.set(clamp(dy * 0.55, maxY));
+    rawPlaqueY.set(clamp(dy * 0.6, maxY));
   };
 
   // ============================================================
-  // PARALLAX TACTILE ET CONTRAINTES — MOBILE (CORRIGÉ & CENTRÉ)
+  // PARALLAX TACTILE ET CONTRAINTES — MOBILE (inchangé)
   // ============================================================
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
   const rawPlaqueYM = useMotionValue(0);
-  
+
   const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 45, damping: 14, mass: 0.6 });
   const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.6 });
-  
+
   const followEnabledM = useRef(false);
 
   useEffect(() => {
-    // Activé seulement quand toute la timeline d'introduction est finie
     const timer = setTimeout(() => {
       followEnabledM.current = true;
     }, 2400);
@@ -65,18 +71,13 @@ export default function Hero() {
   const handlePointerMoveMobile = (e) => {
     if (!followEnabledM.current || !mobileSectionRef.current) return;
     const rect = mobileSectionRef.current.getBoundingClientRect();
-    
-    // Calcul de l'écart depuis le centre exact de l'écran
+
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // Plaque mobile : w-[52%] et h-[22%]
-    // Marge max pour rester dans l'écran à partir du centre :
-    // Horizontal = (100 - 52) / 2 = 24% | Vertical = (100 - 22) / 2 = 39%
     const maxX = rect.width * 0.24;
     const maxY = rect.height * 0.39;
 
-    // Suivi direct 1:1 bridé au pixel près aux frontières de l'écran
     rawPlaqueXM.set(clamp(dx, maxX));
     rawPlaqueYM.set(clamp(dy, maxY));
   };
@@ -171,12 +172,21 @@ export default function Hero() {
         <div className="absolute w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-[150px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
         <div className="relative z-10 w-[58vw] flex flex-col items-start justify-center text-left space-y-3 pl-[1vw]">
-          <motion.div variants={typewriterLeft} initial="hidden" animate="visible" className="text-7xl tracking-tight uppercase opacity-80 h-[1.2em]">
-            {introLeft.split("").map((char, index) => (
-              <motion.span key={index} variants={letterAnimation} className="inline-block">
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
+          {/* "Bonjour je suis" + coucou caché (révélé quand la plaque monte jusqu'ici) */}
+          <motion.div
+            variants={typewriterLeft}
+            initial="hidden"
+            animate="visible"
+            className="text-7xl tracking-tight uppercase opacity-80 h-[1.2em] flex items-center gap-4"
+          >
+            <span>
+              {introLeft.split("").map((char, index) => (
+                <motion.span key={index} variants={letterAnimation} className="inline-block">
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </span>
+            <RevealWave BG={BG} className="w-10 h-10" />
           </motion.div>
 
           <div className="relative inline-block select-none bg-[#080808]">
@@ -192,6 +202,12 @@ export default function Hero() {
             >
               Moundir
             </motion.h1>
+
+            {/* Smiley caché — placé dans la zone que la plaque couvre déjà au repos */}
+            <RevealSmile
+              BG={BG}
+              className="absolute z-10 top-[40%] left-[16%] w-[3vw] h-[3vw]"
+            />
 
             <motion.div
               style={{ x: plaqueX, y: plaqueY }}
@@ -371,11 +387,11 @@ export default function Hero() {
         ref={mobileSectionRef}
         onPointerMove={handlePointerMoveMobile}
         onPointerDown={handlePointerMoveMobile}
-        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-0.5 sm:gap-1 md:gap-1.5 font-cartoon text-white overflow-hidden touch-none"
+        style={{ touchAction: "pan-y" }}
+        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-0.5 sm:gap-1 md:gap-1.5 font-cartoon text-white overflow-hidden"
       >
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* TIMING ÉTAPE 2 : Plaque blanche tactile corrigée & recentrée parfaitement */}
         <motion.div
           style={{ x: plaqueXM, y: plaqueYM, rotate: plaqueTiltM }}
           initial={{ opacity: 0, scale: 0.2 }}
@@ -384,23 +400,26 @@ export default function Hero() {
           className="absolute z-20 top-[39%] left-[24%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
         />
 
-        {/* ---------- ROW 1 : Bonjour je suis (AGRANDI) & Mes projets ---------- */}
+        {/* ---------- ROW 1 : Bonjour je suis (+ coucou caché) & Mes projets ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
           <div className="w-[52%] flex flex-col justify-center items-start pl-1">
-            {/* TIMING ÉTAPE 1 : Apparaît instantanément */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0 }}
-              className="text-[12.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left"
+              className="text-[12.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left flex flex-col items-start"
             >
-              Bonjour
-              <br />
-              je suis
+              <span>Bonjour</span>
+              <span className="flex items-center gap-2">
+                je suis
+                <RevealWave
+                  BG={BG}
+                  className="w-[6vw] h-[6vw] sm:w-[3.5vw] sm:h-[3.5vw] md:w-[2.5vw] md:h-[2.5vw]"
+                />
+              </span>
             </motion.div>
           </div>
 
-          {/* TIMING ÉTAPE 5 : Les deux derniers blocs en dernier */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -420,9 +439,8 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* ---------- ROW 2 : MOUNDIR ---------- */}
+        {/* ---------- ROW 2 : MOUNDIR (+ smiley caché avant "dir") ---------- */}
         <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 40%" }}>
-          {/* TIMING ÉTAPE 2 : Apparaît avec la plaque à 0.5s */}
           <motion.h1
             initial={{ opacity: 0, scale: 0.75, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: [0, 0, -4, 0] }}
@@ -435,14 +453,15 @@ export default function Hero() {
           >
             Moun
             <br />
-            dir
+            <span className="inline-flex items-center justify-center gap-2">
+              <RevealSmile BG={BG} className="w-[0.75em] h-[0.75em]" />
+              dir
+            </span>
           </motion.h1>
         </div>
 
         {/* ---------- ROW 3 : Qui suis je (grande carte) | Bienvenue + Parcours ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3 flex-1 min-h-0">
-          
-          {/* TIMING ÉTAPE 4 : Apparaît à 1.6s */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -467,14 +486,17 @@ export default function Hero() {
           </motion.div>
 
           <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
-            {/* TIMING ÉTAPE 3 : Apparaît à 1.1s */}
-            <motion.div
+           <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.1 }}
               className="flex-[0.55] flex flex-col items-center justify-center text-center"
             >
-              <span className="text-[9.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-white">
+              {/* MODIFICATION : "Bienvenue" en text-stroke comme sur Desktop */}
+              <span 
+                className="text-[9.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-transparent"
+                style={{ WebkitTextStroke: "1px #ffffff", textStroke: "1px #ffffff" }}
+              >
                 bienvenue
                 <br />
                 dans mon
@@ -483,7 +505,6 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* TIMING ÉTAPE 5 : Apparaît en dernier à 2.1s */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -503,6 +524,34 @@ export default function Hero() {
         </div>
       </section>
     </>
+  );
+}
+
+// ============================================================
+// EMOJIS "TROUVAILLE" — invisibles, révélés uniquement par la plaque
+// L'icône est colorée exactement comme le fond (#080808), donc
+// invisible dessus. La plaque blanche fait mix-blend-difference :
+// là où elle passe sur l'icône, |255 - 8| ≈ 247 → quasi blanc,
+// l'icône apparaît d'un coup. Ailleurs elle reste fondue au fond.
+// ============================================================
+function RevealWave({ className = "", BG }) {
+  return (
+    <motion.span
+      animate={{ rotate: [0, 18, -10, 16, 0] }}
+      transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 2.4, ease: "easeInOut" }}
+      style={{ transformOrigin: "70% 75%" }}
+      className={`inline-block pointer-events-none ${className}`}
+    >
+      <Hand className="w-full h-full" stroke={BG} fill={BG} strokeWidth={2} />
+    </motion.span>
+  );
+}
+
+function RevealSmile({ className = "", BG }) {
+  return (
+    <span className={`inline-block pointer-events-none ${className}`}>
+      <Smile className="w-full h-full" stroke={BG} fill={BG} strokeWidth={2} />
+    </span>
   );
 }
 
@@ -610,8 +659,8 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
               {revealContent ?? cardData.content}
             </div>
 
-            <a
-              href={cardData.cta.href}
+            
+            <a href={cardData.cta.href}
               onClick={(e) => e.stopPropagation()}
               className="mt-2 group relative inline-flex items-center gap-1 overflow-hidden rounded-[8px] border border-transparent bg-white px-4 py-2 uppercase tracking-tight text-black text-[3.6vw] sm:text-[1.5vw] md:text-[1vw] font-bold shadow-md"
             >
