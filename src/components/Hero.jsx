@@ -1,6 +1,44 @@
-import { motion, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useSpring, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Hand, Smile } from "lucide-react";
+
+// ============================================================
+// HOOK — révèle une icône uniquement quand la plaque la recouvre
+// réellement à l'écran (comparaison de bounding boxes en live)
+// ============================================================
+function useRevealOnOverlap(plaqueRef, targetRef, mvX, mvY) {
+  const [revealed, setRevealed] = useState(false);
+
+  const check = () => {
+    if (!plaqueRef.current || !targetRef.current) return;
+    const p = plaqueRef.current.getBoundingClientRect();
+    const t = targetRef.current.getBoundingClientRect();
+    const overlap = !(
+      t.left > p.right ||
+      t.right < p.left ||
+      t.top > p.bottom ||
+      t.bottom < p.top
+    );
+    setRevealed(overlap);
+  };
+
+  useMotionValueEvent(mvX, "change", check);
+  useMotionValueEvent(mvY, "change", check);
+
+  useEffect(() => {
+    check();
+    const raf = requestAnimationFrame(check);
+    const onResize = () => check();
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return revealed;
+}
 
 export default function Hero() {
   const introLeft = "Bonjour je suis";
@@ -9,11 +47,6 @@ export default function Hero() {
   const introJourney = "parcours ?";
 
   const clamp = (value, max) => Math.max(-max, Math.min(max, value));
-
-  // ============================================================
-  // COULEUR DE FOND — utilisée pour l'astuce des emojis cachés
-  // ============================================================
-  const BG = "#080808";
 
   // ============================================================
   // PARALLAX SOURIS — DESKTOP (range of motion augmenté)
@@ -41,13 +74,20 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // AUGMENTÉ : la plaque peut maintenant aller beaucoup plus haut/bas
+    // Range of motion augmenté : la plaque peut aller jusqu'en haut/bas complet
     const maxX = rect.width * 0.36;
     const maxY = rect.height * 0.42;
 
     rawPlaqueX.set(clamp(dx * 0.55, maxX));
     rawPlaqueY.set(clamp(dy * 0.6, maxY));
   };
+
+  // Refs pour la détection de superposition — DESKTOP
+  const plaqueRef = useRef(null);
+  const waveRef = useRef(null);
+  const smileRef = useRef(null);
+  const waveRevealed = useRevealOnOverlap(plaqueRef, waveRef, plaqueX, plaqueY);
+  const smileRevealed = useRevealOnOverlap(plaqueRef, smileRef, plaqueX, plaqueY);
 
   // ============================================================
   // PARALLAX TACTILE ET CONTRAINTES — MOBILE (inchangé)
@@ -88,6 +128,13 @@ export default function Hero() {
   });
 
   const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -2]);
+
+  // Refs pour la détection de superposition — MOBILE
+  const plaqueRefM = useRef(null);
+  const waveRefM = useRef(null);
+  const smileRefM = useRef(null);
+  const waveRevealedM = useRevealOnOverlap(plaqueRefM, waveRefM, plaqueXM, plaqueYM);
+  const smileRevealedM = useRevealOnOverlap(plaqueRefM, smileRefM, plaqueXM, plaqueYM);
 
   // ============================================================
   // VARIANTS D'ANIMATION DESKTOP
@@ -172,7 +219,7 @@ export default function Hero() {
         <div className="absolute w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-[150px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
         <div className="relative z-10 w-[58vw] flex flex-col items-start justify-center text-left space-y-3 pl-[1vw]">
-          {/* "Bonjour je suis" + coucou caché (révélé quand la plaque monte jusqu'ici) */}
+          {/* "Bonjour je suis" + coucou révélé quand la plaque monte jusqu'ici */}
           <motion.div
             variants={typewriterLeft}
             initial="hidden"
@@ -186,7 +233,7 @@ export default function Hero() {
                 </motion.span>
               ))}
             </span>
-            <RevealWave BG={BG} className="w-10 h-10" />
+            <RevealWave ref={waveRef} revealed={waveRevealed} className="w-10 h-10" />
           </motion.div>
 
           <div className="relative inline-block select-none bg-[#080808]">
@@ -203,13 +250,15 @@ export default function Hero() {
               Moundir
             </motion.h1>
 
-            {/* Smiley caché — placé dans la zone que la plaque couvre déjà au repos */}
+            {/* Smiley révélé — visible dès que la plaque le recouvre (dès le repos) */}
             <RevealSmile
-              BG={BG}
-              className="absolute z-10 top-[40%] left-[16%] w-[3vw] h-[3vw]"
+              ref={smileRef}
+              revealed={smileRevealed}
+              className="absolute z-10 top-[40%] left-[16%] w-[3.5vw] h-[3.5vw]"
             />
 
             <motion.div
+              ref={plaqueRef}
               style={{ x: plaqueX, y: plaqueY }}
               initial={{ opacity: 0, scale: 0.2, x: -250, rotate: -25 }}
               animate={{ opacity: 1, scale: 1, rotate: -6 }}
@@ -393,6 +442,7 @@ export default function Hero() {
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
         <motion.div
+          ref={plaqueRefM}
           style={{ x: plaqueXM, y: plaqueYM, rotate: plaqueTiltM }}
           initial={{ opacity: 0, scale: 0.2 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -400,7 +450,7 @@ export default function Hero() {
           className="absolute z-20 top-[39%] left-[24%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
         />
 
-        {/* ---------- ROW 1 : Bonjour je suis (+ coucou caché) & Mes projets ---------- */}
+        {/* ---------- ROW 1 : Bonjour je suis (+ coucou) & Mes projets ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
           <div className="w-[52%] flex flex-col justify-center items-start pl-1">
             <motion.div
@@ -413,8 +463,9 @@ export default function Hero() {
               <span className="flex items-center gap-2">
                 je suis
                 <RevealWave
-                  BG={BG}
-                  className="w-[6vw] h-[6vw] sm:w-[3.5vw] sm:h-[3.5vw] md:w-[2.5vw] md:h-[2.5vw]"
+                  ref={waveRefM}
+                  revealed={waveRevealedM}
+                  className="w-[12vw] h-[12vw] sm:w-[3.5vw] sm:h-[3.5vw] md:w-[2.5vw] md:h-[2.5vw]"
                 />
               </span>
             </motion.div>
@@ -439,7 +490,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* ---------- ROW 2 : MOUNDIR (+ smiley caché avant "dir") ---------- */}
+        {/* ---------- ROW 2 : MOUNDIR (+ smiley avant "dir") ---------- */}
         <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 40%" }}>
           <motion.h1
             initial={{ opacity: 0, scale: 0.75, y: 20 }}
@@ -454,7 +505,7 @@ export default function Hero() {
             Moun
             <br />
             <span className="inline-flex items-center justify-center gap-2">
-              <RevealSmile BG={BG} className="w-[0.75em] h-[0.75em]" />
+              <RevealSmile ref={smileRefM} revealed={smileRevealedM} className="w-[0.75em] h-[0.75em]" />
               dir
             </span>
           </motion.h1>
@@ -486,14 +537,13 @@ export default function Hero() {
           </motion.div>
 
           <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
-           <motion.div
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.1 }}
               className="flex-[0.55] flex flex-col items-center justify-center text-center"
             >
-              {/* MODIFICATION : "Bienvenue" en text-stroke comme sur Desktop */}
-              <span 
+              <span
                 className="text-[9.6vw] sm:text-[3.4vw] md:text-[2.2vw] leading-[1.05] tracking-tight uppercase text-transparent"
                 style={{ WebkitTextStroke: "1px #ffffff", textStroke: "1px #ffffff" }}
               >
@@ -528,32 +578,45 @@ export default function Hero() {
 }
 
 // ============================================================
-// EMOJIS "TROUVAILLE" — invisibles, révélés uniquement par la plaque
-// L'icône est colorée exactement comme le fond (#080808), donc
-// invisible dessus. La plaque blanche fait mix-blend-difference :
-// là où elle passe sur l'icône, |255 - 8| ≈ 247 → quasi blanc,
-// l'icône apparaît d'un coup. Ailleurs elle reste fondue au fond.
+// EMOJIS "TROUVAILLE" — révélés seulement quand ils sont
+// géométriquement recouverts par la plaque (voir useRevealOnOverlap)
 // ============================================================
-function RevealWave({ className = "", BG }) {
+const RevealWave = forwardRef(function RevealWave({ revealed, className = "", color = "#ffffff" }, ref) {
   return (
     <motion.span
-      animate={{ rotate: [0, 18, -10, 16, 0] }}
-      transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 2.4, ease: "easeInOut" }}
+      ref={ref}
+      animate={{
+        opacity: revealed ? 1 : 0,
+        scale: revealed ? 1 : 0.5,
+        rotate: revealed ? [0, 18, -10, 16, 0] : 0,
+      }}
+      transition={{
+        opacity: { duration: 0.25 },
+        scale: { duration: 0.25, type: "spring", stiffness: 300, damping: 18 },
+        rotate: revealed
+          ? { duration: 1.3, repeat: Infinity, repeatDelay: 1.8, ease: "easeInOut" }
+          : { duration: 0 },
+      }}
       style={{ transformOrigin: "70% 75%" }}
-      className={`inline-block pointer-events-none ${className}`}
+      className={`inline-block ${className}`}
     >
-      <Hand className="w-full h-full" stroke={BG} fill={BG} strokeWidth={2} />
+      <Hand className="w-full h-full" stroke={color} fill="none" strokeWidth={2.2} />
     </motion.span>
   );
-}
+});
 
-function RevealSmile({ className = "", BG }) {
+const RevealSmile = forwardRef(function RevealSmile({ revealed, className = "", color = "#ffffff" }, ref) {
   return (
-    <span className={`inline-block pointer-events-none ${className}`}>
-      <Smile className="w-full h-full" stroke={BG} fill={BG} strokeWidth={2} />
-    </span>
+    <motion.span
+      ref={ref}
+      animate={{ opacity: revealed ? 1 : 0, scale: revealed ? 1 : 0.5 }}
+      transition={{ duration: 0.25, type: "spring", stiffness: 300, damping: 18 }}
+      className={`inline-block ${className}`}
+    >
+      <Smile className="w-full h-full" stroke={color} fill="none" strokeWidth={2.2} />
+    </motion.span>
   );
-}
+});
 
 // ============================================================
 // COMPOSANTS SUPPORTS DESKTOP (inchangés)
@@ -659,8 +722,8 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
               {revealContent ?? cardData.content}
             </div>
 
-            
-            <a href={cardData.cta.href}
+            <a
+              href={cardData.cta.href}
               onClick={(e) => e.stopPropagation()}
               className="mt-2 group relative inline-flex items-center gap-1 overflow-hidden rounded-[8px] border border-transparent bg-white px-4 py-2 uppercase tracking-tight text-black text-[3.6vw] sm:text-[1.5vw] md:text-[1vw] font-bold shadow-md"
             >
