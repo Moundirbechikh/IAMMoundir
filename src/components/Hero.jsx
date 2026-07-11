@@ -454,12 +454,12 @@ export default function Hero() {
               cardData={cardsData.about}
               revealContent="Je propulse vos idées en expériences visuelles radicales."
               topTitle={
-                <span className="block font-cartoon uppercase tracking-tight text-white text-[8.5vw] sm:text-[4.8vw] md:text-[3.6vw] leading-[1.02]">
+                <span className="mt-5 block font-cartoon uppercase tracking-tight text-white text-[9.5vw] sm:text-[4.8vw] md:text-[3.6vw] leading-[1.02]">
                   qui suis je ?
                 </span>
               }
               centerBody={
-                <span className="block text-[4.2vw] sm:text-[2.3vw] md:text-[1.55vw] font-light uppercase tracking-tight text-white leading-snug px-2 text-center">
+                <span className="block text-[5.2vw] sm:text-[2.3vw] md:text-[1.55vw] font-light uppercase tracking-tight text-white leading-snug px-2 text-center">
                   Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
                   <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
                   <MiniHighlight delay={2.4}>Oran</MiniHighlight>
