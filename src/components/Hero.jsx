@@ -43,13 +43,16 @@ export default function Hero() {
   };
 
   // ============================================================
-  // PARALLAX TACTILE + SCROLL — MOBILE / TABLETTE
+  // PARALLAX TACTILE + SCROLL — MOBILE / TABLETTE (AMÉLIORÉ)
   // ============================================================
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
   const rawPlaqueYM = useMotionValue(0);
-  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 38, damping: 16, mass: 0.9 });
-  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 38, damping: 16, mass: 0.9 });
+  
+  // Ressorts optimisés pour fluidité
+  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 45, damping: 14, mass: 0.6 });
+  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.6 });
+  
   const followEnabledM = useRef(false);
 
   useEffect(() => {
@@ -65,18 +68,22 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // amplitude alignée sur le desktop : la plaque parcourt (presque) tout l'écran
-    const maxX = rect.width * 0.32;
-    const maxY = rect.height * 0.14;
+    // La plaque fait 52% de large et 22% de haut.
+    // Limites mathématiques pour l'empêcher de sortir de l'écran:
+    // Largeur dispo : (100 - 52) / 2 = 24% | Hauteur dispo : (100 - 22) / 2 = 39%
+    const maxX = rect.width * 0.22; // Marge de sécurité (ne dépasse pas 24%)
+    const maxY = rect.height * 0.37; // Marge de sécurité (ne dépasse pas 39%)
 
-    rawPlaqueXM.set(clamp(dx * 0.55, maxX));
-    rawPlaqueYM.set(clamp(dy * 0.55, maxY));
+    // On maintient un bon suivi (1.2) mais bloqué strictement aux limites maxX/maxY
+    rawPlaqueXM.set(clamp(dx * 1.2, maxX));
+    rawPlaqueYM.set(clamp(dy * 1.2, maxY));
   };
 
   const { scrollYProgress: scrollProgressM } = useScroll({
     target: mobileSectionRef,
     offset: ["start start", "end start"],
   });
+
   const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -2]);
 
   // ============================================================
@@ -86,18 +93,22 @@ export default function Hero() {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04 } },
   };
+
   const typewriterMiddle = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.6 } },
   };
+
   const typewriterJourney = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.0 } },
   };
+
   const typewriterRight = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.4 } },
   };
+
   const letterAnimation = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } },
@@ -370,18 +381,18 @@ export default function Hero() {
       <section
         ref={mobileSectionRef}
         onPointerMove={handlePointerMoveMobile}
-        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-0.5 sm:gap-1 md:gap-1.5 font-cartoon text-white overflow-hidden"
+        onPointerDown={handlePointerMoveMobile}
+        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-0.5 sm:gap-1 md:gap-1.5 font-cartoon text-white overflow-hidden touch-none"
       >
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* Plaque blanche tactile — libre sur toute la section, elle voyage entre
-            "bonjour", "Moundir" et "bienvenue" au gré du doigt (comme le hover desktop) */}
+        {/* Plaque blanche tactile — bloquée dans les bords de l'écran */}
         <motion.div
           style={{ x: plaqueXM, y: plaqueYM, rotate: plaqueTiltM }}
           initial={{ opacity: 0, scale: 0.2, x: -140, rotate: -25 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.6 }}
-          className="absolute z-20 top-[11%] left-[4%] w-[56%] h-[24%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
+          className="absolute z-20 top-[11%] left-[4%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
         />
 
         {/* ---------- ROW 1 : bonjour je suis + Mes projets ---------- */}
@@ -412,12 +423,12 @@ export default function Hero() {
             className="w-[48%] h-full"
           >
             <MobileCard cardData={cardsData.projets}>
-              <span className="block font-cartoon uppercase tracking-tight text-white text-[6.8vw] sm:text-[3.8vw] md:text-[3vw] leading-[1.02] text-center">
+              <span className="block font-cartoon uppercase tracking-tight text-white text-[8vw] sm:text-[4.5vw] md:text-[3.5vw] leading-none text-center mb-1">
                 Mes
                 <br />
                 projets ?
               </span>
-              <span className="block mt-1 text-[2.7vw] sm:text-[1.8vw] md:text-[1.2vw] font-light uppercase tracking-tight text-white text-center leading-snug px-1">
+              <span className="block mt-1 text-[3.2vw] sm:text-[2vw] md:text-[1.4vw] font-light uppercase tracking-tight text-white text-center leading-snug px-2">
                 {cardsData.projets.teaser}
               </span>
             </MobileCard>
@@ -453,19 +464,18 @@ export default function Hero() {
             <MobileCard
               cardData={cardsData.about}
               revealContent="Je propulse vos idées en expériences visuelles radicales."
-              topTitle={
-                <span className="mt-5 block font-cartoon uppercase tracking-tight text-white text-[9.5vw] sm:text-[4.8vw] md:text-[3.6vw] leading-[1.02]">
+            >
+              <div className="flex flex-col items-center justify-center text-center w-full h-full px-1">
+                <span className="block font-cartoon uppercase tracking-tight text-white text-[10vw] sm:text-[6vw] md:text-[4vw] leading-none mb-3">
                   qui suis je ?
                 </span>
-              }
-              centerBody={
-                <span className="block text-[5.2vw] sm:text-[2.3vw] md:text-[1.55vw] font-light uppercase tracking-tight text-white leading-snug px-2 text-center">
+                <span className="block text-[5.8vw] sm:text-[3vw] md:text-[2vw] font-light uppercase tracking-tight text-white leading-tight px-1 text-center">
                   Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
                   <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
                   <MiniHighlight delay={2.4}>Oran</MiniHighlight>
                 </span>
-              }
-            />
+              </div>
+            </MobileCard>
           </motion.div>
 
           <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
@@ -491,10 +501,10 @@ export default function Hero() {
               className="flex-1 min-h-0"
             >
               <MobileCard cardData={cardsData.parcours}>
-                <span className="block font-cartoon uppercase tracking-tight text-white text-[6.5vw] sm:text-[4vw] md:text-[3vw] leading-none text-center">
+                <span className="block font-cartoon uppercase tracking-tight text-white text-[7.5vw] sm:text-[4.2vw] md:text-[3.2vw] leading-none text-center mb-1">
                   parcours ?
                 </span>
-                <span className="block mt-1 text-[2.6vw] sm:text-[1.7vw] md:text-[1.1vw] font-light uppercase tracking-tight text-white text-center leading-snug px-1">
+                <span className="block mt-1 text-[3vw] sm:text-[1.9vw] md:text-[1.3vw] font-light uppercase tracking-tight text-white text-center leading-snug px-2">
                   {cardsData.parcours.teaser}
                 </span>
               </MobileCard>
@@ -513,12 +523,10 @@ const barOuterTop = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { dur
 const barOuterBottom = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0 } } };
 const barInnerTop = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0.3 } } };
 const barInnerBottom = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0.3 } } };
-
 const contentBlurVariants = {
   rest: { filter: "blur(0px)", transition: { duration: 0.4 } },
   hover: { filter: "blur(6px)", transition: { duration: 0.4, delay: 0.1 } },
 };
-
 function AnimatedFrame({ hoverColor = "#ffffff" }) {
   const frameVariants = {
     rest: { stroke: "#ffffff", opacity: 0.8, transition: { duration: 0.3 } },
@@ -533,7 +541,6 @@ function AnimatedFrame({ hoverColor = "#ffffff" }) {
 
 // ============================================================
 // MINI STABILO — version mobile du composant Highlight desktop
-// (fond jaune en clip-path derrière "développeur fullstack" / "23 ans" / "Oran")
 // ============================================================
 function MiniHighlight({ children, delay = 0 }) {
   return (
@@ -552,16 +559,13 @@ function MiniHighlight({ children, delay = 0 }) {
 }
 
 // ============================================================
-// CARTE MOBILE — bordure CSS fiable, teaser toujours visible,
-// label "Appuyer" flouté, contenu détaillé (ou revealContent) au clic.
+// CARTE MOBILE — MAJ: Taille du texte d'ouverture légèrement réduit
 // ============================================================
 function MobileCard({ cardData, children, revealContent, topTitle, centerBody }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const handleClick = () => {
     setIsOpen((v) => !v);
   };
-
   return (
     <motion.div
       onClick={handleClick}
@@ -599,6 +603,8 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
             <div className="w-full text-center pt-1">{topTitle}</div>
             <div className="flex-1 flex items-center justify-center w-full">{centerBody}</div>
           </>
+        ) : centerBody ? (
+          <div className="w-full h-full flex flex-col items-center justify-center">{centerBody}</div>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center">{children}</div>
         )}
@@ -614,16 +620,17 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
             transition={{ duration: 0.3, delay: 0.15 }}
             className="absolute inset-0 z-20 flex flex-col items-center justify-center p-3 text-center"
           >
-            <div className="text-[3vw] sm:text-[1.8vw] md:text-[1.2vw] leading-snug uppercase text-white font-light drop-shadow-md line-clamp-4">
+            {/* TAILLE DU TEXTE RÉDUITE ICI (3.2vw au lieu de 3.8vw) + leading-tight */}
+            <div className="text-[3.2vw] sm:text-[1.9vw] md:text-[1.3vw] leading-tight uppercase text-white font-medium drop-shadow-md line-clamp-4 mb-2">
               {revealContent ?? cardData.content}
             </div>
 
             <a
               href={cardData.cta.href}
               onClick={(e) => e.stopPropagation()}
-              className="mt-3 group relative inline-flex items-center gap-1 overflow-hidden rounded-[8px] border border-white px-3 py-1.5 uppercase tracking-tight text-white text-[3.6vw] sm:text-[1.4vw] md:text-[0.9vw]"
+              className="mt-2 group relative inline-flex items-center gap-1 overflow-hidden rounded-[8px] border border-transparent bg-white px-4 py-2 uppercase tracking-tight text-black text-[3.6vw] sm:text-[1.5vw] md:text-[1vw] font-bold shadow-md"
             >
-              <span className="relative z-10 font-bold">{cardData.cta.label}</span>
+              <span className="relative z-10">{cardData.cta.label}</span>
             </a>
           </motion.div>
         )}
