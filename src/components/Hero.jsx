@@ -55,7 +55,7 @@ export default function Hero() {
   useEffect(() => {
     const timer = setTimeout(() => {
       followEnabledM.current = true;
-    }, 1200);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -65,8 +65,9 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    const maxX = rect.width * 0.12;
-    const maxY = rect.height * 0.03;
+    // amplitude large : la plaque doit pouvoir voyager entre "bonjour", "Moundir" et "bienvenue"
+    const maxX = rect.width * 0.22;
+    const maxY = rect.height * 0.1;
 
     rawPlaqueXM.set(clamp(dx * 0.5, maxX));
     rawPlaqueYM.set(clamp(dy * 0.5, maxY));
@@ -76,7 +77,7 @@ export default function Hero() {
     target: mobileSectionRef,
     offset: ["start start", "end start"],
   });
-  const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -1]);
+  const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -2]);
 
   // ============================================================
   // VARIANTS D'ANIMATION (TYPEWRITER) — DESKTOP
@@ -156,6 +157,7 @@ export default function Hero() {
     <>
       {/* ============================================================
           ================   VERSION DESKTOP (>= lg)   ================
+          ================   INCHANGÉ — NE PAS MODIFIER   =============
           ============================================================ */}
       <section
         ref={sectionRef}
@@ -368,18 +370,28 @@ export default function Hero() {
       <section
         ref={mobileSectionRef}
         onPointerMove={handlePointerMoveMobile}
-        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-6 gap-3 sm:gap-4 font-cartoon text-white overflow-hidden"
+        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] flex-col p-3 sm:p-5 md:p-6 gap-1.5 sm:gap-2 font-cartoon text-white overflow-hidden"
       >
         <div className="absolute w-[400px] h-[400px] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
+        {/* Plaque blanche tactile — libre sur toute la section, elle voyage entre
+            "bonjour", "Moundir" et "bienvenue" au gré du doigt (comme le hover desktop) */}
+        <motion.div
+          style={{ x: plaqueXM, y: plaqueYM, rotate: plaqueTiltM }}
+          initial={{ opacity: 0, scale: 0.2, x: -140, rotate: -25 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.6 }}
+          className="absolute z-20 top-[11%] left-[4%] w-[56%] h-[24%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
+        />
+
         {/* ---------- ROW 1 : bonjour je suis + Mes projets ---------- */}
-        <div className="relative z-10 flex w-full gap-3 sm:gap-4" style={{ flex: "0 0 19%" }}>
-          <div className="w-[50%] flex flex-col justify-end pb-1 text-left pl-2">
+        <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
+          <div className="w-[52%] flex flex-col justify-center items-start pl-1">
             <motion.div
               variants={typewriterLeft}
               initial="hidden"
               animate="visible"
-              className="text-[14vw] sm:text-[7vw] md:text-[5.5vw] leading-[0.95] tracking-tight uppercase opacity-90"
+              className="text-[8.5vw] sm:text-[5.6vw] md:text-[4.4vw] leading-[0.95] tracking-tight uppercase opacity-90"
             >
               {introLeft.split(" ").map((word, wi) => (
                 <span key={wi} className="block">
@@ -393,88 +405,97 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          <div className="w-[46%] h-full">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.0, duration: 0.5, ease: "easeOut" }}
+            className="w-[48%] h-full"
+          >
             <MobileCard cardData={cardsData.projets}>
-              <span className="block font-cartoon uppercase tracking-tight text-white text-[7.5vw] sm:text-[4.2vw] md:text-[3.4vw] leading-[1.05] text-center">
+              <span className="block font-cartoon uppercase tracking-tight text-white text-[6.8vw] sm:text-[3.8vw] md:text-[3vw] leading-[1.02] text-center">
                 Mes
                 <br />
                 projets ?
               </span>
-              <span className="hidden sm:block mt-2 text-[2.2vw] md:text-[1.4vw] font-light uppercase tracking-tight text-white/70 text-center leading-snug px-1">
+              <span className="block mt-1 text-[2.7vw] sm:text-[1.8vw] md:text-[1.2vw] font-light uppercase tracking-tight text-white/60 text-center leading-snug px-1">
                 {cardsData.projets.teaser}
               </span>
             </MobileCard>
-          </div>
+          </motion.div>
         </div>
 
-        {/* ---------- ROW 2 : MOUNDIR (pleine largeur) ---------- */}
-        <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 27%" }}>
-          <div className="relative inline-block select-none bg-[#080808]">
-            <motion.h1
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: [0, 0, -4, 0] }}
-              transition={{
-                opacity: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
-                scale: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
-                y: { duration: 5, delay: 1, repeat: Infinity, ease: "easeInOut" },
-              }}
-              className="font-cartoon tracking-tight uppercase text-white leading-[0.8] text-[31.5vw] sm:text-[33vw] md:text-[32vw]"
+        {/* ---------- ROW 2 : MOUNDIR — immense, deux lignes ---------- */}
+        <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 40%" }}>
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.75, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: [0, 0, -4, 0] }}
+            transition={{
+              opacity: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
+              scale: { type: "spring", stiffness: 50, damping: 12, delay: 0.1 },
+              y: { duration: 5, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
+            }}
+            className="font-cartoon tracking-tight uppercase text-white text-center leading-[0.8] text-[32vw] sm:text-[20vw] md:text-[17vw]"
+          >
+            Moun
+            <br />
+            dir
+          </motion.h1>
+        </div>
+
+        {/* ---------- ROW 3 : qui suis je (grande carte) | bienvenue + parcours ---------- */}
+        <div className="relative z-10 flex w-full gap-2 sm:gap-3 flex-1 min-h-0">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8, duration: 0.5, ease: "easeOut" }}
+            className="w-[58%] h-full"
+          >
+            <MobileCard
+              cardData={cardsData.about}
+              revealContent="Je propulse vos idées en expériences visuelles radicales."
             >
-              Moundir
-            </motion.h1>
-
-            <motion.div
-              style={{ x: plaqueX, y: plaqueY }}
-              initial={{ opacity: 0, scale: 0.2, x: -250, rotate: -25 }}
-              animate={{ opacity: 1, scale: 1, rotate: -6 }}
-              transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.7 }}
-              className="absolute z-20 top-[-6%] left-[-4%] w-[45%] h-[110%] bg-white rounded-[20px] mix-blend-difference pointer-events-none"
-            />
-
-          </div>
-        </div>
-
-        {/* ---------- ROW 3 : qui suis je | (bienvenue + parcours) ---------- */}
-        <div className="relative z-10 flex w-full gap-3 sm:gap-4 flex-1 min-h-0">
-          <div className="w-[58%] h-full">
-            <MobileCard cardData={cardsData.about}>
-              <span className="block font-cartoon uppercase tracking-tight text-white text-[11.5vw] sm:text-[7vw] md:text-[5.6vw] leading-[1.05] text-center">
-                qui
-                <br />
-                suis je ?
+              <span className="block font-cartoon uppercase tracking-tight text-white text-[7.5vw] sm:text-[4.4vw] md:text-[3.4vw] leading-[1.05] text-center mb-1.5">
+                qui suis je ?
               </span>
-              <span className="hidden sm:block mt-3 text-[2.3vw] md:text-[1.4vw] font-light uppercase tracking-tight text-white/70 text-center leading-snug px-3">
-                {cardsData.about.teaser}
+              <span className="block text-[3.3vw] sm:text-[1.9vw] md:text-[1.25vw] font-light uppercase tracking-tight text-white/85 text-center leading-snug px-2">
+                Je suis <MiniHighlight delay={2.1}>développeur fullstack</MiniHighlight> de{" "}
+                <MiniHighlight delay={2.25}>23 ans</MiniHighlight>, habite à{" "}
+                <MiniHighlight delay={2.4}>Oran</MiniHighlight>
               </span>
             </MobileCard>
-          </div>
+          </motion.div>
 
-          <div className="w-[40%] h-full flex flex-col gap-3 sm:gap-4">
-            <div className="text-right items-center flex-[0.65] flex flex-col justify-start pb-1">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.2 }}
-                className="text-[9vw] sm:text-[4.6vw] md:text-[3.4vw] leading-[1.05] tracking-tight uppercase"
-              >
+          <div className="w-[42%] h-full flex flex-col gap-2 sm:gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 50, damping: 15, delay: 1.5 }}
+              className="flex-[0.55] flex flex-col items-end justify-center text-right pr-1"
+            >
+              <span className="text-[4.6vw] sm:text-[2.6vw] md:text-[1.8vw] leading-[1.1] tracking-tight uppercase text-white/80">
                 bienvenue
                 <br />
                 dans mon
                 <br />
                 portfolio
-              </motion.div>
-            </div>
+              </span>
+            </motion.div>
 
-            <div className="flex-1 min-h-0">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.2, duration: 0.5, ease: "easeOut" }}
+              className="flex-1 min-h-0"
+            >
               <MobileCard cardData={cardsData.parcours}>
-                <span className="block font-cartoon uppercase tracking-tight text-white text-[7vw] sm:text-[4.4vw] md:text-[3.4vw] leading-none text-center">
+                <span className="block font-cartoon uppercase tracking-tight text-white text-[6.5vw] sm:text-[4vw] md:text-[3vw] leading-none text-center">
                   parcours ?
                 </span>
-                <span className="hidden sm:block mt-2 text-[2.1vw] md:text-[1.3vw] font-light uppercase tracking-tight text-white/70 text-center leading-snug px-1">
+                <span className="block mt-1 text-[2.6vw] sm:text-[1.7vw] md:text-[1.1vw] font-light uppercase tracking-tight text-white/60 text-center leading-snug px-1">
                   {cardsData.parcours.teaser}
                 </span>
               </MobileCard>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -508,43 +529,30 @@ function AnimatedFrame({ hoverColor = "#ffffff" }) {
 }
 
 // ============================================================
-// TAP HINT — indicateur "c'est cliquable" (mobile/tablette)
-// Plaque blanche mix-blend-difference façon desktop + anneau qui pulse.
+// MINI STABILO — version mobile du composant Highlight desktop
+// (fond jaune en clip-path derrière "développeur fullstack" / "23 ans" / "Oran")
 // ============================================================
-function TapHint({ visible }) {
+function MiniHighlight({ children, delay = 0 }) {
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          transition={{ duration: 0.25 }}
-          className="absolute top-2 right-2 z-30 w-[9vw] max-w-[34px] h-[9vw] max-h-[34px] pointer-events-none"
-        >
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            className="relative w-full h-full rounded-[7px] bg-white mix-blend-difference flex items-center justify-center"
-          >
-            <motion.span
-              animate={{ scale: [1, 1.7], opacity: [0.7, 0] }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: "easeOut" }}
-              className="absolute w-[55%] h-[55%] rounded-full border border-black"
-            />
-            <span className="w-[28%] h-[28%] rounded-full bg-black" />
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <span className="relative inline-block z-30">
+      <motion.span
+        initial={{ clipPath: "inset(0 100% 0 0)" }}
+        animate={{ clipPath: "inset(0 0% 0 0)" }}
+        transition={{ duration: 0.4, delay, ease: [0.65, 0, 0.35, 1] }}
+        className="absolute inset-0 bg-yellow-400"
+      />
+      <span className="relative text-black px-1 font-black tracking-normal inline-block">
+        {children}
+      </span>
+    </span>
   );
 }
 
 // ============================================================
-// CARTE MOBILE — bordure fiable en CSS (plus de SVG cassé),
-// contenu teaser en sm:/md:, tap hint, ripple au clic.
+// CARTE MOBILE — bordure CSS fiable, teaser toujours visible,
+// label "Appuyer" flouté, contenu détaillé (ou revealContent) au clic.
 // ============================================================
-function MobileCard({ cardData, children }) {
+function MobileCard({ cardData, children, revealContent }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
@@ -570,9 +578,9 @@ function MobileCard({ cardData, children }) {
         </div>
       </div>
 
-      {/* Texte "APPUYER" avec fond blur (uniquement quand fermé) */}
+      {/* Indicateur "c'est cliquable" — label flou (uniquement fermé) */}
       {!isOpen && (
-        <div className="absolute top-0 right-0 z-20 bg-white/10 backdrop-blur-md px-2 py-1 text-[10px] sm:text-[12px] uppercase tracking-wider text-white">
+        <div className="absolute top-1.5 right-1.5 z-20 rounded-md border border-white/10 bg-white/10 backdrop-blur-md px-2 py-1 text-[2.6vw] sm:text-[1.3vw] md:text-[0.85vw] uppercase tracking-wider text-white/90">
           Appuyer
         </div>
       )}
@@ -597,9 +605,9 @@ function MobileCard({ cardData, children }) {
             className="absolute inset-0 z-20 flex flex-col items-center justify-center p-3 text-center"
           >
             <div className="text-[3vw] sm:text-[1.8vw] md:text-[1.2vw] leading-snug uppercase text-white font-light drop-shadow-md line-clamp-4">
-              {cardData.content}
+              {revealContent ?? cardData.content}
             </div>
-            
+
             <a
               href={cardData.cta.href}
               onClick={(e) => e.stopPropagation()}
