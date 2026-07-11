@@ -392,7 +392,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0 }}
-              className="text-[10.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left"
+              className="text-[12.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left"
             >
               Bonjour
               <br />
@@ -431,7 +431,7 @@ export default function Hero() {
               scale: { type: "spring", stiffness: 50, damping: 12, delay: 0.5 },
               y: { duration: 5, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
             }}
-            className="font-cartoon tracking-tight uppercase text-white text-center leading-[0.8] text-[32vw] sm:text-[20vw] md:text-[17vw]"
+            className="font-cartoon tracking-tight uppercase text-white text-center leading-[0.8] text-[38vw] sm:text-[20vw] md:text-[17vw]"
           >
             Moun
             <br />
