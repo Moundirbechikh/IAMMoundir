@@ -157,7 +157,7 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
               h-[1.1em] font-cartoon uppercase tracking-tight text-center
               transition-colors duration-300 ${textColor}
               text-lg min-w-[80px]
-              md:text-xl md:min-w-[150px]
+              md:text-3xl md:min-w-[150px]
             `}
           />
         </div>
