@@ -1,93 +1,167 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+// components/Navbar.jsx
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import SlotReel from "./SlotReel";
 
-const navLinks = [
-  { name: "Acceuil", href: "#hero" },
-  { name: "Projects", href: "#projects" },
-  { name: "À Propos", href: "#about" },
-  { name: "Contact", href: "#contact" },
-];
+// ============================================================
+// BALAYAGE DE COULEUR — même technique que les bandes du Hero
+// (AnimatedFrame / MobileCard) : le fond reste sur l'ANCIENNE
+// couleur, 4 bandes diagonales de la NOUVELLE couleur balaient
+// depuis le haut et le bas et se referment au centre. Une fois
+// refermées, la nouvelle couleur devient le nouveau fond stable
+// (via onAnimationComplete), prête pour le prochain changement.
+// ============================================================
+function ColorSweep({ targetColor }) {
+  const [baseColor, setBaseColor] = useState(targetColor);
+  const [sweepKey, setSweepKey] = useState(0);
+  const prevTarget = useRef(targetColor);
 
-function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    if (targetColor !== prevTarget.current) {
+      prevTarget.current = targetColor;
+      setSweepKey((k) => k + 1);
+    }
+  }, [targetColor]);
+
+  const isSweeping = targetColor !== baseColor;
 
   return (
-    <div className="fixed top-0 left-0 w-full z-[100] flex justify-center items-start p-4 md:p-0 pointer-events-none font-body">
-      
-      {/* --- VERSION DESKTOP --- */}
-      <motion.nav 
-        initial={{ y: -50, opacity: 0 }}
+    <div className="absolute inset-0 overflow-hidden rounded-full pointer-events-none z-0">
+      {/* Fond stable — reste sur l'ancienne couleur pendant le balayage */}
+      <div className="absolute inset-0" style={{ backgroundColor: baseColor }} />
+
+      {isSweeping && (
+        <div className="absolute w-[300%] h-[300%] top-[-100%] left-[-100%] rotate-[-35deg] flex flex-col">
+          <motion.div
+            key={`${sweepKey}-outer-top`}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.4, ease: "easeInOut", delay: 0 }}
+            style={{ backgroundColor: targetColor }}
+            className="w-full h-[25%] origin-top"
+          />
+          <motion.div
+            key={`${sweepKey}-inner-top`}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.4, ease: "easeInOut", delay: 0.12 }}
+            style={{ backgroundColor: targetColor }}
+            className="w-full h-[25%] origin-top"
+          />
+          <motion.div
+            key={`${sweepKey}-inner-bottom`}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.4, ease: "easeInOut", delay: 0.12 }}
+            style={{ backgroundColor: targetColor }}
+            className="w-full h-[25%] origin-bottom"
+          />
+          <motion.div
+            key={`${sweepKey}-outer-bottom`}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.4, ease: "easeInOut", delay: 0 }}
+            onAnimationComplete={() => setBaseColor(targetColor)}
+            style={{ backgroundColor: targetColor }}
+            className="w-full h-[25%] origin-bottom"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
+  const prevIndex = useRef(activeIndex);
+  const [direction, setDirection] = useState(1);
+
+  useEffect(() => {
+    if (activeIndex !== prevIndex.current) {
+      setDirection(activeIndex > prevIndex.current ? 1 : -1);
+      prevIndex.current = activeIndex;
+    }
+  }, [activeIndex]);
+
+  const current = sections[activeIndex];
+  const canGoUp = activeIndex > 0;
+  const canGoDown = activeIndex < sections.length - 1;
+
+  const isLight = current.text === "light";
+  const textColor = isLight ? "text-white" : "text-black";
+  const iconColor = isLight ? "text-white" : "text-black";
+  const iconHover = isLight ? "hover:bg-white/15" : "hover:bg-black/10";
+  const iconDisabled = isLight ? "text-white/25" : "text-black/20";
+
+  const move = (nextIdx) => {
+    const target = sections[nextIdx];
+    if (!target) return;
+    onNavigate(nextIdx);
+    if (!isDesktop) {
+      requestAnimationFrame(() => {
+        document.getElementById(target.id)?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  };
+
+  const goUp = () => canGoUp && move(activeIndex - 1);
+  const goDown = () => canGoDown && move(activeIndex + 1);
+
+  return (
+    <div className="fixed top-3 md:top-6 left-3 md:left-6 z-[100] pointer-events-none">
+      <motion.div
+        initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="hidden md:flex pointer-events-auto bg-black border-x border-b border-white/10 px-8 py-3 rounded-b-[32px] items-center gap-8 shadow-2xl shadow-black/60"
+        transition={{ delay: 0.3, type: "spring", stiffness: 140, damping: 18 }}
+        className="
+          relative pointer-events-auto flex items-center
+          rounded-full select-none overflow-hidden shadow-2xl shadow-black/40
+          pl-0.5 pr-3 py-0.5 gap-0.5
+          md:pl-1 md:pr-5 md:py-1 md:gap-1
+        "
       >
-        <ul className="flex items-center space-x-8">
-          {navLinks.map((link, index) => (
-            <motion.li key={index} whileHover={{ scale: 1.05 }} className="relative group">
-              <a href={link.href} className="text-white/70 hover:text-white text-[11px] uppercase font-bold tracking-[0.2em] transition-colors">
-                {link.name}
-              </a>
-            </motion.li>
-          ))}
-        </ul>
+        <ColorSweep targetColor={current.color} />
 
-        {/* LE BOUTON DYNAMIQUE */}
-        <motion.button 
-          whileHover={{ width: "180px", borderRadius: "40px" }}
-          className="relative group flex items-center justify-center bg-white text-black h-12 w-12 rounded-full transition-all duration-500 ease-[0.23,1,0.32,1] pointer-events-auto overflow-hidden shadow-[0_10px_30px_rgba(255,255,255,0.2)]"
-        >
-          {/* CONTENU AU HOVER : Hire Me + Smiley N&B */}
-          <a 
-  href="#contact" 
-  className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20 backdrop-blur-sm cursor-pointer"
->
-  <span className="font-black uppercase text-[10px] tracking-widest whitespace-nowrap text-white">
-    Hire Me
-  </span>
-  <span className="text-xl grayscale group-hover:grayscale-0 transition-all">😉</span>
-</a>
-          
-          {/* EMOJI DE DÉPART (Appel au clic) */}
-          <span className="text-xl group-hover:opacity-0 transition-opacity duration-300">
-          👇
-          </span>
-        </motion.button>
-      </motion.nav>
+        {/* Flèches haut/bas — plus petites sur mobile */}
+        <div className="relative z-10 flex flex-col">
+          <button
+            onClick={goUp}
+            disabled={!canGoUp}
+            aria-label="Section précédente"
+            className={`flex items-center justify-center w-5 h-4 md:w-7 md:h-6 rounded-full transition-colors ${
+              canGoUp ? `${iconColor} ${iconHover}` : iconDisabled
+            }`}
+          >
+            <ChevronUp size={11} strokeWidth={3} className="md:hidden" />
+            <ChevronUp size={15} strokeWidth={3} className="hidden md:block" />
+          </button>
+          <button
+            onClick={goDown}
+            disabled={!canGoDown}
+            aria-label="Section suivante"
+            className={`flex items-center justify-center w-5 h-4 md:w-7 md:h-6 rounded-full transition-colors ${
+              canGoDown ? `${iconColor} ${iconHover}` : iconDisabled
+            }`}
+          >
+            <ChevronDown size={11} strokeWidth={3} className="md:hidden" />
+            <ChevronDown size={15} strokeWidth={3} className="hidden md:block" />
+          </button>
+        </div>
 
-      {/* --- VERSION MOBILE (À DROITE & COMPACT) --- */}
-      <div className="md:hidden flex flex-col items-end w-full px-2">
-        <motion.button
-          onClick={() => setIsOpen(!isOpen)}
-          className="pointer-events-auto bg-black border border-white/20 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl z-[110]"
-          whileTap={{ scale: 0.9 }}
-        >
-          {isOpen ? <X size={20} /> : <span className="text-xl grayscale"><Menu size={20} /></span>}
-        </motion.button>
-
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 20 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.8, x: 20 }}
-              className="pointer-events-auto absolute top-20 right-4 w-48 bg-black/95 backdrop-blur-xl border border-white/10 rounded-[30px] p-6 flex flex-col gap-6 shadow-2xl"
-            >
-              <ul className="flex flex-col gap-4 items-end pr-2">
-                {navLinks.map((link, index) => (
-                  <motion.li key={index} onClick={() => setIsOpen(false)}>
-                    <a href={link.href} className="text-white/80 text-xs uppercase font-black tracking-widest hover:text-white">
-                      {link.name}
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
-              <a href="#contact" className="bg-white text-black py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                Hire Me <span className="grayscale">😉</span>
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        {/* Nom de section — effet machine à sous, VRAIMENT centré */}
+        <div className="relative z-10 flex-1 flex justify-center">
+          <SlotReel
+            text={current.label}
+            direction={direction}
+            className={`
+              h-[1.1em] font-cartoon uppercase tracking-tight text-center
+              transition-colors duration-300 ${textColor}
+              text-lg min-w-[80px]
+              md:text-xl md:min-w-[150px]
+            `}
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }

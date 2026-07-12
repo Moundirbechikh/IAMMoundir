@@ -457,7 +457,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0 }}
-              className="text-[12.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left flex flex-col items-start"
+              className="mt-12 text-[11.5vw] sm:text-[6.8vw] md:text-[5vw] leading-[0.88] font-black tracking-tight uppercase opacity-95 text-left flex flex-col items-start"
             >
               <span>Bonjour</span>
               <span className="flex items-center gap-2">

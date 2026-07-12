@@ -1,12 +1,11 @@
-// hooks/useFullPageScroll.js
 import { useEffect, useRef, useState, useCallback } from "react";
 
-export function useFullPageScroll(sectionCount, { cooldown = 900, swipeThreshold = 70 } = {}) {
+export function useFullPageScroll(sectionCount, { cooldown = 900, breakpoint = 1024 } = {}) {
   const [index, setIndex] = useState(0);
   const isAnimating = useRef(false);
-  const touchStartY = useRef(0);
   const wheelAccum = useRef(0);
   const lastWheelTime = useRef(0);
+  const isDesktop = useRef(window.innerWidth >= breakpoint);
 
   const goTo = useCallback(
     (next) => {
@@ -23,10 +22,16 @@ export function useFullPageScroll(sectionCount, { cooldown = 900, swipeThreshold
   );
 
   useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${breakpoint}px)`);
+    isDesktop.current = mq.matches;
+    const updateDesktop = (e) => (isDesktop.current = e.matches);
+    mq.addEventListener("change", updateDesktop);
+
+    // Wheel — desktop uniquement, le mobile scroll nativement
     const handleWheel = (e) => {
+      if (!isDesktop.current) return;
       e.preventDefault();
       const now = Date.now();
-      // reset l'accumulateur si trop de temps s'est écoulé (nouveau geste)
       if (now - lastWheelTime.current > 200) wheelAccum.current = 0;
       lastWheelTime.current = now;
       wheelAccum.current += e.deltaY;
@@ -41,33 +46,22 @@ export function useFullPageScroll(sectionCount, { cooldown = 900, swipeThreshold
       }
     };
 
+    // Clavier — desktop uniquement
     const handleKey = (e) => {
+      if (!isDesktop.current) return;
       if (["ArrowDown", "PageDown"].includes(e.key)) goTo(index + 1);
       if (["ArrowUp", "PageUp"].includes(e.key)) goTo(index - 1);
     };
 
-    const handleTouchStart = (e) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-    const handleTouchEnd = (e) => {
-      const delta = touchStartY.current - e.changedTouches[0].clientY;
-      if (Math.abs(delta) < swipeThreshold) return;
-      if (delta > 0) goTo(index + 1);
-      else goTo(index - 1);
-    };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKey);
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
+      mq.removeEventListener("change", updateDesktop);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKey);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [index, goTo, swipeThreshold]);
+  }, [index, goTo, breakpoint]);
 
   return { index, goTo, setIndex };
 }
