@@ -1,7 +1,7 @@
 // components/Navbar.jsx
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, X } from "lucide-react";
+import { ChevronUp, ChevronDown, X, Hand } from "lucide-react";
 import SlotReel from "./SlotReel";
 
 // ============================================================
@@ -66,28 +66,27 @@ function ColorSweep({ targetColor }) {
 }
 
 // ============================================================
-// BULLE D'ONBOARDING — sort de la pilule, même blanc plein,
-// se CHEVAUCHE avec la pilule pour créer une forme fusionnée
-// (même technique que la plaque blanche par-dessus MOUNDIR).
-// Auto-fermeture 3s, ou clic sur le X. Ne réapparaît plus une
-// fois fermée (mémorisé pour la session en cours).
+// BULLE D'ONBOARDING — Glisse vers le bas (entrée), vers le haut (sortie)
+// Dure 6 secondes une fois affichée. Text forcé en noir.
 // ============================================================
 function NavHint({ onClose }) {
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
+    // Le message dure 6 secondes (6000 ms) APRÈS son apparition
+    const timer = setTimeout(onClose, 6000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.85, y: -8 }}
+      // Animation : Scroll down pour entrer, Scroll up pour sortir
+      initial={{ opacity: 0, scale: 0.85, y: -30 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.85, y: -8, transition: { duration: 0.2 } }}
+      exit={{ opacity: 0, scale: 0.85, y: -30, transition: { duration: 0.3 } }}
       transition={{ type: "spring", stiffness: 260, damping: 22 }}
       className="
         pointer-events-auto absolute top-[85%] left-0 z-[-1]
         w-[220px] md:w-[260px]
-        bg-white text-black
+        bg-white/70 backdrop-blur-md text-black border border-white/40
         rounded-[26px] rounded-tl-[10px]
         pt-5 pb-4 px-4 md:pt-6 md:pb-5 md:px-5
         shadow-2xl shadow-black/40
@@ -101,10 +100,10 @@ function NavHint({ onClose }) {
         <X size={13} strokeWidth={3} />
       </button>
 
-      <p className="font-cartoon uppercase leading-tight text-sm md:text-base tracking-tight pr-4">
-        Ceci est ta navbar 👋
+      <p className="font-cartoon uppercase leading-tight text-md md:text-lg tracking-tight pr-4 text-black flex items-center gap-2">
+        Ceci est ta navbar <Hand size={18} strokeWidth={2.5} />
       </p>
-      <p className="mt-1.5 text-[11px] md:text-xs font-body text-black/70 leading-snug">
+      <p className="mt-1.5 text-[13px] md:text-md text-black leading-snug font-cartoon">
         Utilise les flèches (ou scroll / swipe) pour changer de section, ou clique le X pour fermer ce message.
       </p>
     </motion.div>
@@ -114,15 +113,21 @@ function NavHint({ onClose }) {
 function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
   const prevIndex = useRef(activeIndex);
   const [direction, setDirection] = useState(1);
-  const [showHint, setShowHint] = useState(() => {
-    return typeof window !== "undefined"
-      ? !sessionStorage.getItem("navHintDismissed")
-      : true;
-  });
+  
+  // Initialement "false" pour cacher le hint au démarrage
+  const [showHint, setShowHint] = useState(false);
+
+  // Gérer l'apparition de la bulle après 4 secondes
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      setShowHint(true);
+    }, 4000); // 4000 ms = 4 secondes d'attente
+
+    return () => clearTimeout(delayTimer);
+  }, []);
 
   const closeHint = () => {
     setShowHint(false);
-    sessionStorage.setItem("navHintDismissed", "1");
   };
 
   useEffect(() => {
@@ -213,7 +218,7 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
           </div>
         </motion.div>
 
-        {/* Bulle d'onboarding — chevauche la pilule, même blanc plein */}
+        {/* Bulle d'onboarding (apparait au bout de 4s) */}
         <AnimatePresence>
           {showHint && <NavHint onClose={closeHint} />}
         </AnimatePresence>
