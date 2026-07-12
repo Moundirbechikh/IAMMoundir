@@ -452,7 +452,7 @@ export default function Hero() {
 
         {/* ---------- ROW 1 : Bonjour je suis (+ coucou) & Mes projets ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
-          <div className="w-[52%] flex flex-col justify-center items-start pl-1">
+          <div className="w-[45%] flex flex-col justify-center items-start pl-1">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
