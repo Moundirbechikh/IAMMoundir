@@ -66,10 +66,9 @@ function ColorSweep({ targetColor }) {
 }
 
 // ============================================================
-// BULLE D'ONBOARDING — Glisse vers le bas (entrée), vers le haut (sortie)
-// Dure 6 secondes une fois affichée. Text forcé en noir.
+// BULLE D'ONBOARDING — Phrase dynamique en fonction de isDesktop
 // ============================================================
-function NavHint({ onClose }) {
+function NavHint({ onClose, isDesktop }) {
   useEffect(() => {
     // Le message dure 6 secondes (6000 ms) APRÈS son apparition
     const timer = setTimeout(onClose, 6000);
@@ -104,7 +103,9 @@ function NavHint({ onClose }) {
         Ceci est ta navbar <Hand size={18} strokeWidth={2.5} />
       </p>
       <p className="mt-1.5 text-[13px] md:text-md text-black leading-snug font-cartoon">
-        Utilise les flèches (ou scroll / swipe) pour changer de section, ou clique le X pour fermer ce message.
+        {isDesktop
+          ? "Utilise les flèches (ou scroll / swipe) pour changer de section, ou clique le X pour fermer ce message."
+          : "Clique sur la navbar pour descendre."}
       </p>
     </motion.div>
   );
@@ -121,7 +122,7 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
   useEffect(() => {
     const delayTimer = setTimeout(() => {
       setShowHint(true);
-    }, 4000); // 4000 ms = 4 secondes d'attente
+    }, 4000);
 
     return () => clearTimeout(delayTimer);
   }, []);
@@ -151,11 +152,7 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
     const target = sections[nextIdx];
     if (!target) return;
     onNavigate(nextIdx);
-    if (!isDesktop) {
-      requestAnimationFrame(() => {
-        document.getElementById(target.id)?.scrollIntoView({ behavior: "smooth" });
-      });
-    }
+    // On ne fait plus de scrollIntoView ici, App.jsx gère le snap global.
   };
 
   const goUp = () => canGoUp && move(activeIndex - 1);
@@ -218,9 +215,9 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
           </div>
         </motion.div>
 
-        {/* Bulle d'onboarding (apparait au bout de 4s) */}
+        {/* Bulle d'onboarding (apparait au bout de 4s) avec passage de isDesktop */}
         <AnimatePresence>
-          {showHint && <NavHint onClose={closeHint} />}
+          {showHint && <NavHint onClose={closeHint} isDesktop={isDesktop} />}
         </AnimatePresence>
       </div>
     </div>
