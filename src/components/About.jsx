@@ -1,419 +1,625 @@
-import { motion, AnimatePresence, useAnimation, useInView } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import { Server, Layout, Database, PenTool, Terminal, Fingerprint, Globe } from "lucide-react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  useInView,
+} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { GraduationCap } from "lucide-react";
 
-// Logos noirs par défaut, couleurs réelles au survol
-const languages = [
-  { name: "JS", color: "#F7DF1E", textColor: "#000", icon: "https://cdn.simpleicons.org/javascript/000" },
-  { name: "React", color: "#61DAFB", textColor: "#000", icon: "https://cdn.simpleicons.org/react/000" },
-  { name: "Node JS", color: "#339933", textColor: "#fff", icon: "https://cdn.simpleicons.org/nodedotjs/000" },
-  { name: "Python", color: "#3776AB", textColor: "#fff", icon: "https://cdn.simpleicons.org/python/000" },
-  { 
-    name: "Java", 
-    color: "#ED8B00", 
-    textColor: "#fff", 
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" 
-  },
-  { name: "PHP", color: "#777BB4", textColor: "#fff", icon: "https://cdn.simpleicons.org/php/000" },
-  { name: "MySQL", color: "#4479A1", textColor: "#fff", icon: "https://cdn.simpleicons.org/mysql/000" },
-  { name: "MongoDB", color: "#47A248", textColor: "#fff", icon: "https://cdn.simpleicons.org/mongodb/000" },
-  // NOUVEAUX AJOUTS
-  { name: "HTML5", color: "#E34F26", textColor: "#fff", icon: "https://cdn.simpleicons.org/html5/000" },
-  { name: "CSS3", color: "#1572B6", textColor: "#fff", icon: "https://cdn.simpleicons.org/css/000" },
-  { name: "Tailwind", color: "#06B6D4", textColor: "#fff", icon: "https://cdn.simpleicons.org/tailwindcss/000" },
-  { name: "Supabase", color: "#3ECF8E", textColor: "#000", icon: "https://cdn.simpleicons.org/supabase/000" }
-];
+// Fonction utilitaire pour contraindre une valeur entre un min et un max
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
-const aboutTranslations = [
-  { 
-    title: "More about me", 
-    job: "Web Systems Architect",
-    desc: "I architect high-performance digital solutions with a focus on Web ecosystems. Master 2 student pushing technical logic to its peak.",
-    tags: [
-        { name: "Frontend", icon: <Layout size={14}/> },
-        { name: "Backend", icon: <Server size={14}/> },
-        { name: "Database", icon: <Database size={14}/> },
-        { name: "UI/UX", icon: <PenTool size={14}/> }
-    ]
-  },
-  { 
-    title: "Plus sur moi", 
-    job: "Architecte Systèmes Web",
-    desc: "J'architecture des solutions numériques haute performance, spécialisé dans les écosystèmes Web. Étudiant en Master 2 poussant la logique technique à son paroxysme.",
-    tags: [
-        { name: "Frontend", icon: <Layout size={14}/> },
-        { name: "Backend", icon: <Server size={14}/> },
-        { name: "Base de données", icon: <Database size={14}/> },
-        { name: "UI/UX", icon: <PenTool size={14}/> }
-    ]
-  },
-  { 
-    title: "Más sobre mí", 
-    job: "Arquitecto de Sistemas Web",
-    desc: "Arquitecto soluciones digitales de alto rendimiento con enfoque en ecosistemas Web. Estudiante de Maestría 2 llevando la lógica técnica a la cima.",
-    tags: [
-        { name: "Frontend", icon: <Layout size={14}/> },
-        { name: "Backend", icon: <Server size={14}/> },
-        { name: "Base de Datos", icon: <Database size={14}/> },
-        { name: "UI/UX", icon: <PenTool size={14}/> }
-    ]
-  }
-];
-
-
-// --- COMPOSANT AVATAR SÉQUENTIEL ---
-function FallingAvatarSequence({ size = "lg" }) {
-  const [currentPose, setCurrentPose] = useState(0); // 0: Falling, 1: Crouching, 2: Rising, 3: Salute
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { amount: 0.4 });
-  
-  const headOuterRef = useRef(null);
-  const headPulse = useAnimation();
-
-  // Logique de suivi de tête (exactement celle du Hero)
-  useEffect(() => {
-    const updateHead = (clientX, clientY) => {
-      if (!headOuterRef.current) return;
-      const rect = headOuterRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = clientX - centerX;
-      const dy = clientY - centerY;
-
-      const maxAngle = 9;
-      const maxDist = Math.max(window.innerWidth * 0.25, 220);
-
-      let rotation = -(dx / maxDist) * maxAngle;
-      rotation = Math.max(-maxAngle, Math.min(maxAngle, rotation));
-
-      const translateX = dx / 65;
-      const translateY = dy / 95;
-
-      headOuterRef.current.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg)`;
-    };
-
-    const handleMouseMove = (e) => updateHead(e.clientX, e.clientY);
-    const handleClick = (e) => {
-      updateHead(e.clientX, e.clientY);
-      headPulse.start({ scale: [1, 1.1, 1], transition: { duration: 0.35, ease: "easeOut" } });
-    };
-    const handleTouch = (e) => {
-      const t = e.touches && e.touches[0];
-      if (!t) return;
-      updateHead(t.clientX, t.clientY);
-      headPulse.start({ scale: [1, 1.08, 1], transition: { duration: 0.3, ease: "easeOut" } });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("click", handleClick);
-    window.addEventListener("touchstart", handleTouch, { passive: true });
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("click", handleClick);
-      window.removeEventListener("touchstart", handleTouch);
-    };
-  }, [headPulse]);
-
-
-  // Gestion de la séquence d'animation
-  useEffect(() => {
-    if (isInView) {
-      setCurrentPose(0); // Pose 0 : Tomber
-      setTimeout(() => setCurrentPose(1), 500); // Au bout de 0.5s, on s'accroupit
-      setTimeout(() => setCurrentPose(2), 1200); // On se lève
-      setTimeout(() => setCurrentPose(3), 1600); // Salut militaire final
-    } else {
-      setCurrentPose(0); // Reset si on scroll en haut
-    }
-  }, [isInView]);
-
-  // Taille basée sur ta demande
-  const sizeClass = size === "lg" ? "w-[12.5rem] md:w-[14.5rem]" : "w-[9rem] md:w-[11rem]";
-
-  // --- SVG Data extraites de NAdir.txt ---
-
-  const svgTomber = (
-    <svg viewBox="0 0 639 1241" className="w-full h-auto text-white overflow-visible" fill="currentColor">
-      {/* Corps sans la tête */}
-      <rect x="164.148" y="375.403" width="311" height="481" rx="30" transform="rotate(-11.3592 164.148 375.403)" />
-      <rect x="249.542" y="702.148" width="147" height="251" rx="30" transform="rotate(24.5766 249.542 702.148)" />
-      <rect x="442.248" y="470.823" width="99.1167" height="463.458" rx="34.5" transform="rotate(-164.438 442.248 470.823)" />
-      <rect x="285.261" y="452.21" width="100.117" height="303.629" rx="35" transform="rotate(143.18 285.261 452.21)" />
-      <rect x="405.148" y="742.176" width="147" height="271.492" rx="30" transform="rotate(-23.2503 405.148 742.176)" />
-      <rect x="145.148" y="890.879" width="147" height="371.53" rx="30" transform="rotate(-16.0859 145.148 890.879)" />
-      <rect x="-2.8515" y="5.67456" width="100.117" height="303.629" rx="35" transform="rotate(-4.8853 -2.8515 5.67456)" />
-      <rect x="490.148" y="911.916" width="147" height="274.704" rx="30" transform="rotate(-0.299255 490.148 911.916)" />
-      {/* Tête interactive */}
-      <g ref={currentPose === 0 ? headOuterRef : null} style={{ transformOrigin: "279px 233px", transition: "transform 0.12s cubic-bezier(.2,.9,.2,1)" }}>
-          <motion.ellipse animate={headPulse} cx="279.401" cy="233.208" rx="107" ry="110.5" fill="currentColor" transform="rotate(-10.4403 279.401 233.208)" />
-      </g>
-    </svg>
-  );
-
-  const svgAccroupi = (
-    <svg viewBox="0 0 738 1186" className="w-full h-auto text-white overflow-visible" fill="currentColor">
-      {/* Corps */}
-      <rect x="301" y="221" width="311" height="481" rx="30" />
-      <rect x="465" y="665" width="147" height="518" rx="30" />
-      <rect x="301.039" y="221" width="100.117" height="253.264" rx="35" transform="rotate(22.0402 301.039 221)" />
-      <rect x="32.2133" y="289" width="280" height="111" rx="35" transform="rotate(16.8705 32.2133 289)" />
-      <rect x="527" y="273.521" width="100.117" height="238.197" rx="35" transform="rotate(-31.641 527 273.521)" />
-      <rect x="465.213" y="306" width="280" height="111" rx="35" transform="rotate(16.8705 465.213 306)" />
-      <rect x="301.554" y="656" width="147" height="214" rx="30" transform="rotate(3.63127 301.554 656)" />
-      <rect x="288" y="844.261" width="147" height="343.092" rx="35" transform="rotate(-5.56707 288 844.261)" />
-      {/* Tête interactive */}
-      <g ref={currentPose === 1 ? headOuterRef : null} style={{ transformOrigin: "448px 110px", transition: "transform 0.12s cubic-bezier(.2,.9,.2,1)" }}>
-          <motion.ellipse animate={headPulse} cx="448" cy="110.5" rx="107" ry="110.5" fill="currentColor" />
-      </g>
-    </svg>
-  );
-
-  const svgSeLever = (
-    <svg viewBox="0 0 548 1073" className="w-full h-auto text-white overflow-visible" fill="currentColor">
-       {/* Corps */}
-      <rect x="87.1485" y="252.6" width="311" height="481" rx="30" transform="rotate(-11.3592 87.1485 252.6)" />
-      <rect x="170.41" y="600.345" width="147" height="251" rx="30" transform="rotate(12.4849 170.41 600.345)" />
-      <rect x="304.836" y="238.03" width="99.1167" height="302.972" rx="34.5" transform="rotate(-31.641 304.836 238.03)" />
-      <rect x="108.087" y="238.345" width="100.117" height="303.629" rx="35" transform="rotate(22.0402 108.087 238.345)" />
-      <rect x="325.148" y="614.054" width="147" height="470.06" rx="30" transform="rotate(-10.0722 325.148 614.054)" />
-      <rect x="117.148" y="832.076" width="147" height="251" rx="30" transform="rotate(-16.0859 117.148 832.076)" />
-      <rect x="-2.8515" y="488.872" width="100.117" height="303.629" rx="35" transform="rotate(-4.8853 -2.8515 488.872)" />
-      <rect x="431.689" y="424.327" width="99.1167" height="211.854" rx="34.5" transform="rotate(-4.8853 431.689 424.327)" />
-      {/* Tête interactive */}
-      <g ref={currentPose === 2 ? headOuterRef : null} style={{ transformOrigin: "202px 110px", transition: "transform 0.12s cubic-bezier(.2,.9,.2,1)" }}>
-          <motion.ellipse animate={headPulse} cx="202.401" cy="110.406" rx="107" ry="110.5" transform="rotate(-10.4403 202.401 110.406)" fill="currentColor" />
-      </g>
-    </svg>
-  );
-
-  const svgSalut = (
-    <svg viewBox="0 0 669 1223" className="w-full h-auto text-white overflow-visible" fill="currentColor">
-       {/* Corps */}
-      <rect x="200.592" y="303.813" width="311" height="481" rx="30" transform="rotate(1.06888 200.592 303.813)" />
-      <rect x="192" y="694.33" width="147" height="525.427" rx="30" transform="rotate(-0.908061 192 694.33)" />
-      <rect x="322.492" y="442.078" width="100.117" height="417.305" rx="35" transform="rotate(155.95 322.492 442.078)" />
-      <rect x="680.378" y="644.51" width="100.117" height="384.567" rx="35" transform="rotate(152.305 680.378 644.51)" />
-      <rect x="357" y="747.634" width="147" height="475.545" rx="30" transform="rotate(-1.02665 357 747.634)" />
-      
-      {/* Tête interactive */}
-      <g ref={currentPose === 3 ? headOuterRef : null} style={{ transformOrigin: "360px 192px", transition: "transform 0.12s cubic-bezier(.2,.9,.2,1)" }}>
-          <motion.ellipse animate={headPulse} cx="360.252" cy="192.06" rx="107" ry="110.5" transform="rotate(-10.4403 360.252 192.06)" fill="currentColor"/>
-      </g>
-    </svg>
-  );
-
+// ============================================================
+// HIGHLIGHT — clip-path jaune
+// ============================================================
+function Highlight({ children, delay = 0, className = "" }) {
   return (
-    <div ref={containerRef} className={`absolute bottom-[5%] right-[0.6%] ${sizeClass} z-30 pointer-events-none`}>
-      <AnimatePresence mode="wait">
-        
-        {currentPose === 0 && (
-          <motion.div 
-            key="tomber" 
-            initial={{ y: -800, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            transition={{ duration: 0.5, ease: "easeIn" }}
-          >
-            {svgTomber}
-          </motion.div>
-        )}
-        
-        {currentPose === 1 && (
-          <motion.div key="accroupi" initial={{ opacity: 0, scaleY: 0.7 }} animate={{ opacity: 1, scaleY: 1 }} exit={{ opacity: 0 }}>
-            {svgAccroupi}
-          </motion.div>
-        )}
+    <span className={`relative inline-block z-10 ${className}`}>
+      <motion.span
+        initial={{ clipPath: "inset(0 100% 0 0)" }}
+        animate={{ clipPath: "inset(0 0% 0 0)" }}
+        transition={{ duration: 0.45, delay, ease: [0.65, 0, 0.35, 1] }}
+        className="absolute inset-0 bg-yellow-400"
+      />
+      <span className="relative text-black px-1.5 font-black inline-block">
+        {children}
+      </span>
+    </span>
+  );
+}
 
-        {currentPose === 2 && (
-          <motion.div key="lever" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {svgSeLever}
-          </motion.div>
-        )}
+// ============================================================
+// NOM GÉANT "MOUNDIR" - Fond blanc et texte noir pour l'inversion
+// ============================================================
+function GiantName({ isVisible, className = "" }) {
+  return (
+    <motion.h2
+      initial={{ opacity: 0, scale: 0.7, y: 30 }}
+      animate={
+        isVisible
+          ? { opacity: 1, scale: 1, y: [0, 0, -4, 0] }
+          : { opacity: 0, scale: 0.7, y: 30 }
+      }
+      transition={{
+        opacity: { type: "spring", stiffness: 55, damping: 12, delay: 0.1 },
+        scale: { type: "spring", stiffness: 55, damping: 12, delay: 0.1 },
+        y: { duration: 4.5, delay: 1, repeat: Infinity, ease: "easeInOut" },
+      }}
+      className={`font-cartoon uppercase bg-white text-black px-0 inline-block leading-[0.85] ${className}`}
+    >
+      Moundir
+    </motion.h2>
+  );
+}
 
-        {currentPose === 3 && (
-          <motion.div key="salut" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
-            {svgSalut}
-          </motion.div>
-        )}
+// ============================================================
+// PARAGRAPHE
+// ============================================================
+function RevealParagraph({ segments, className = "", isVisible = false }) {
+  let wordIndex = 0;
+  return (
+    <p className={className}>
+      {segments.map((seg, si) =>
+        seg.t.split(" ").map((w, wi) => {
+          const delay = isVisible ? 0.1 + wordIndex * 0.02 : 0;
+          wordIndex += 1;
+          return (
+            <motion.span
+              key={`${si}-${wi}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+              transition={{ duration: 0.35, delay, ease: [0.65, 0, 0.35, 1] }}
+              className="inline-block mr-[0.25em] text-white"
+            >
+              {w}
+            </motion.span>
+          );
+        })
+      )}
+    </p>
+  );
+}
 
-      </AnimatePresence>
+const smallIntro = "Je suis";
+const introSegments = [
+  { t: "développeur Full Stack." },
+  { t: "Je transforme vos idées en applications web modernes, fluides et performantes." },
+  { t: "De la conception d'interfaces intuitives à l'architecture backend robuste," },
+  { t: "je crée des expériences numériques immersives de bout en bout." },
+];
+
+// ============================================================
+// TECHNOLOGIES
+// ============================================================
+const techs = [
+  { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/white", color: "#F7DF1E" },
+  { name: "React", icon: "https://cdn.simpleicons.org/react/white", color: "#61DAFB" },
+  { name: "Node.js", icon: "https://cdn.simpleicons.org/nodedotjs/white", color: "#339933" },
+  { name: "Python", icon: "https://cdn.simpleicons.org/python/white", color: "#3776AB" },
+  { name: "Java", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg", color: "#E76F00" },
+  { name: "PHP", icon: "https://cdn.simpleicons.org/php/white", color: "#777BB4" },
+  { name: "HTML5", icon: "https://cdn.simpleicons.org/html5/white", color: "#E34F26" },
+  { name: "CSS3", icon: "https://cdn.simpleicons.org/css/white", color: "#1572B6" },
+  { name: "Tailwind", icon: "https://cdn.simpleicons.org/tailwindcss/white", color: "#06B6D4" },
+  { name: "Spring Boot", icon: "https://cdn.simpleicons.org/springboot/white", color: "#6DB33F" },
+  { name: "PostgreSQL", icon: "https://cdn.simpleicons.org/postgresql/white", color: "#336791" },
+  { name: "MySQL", icon: "https://cdn.simpleicons.org/mysql/white", color: "#4479A1" },
+  { name: "MongoDB", icon: "https://cdn.simpleicons.org/mongodb/white", color: "#47A248" },
+  { name: "Supabase", icon: "https://cdn.simpleicons.org/supabase/white", color: "#3ECF8E" },
+  { name: "Git", icon: "https://cdn.simpleicons.org/git/white", color: "#F05032" },
+];
+
+// ============================================================
+// SUPPORTS VISUELS
+// ============================================================
+const barOuterTop = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut" } } };
+const barOuterBottom = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut" } } };
+const barInnerTop = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0.2 } } };
+const barInnerBottom = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0.2 } } };
+const contentBlurVariants = {
+  rest: { filter: "blur(0px)", opacity: 1, transition: { duration: 0.4 } },
+  hover: { filter: "blur(6px)", opacity: 0.3, transition: { duration: 0.4 } },
+};
+const revealVariants = {
+  rest: { opacity: 0, y: 12, pointerEvents: "none" },
+  hover: { opacity: 1, y: 0, pointerEvents: "auto" },
+};
+
+function AnimatedFrame({ hoverColor = "#facc15" }) {
+  const frameVariants = {
+    rest: { stroke: "#ffffff", opacity: 0.3, transition: { duration: 0.3 } },
+    hover: { stroke: hoverColor, opacity: 1, transition: { duration: 0.3 } },
+  };
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none">
+      <motion.rect
+        x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
+        fill="none" strokeWidth="2" strokeDasharray="8 6"
+        variants={frameVariants}
+      />
+    </svg>
+  );
+}
+
+function BandsYellow() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+      <div className="absolute w-[260%] h-[260%] top-[-80%] left-[-80%] rotate-[-35deg] flex flex-col">
+        <motion.div variants={barOuterTop} className="w-full h-[25%] bg-yellow-400 origin-top" />
+        <motion.div variants={barInnerTop} className="w-full h-[25%] bg-yellow-400 origin-top" />
+        <motion.div variants={barInnerBottom} className="w-full h-[25%] bg-yellow-400 origin-bottom" />
+        <motion.div variants={barOuterBottom} className="w-full h-[25%] bg-yellow-400 origin-bottom" />
+      </div>
     </div>
   );
 }
 
+function TapHint() {
+  return (
+    <div className="absolute top-2 right-2 z-30 rounded-md border border-white/10 bg-white/10 backdrop-blur-md px-2 py-1 text-[2.4vw] sm:text-[1.2vw] uppercase tracking-wider text-white/80 pointer-events-none">
+      Toucher
+    </div>
+  );
+}
 
-// --- COMPOSANT PRINCIPAL ABOUT ---
-export default function About() {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % aboutTranslations.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const current = aboutTranslations[index];
+// ============================================================
+// CARTE PARCOURS
+// ============================================================
+function ParcoursCard({
+  className = "",
+  titleSize = "text-3xl xl:text-[3.8vw]",
+  bodySize = "text-lg xl:text-[1.8vw]",
+  mode = "hover",
+}) {
+  const [open, setOpen] = useState(false);
+  const isClickMode = mode === "click";
 
   return (
-    <section id="about" className="min-h-screen w-full bg-[#050505] flex items-center justify-center py-24 overflow-hidden relative border-t border-white/5 font-body">
-      
-      {/* Subtle Yellow Glow in Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gray-600/5 blur-[120px] rounded-full pointer-events-none" />
-      
-      <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10">
-        
-        {/* --- CÔTÉ GAUCHE : ID CARD 3D --- */}
-        <div className="perspective-2000 flex justify-center lg:justify-start">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
-            whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ rotateY: 12, rotateX: -5, scale: 1.02 }}
-            whileTap={{ rotateY: 12, rotateX: -5, scale: 0.98 }} 
-            transition={{ type: "spring", stiffness: 80, damping: 15 }}
-            className="relative w-[350px] md:w-[420px] bg-white rounded-[3rem] p-1 shadow-[0_40px_100px_rgba(0,0,0,0.8)] group touch-none z-10"
-          >
-            <div className="relative bg-[#ffffff] rounded-[2.9rem] h-full p-8 flex flex-col overflow-hidden">
-              
-              {/* Header Badge */}
-              <div className="flex justify-between items-start mb-10">
-                <div className="p-3 bg-black rounded-2xl shadow-lg border border-yellow-500/20">
-                    <Fingerprint className="text-yellow-500" size={26} />
-                </div>
-                <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-black/30">Auth. System</p>
-                    <p className="text-xs font-mono font-bold text-black uppercase">MNDR.WEB.22</p>
-                </div>
-              </div>
+    <motion.div
+      initial="rest"
+      whileHover={!isClickMode ? "hover" : undefined}
+      animate={isClickMode ? (open ? "hover" : "rest") : undefined}
+      onClick={isClickMode ? () => setOpen((v) => !v) : undefined}
+      whileTap={isClickMode ? { scale: 0.97 } : undefined}
+      className={`relative bg-[#0c0c0c] p-6 lg:p-8 overflow-hidden rounded-md flex flex-col justify-center select-none ${
+        isClickMode ? "cursor-pointer" : ""
+      } ${className}`}
+    >
+      <AnimatedFrame hoverColor="#facc15" />
+      <BandsYellow />
+      {isClickMode && !open && <TapHint />}
 
-              {/* CORE LANGUAGES GRID */}
-              <div className="mb-2">
-                <p className="text-[8px] font-black uppercase tracking-[0.5em] text-black/20 mb-5 text-center">Core Stack</p>
-                <div className="grid grid-cols-4 gap-4">
-                    {languages.map((lang) => (
-                        <motion.div 
-                            key={lang.name}
-                            whileHover={{ 
-                                y: -8, 
-                                scale: 1.15,
-                                backgroundColor: lang.color,
-                                boxShadow: `0 10px 20px ${lang.color}44`
-                            }}
-                            whileTap={{ scale: 0.95, backgroundColor: lang.color }}
-                            className="relative aspect-square flex items-center justify-center rounded-2xl bg-black/[0.04] border border-black/[0.05] cursor-pointer transition-colors duration-300 group/item"
-                        >
-                            <img 
-                                src={lang.icon} 
-                                className="w-7 h-7 object-contain transition-all duration-300 group-hover/item:invert group-hover/item:brightness-200" 
-                                alt={lang.name} 
-                            />
-                            
-                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full opacity-0 group-hover/item:opacity-100 transition-all pointer-events-none z-20">
-                                <span className="text-[8px] font-black uppercase text-white bg-black px-2 py-1 rounded shadow-xl">{lang.name}</span>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-              </div>
+      <motion.div variants={contentBlurVariants} className="relative z-0 flex flex-col items-center text-start justify-center h-full w-full">
+        <h2 className={`${titleSize} uppercase leading-none mb-4 lg:mb-6 text-white text-center`}>
+          Parcours académique ?
+        </h2>
+        <p className={`${bodySize} text-white leading-relaxed max-w-xl mx-auto text-center`}>
+          <Highlight delay={0.5}>5 ans d'études</Highlight> à l'Université Ahmed Ben Bella — Oran 1. <br />
+          Une expérience <Highlight delay={0.9}>pleine de projets concrets</Highlight> et d'apprentissage intensif.
+        </p>
+      </motion.div>
 
-              {/* ARCHITECTURE FIELDS */}
-              <div className="space-y-3 mb-2">
-                 <p className="text-[8px] font-black uppercase tracking-[0.5em] text-black/20 mb-4 text-center">Expertise Fields</p>
-                 <div className="grid grid-cols-2 gap-3">
-                    {current.tags.map((tag, i) => (
-                        <motion.div 
-                            key={i} 
-                            whileHover={{ 
-                                scale: 1.05, 
-                                borderColor: "#EAB308", 
-                                backgroundColor: "#fafafa"
-                            }}
-                            whileTap={{ scale: 0.98, borderColor: "#EAB308" }}
-                            className="flex items-center justify-center gap-3 bg-black/[0.03] py-3.5 px-4 rounded-2xl transition-all duration-300 cursor-default border border-transparent group/tag shadow-sm"
-                        >
-                            <span className="text-black group-hover/tag:text-yellow-600 transition-colors">{tag.icon}</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/80 group-hover/tag:text-black">{tag.name}</span>
-                        </motion.div>
-                    ))}
-                 </div>
-              </div>
-
-              {/* Barcode Footer */}
-              <div className="mt-auto pt-2 border-t border-black/5 flex flex-col items-center">
-                  <div className="h-8 w-full opacity-70 bg-[url('https://www.cognex.com/api/SiteCore/Barcode/Get?data=MOUNDIR22&type=Code128&width=300&height=50&imagetype=Png')] bg-repeat-x grayscale contrast-200" />
-                  <div className="flex justify-between w-full mt-4">
-                      <span className="text-[9px] font-mono font-bold text-black/30">ARCHITECT.M2</span>
-                      <span className="text-[9px] font-mono font-bold text-black/30">© 2024-2026</span>
-                  </div>
-              </div>
-
+      <motion.div variants={revealVariants} className="absolute inset-0 z-20 p-4 lg:p-6 flex flex-col justify-center gap-4 xl:gap-8 bg-yellow-400/90 backdrop-blur-sm">
+        <div className="flex items-center gap-3 lg:gap-4">
+          <GraduationCap size={36} className="text-black flex-shrink-0 lg:w-[48px] lg:h-[48px]" strokeWidth={2.5} />
+          <div>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-base lg:text-xl xl:text-[2vw] font-black uppercase leading-none text-black">Licence Informatique</span>
+              <span className="text-xs xl:text-[1vw] font-bold text-black/80">2021 — 2024</span>
             </div>
+            <p className="text-xs xl:text-[1.2vw] font-medium text-black mt-1 leading-tight">Spécialité Systèmes d'Information</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 lg:gap-4">
+          <GraduationCap size={36} className="text-black flex-shrink-0 lg:w-[48px] lg:h-[48px]" strokeWidth={2.5} />
+          <div>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-base lg:text-xl xl:text-[2vw] font-black uppercase leading-none text-black">Master 2 — SITW</span>
+              <span className="text-xs xl:text-[1vw] font-bold text-black/80">2024 — 2026</span>
+            </div>
+            <p className="text-xs xl:text-[1.2vw] font-medium text-black mt-1 leading-tight">Systèmes d'Information & Technologie Web</p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// KEYCAP (Touche)
+// ============================================================
+function TechKey({
+  tech,
+  mode = "hover",
+  sizeClass = "w-16 h-16 xl:w-[4.4vw] xl:h-[4.4vw]",
+  nameSize = "text-[9px] xl:text-[0.6vw]",
+}) {
+  const [active, setActive] = useState(false);
+  const [restRotate] = useState(() => (Math.random() * 6 - 3).toFixed(1));
+  const isClickMode = mode === "click";
+
+  const keyVariants = {
+    rest: {
+      rotate: Number(restRotate),
+      y: 0,
+      scale: 1,
+      boxShadow: "0 4px 0 #000, 0 4px 10px rgba(0,0,0,.4)",
+      borderColor: "#2a2a2a",
+    },
+    hover: {
+      rotate: 0,
+      y: -8,
+      scale: 1.1,
+      boxShadow: `0 14px 0 #000, 0 20px 25px rgba(0,0,0,.5), 0 0 22px ${tech.color}`,
+      borderColor: tech.color,
+    },
+  };
+
+  return (
+    <motion.div
+      initial="rest"
+      whileHover={!isClickMode ? "hover" : undefined}
+      animate={isClickMode ? (active ? "hover" : "rest") : undefined}
+      onClick={isClickMode ? () => setActive((v) => !v) : undefined}
+      whileTap={isClickMode ? { scale: 1.05 } : { scale: 0.95 }}
+      variants={keyVariants}
+      transition={{ duration: 0.35, ease: [0.2, 0.9, 0.3, 1.3] }}
+      className={`relative flex flex-col items-center justify-center rounded-lg border-2 bg-[#1a1a1a] select-none ${
+        isClickMode ? "cursor-pointer" : "cursor-default"
+      } ${sizeClass}`}
+    >
+      <motion.img
+        src={tech.icon}
+        alt={tech.name}
+        variants={{ rest: { filter: "grayscale(1) brightness(1.4)" }, hover: { filter: "none" } }}
+        className="w-[45%] h-[45%] object-contain pointer-events-none"
+      />
+      <motion.span
+        variants={{ rest: { opacity: 0, y: 6 }, hover: { opacity: 1, y: 0 } }}
+        className={`absolute -bottom-5 font-cartoon tracking-wide whitespace-nowrap ${nameSize}`}
+        style={{ color: tech.color }}
+      >
+        {tech.name}
+      </motion.span>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// CARTE TECHNOLOGIES
+// ============================================================
+function TechCard({
+  className = "",
+  titleSize = "text-2xl xl:text-[3.2vw]",
+  titleContainerClass = "text-center mb-4 lg:mb-6",
+  gridContainerClass = "justify-center content-start",
+  mode = "hover",
+  keySizeClass,
+  keyNameSize,
+  gapClass = "gap-4 xl:gap-5",
+}) {
+  return (
+    <div className={`relative flex flex-col ${className}`}>
+      <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
+        Technologies et Mes compétences
+      </h2>
+      <div className={`relative z-0 flex flex-wrap ${gridContainerClass} ${gapClass}`}>
+        {techs.map((tech) => (
+          <TechKey key={tech.name} tech={tech} mode={mode} sizeClass={keySizeClass} nameSize={keyNameSize} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// OVERLAY D'INTRODUCTION (Effet Fill Jaune + Pointillés)
+// ============================================================
+function IntroOverlay({ startAnimation }) {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    if (startAnimation) {
+      setPhase(1);
+      const t = setTimeout(() => setPhase(2), 1500);
+      return () => clearTimeout(t);
+    }
+  }, [startAnimation]);
+
+  const phrases = [
+    "Je suis qui ?", "Who am I?", "¿Quién soy?", "من أنا؟",
+    "Wer bin ich?", "Chi sono?", "Qui je suis ?", "私は誰ですか？"
+  ];
+
+  return (
+    <motion.div
+      exit={{ y: "-100%", opacity: 0 }}
+      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+      className="absolute inset-0 z-50 bg-[#000000] overflow-hidden flex items-center justify-center pointer-events-none"
+    >
+      <div className="absolute w-[250vw] h-[250vh] flex flex-wrap gap-2 md:gap-4 justify-center content-center rotate-[-25deg] scale-110">
+        {Array.from({ length: 180 }).map((_, i) => {
+          const hasText = i % 9 === 0;
+          const text = hasText ? phrases[(i / 9) % phrases.length] : "";
+
+          return (
+            <div key={i} className="relative w-20 h-20 md:w-32 md:h-32">
+              <div
+                className={`relative w-full h-full flex items-center justify-center rounded-xl md:rounded-2xl border-[2px] md:border-[3px] border-dashed transition-all duration-300 ${
+                  phase === 0 ? "border-transparent" : "border-yellow-400/60"
+                }`}
+              >
+                {/* Effet Fill Jaune au lancement */}
+                {phase >= 1 && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: hasText ? 0.8 : 0.2 }}
+                    transition={{ duration: 0.4, delay: (i % 10) * 0.05 }}
+                    className="absolute inset-0 bg-yellow-400 rounded-xl md:rounded-2xl"
+                  />
+                )}
+                {phase >= 1 && hasText && (
+                  <span className="relative z-10 font-cartoon text-black text-center leading-tight px-2 text-sm md:text-xl">
+                    {text}
+                  </span>
+                )}
+                {phase === 2 && i % 14 === 0 && (
+                  <motion.span
+                    initial={{ scale: 0.2, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 11, delay: (i % 5) * 0.1 }}
+                    className="absolute z-10 inset-0 flex items-center justify-center font-black text-black text-5xl md:text-7xl opacity-40"
+                  >
+                    ?
+                  </motion.span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// GRILLE DE FOND (En pointillés)
+// ============================================================
+function BackgroundGrid() {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center">
+      <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-4 md:gap-6 justify-center content-center rotate-[-35deg]">
+        {Array.from({ length: 160 }).map((_, i) => (
+          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border-[2px] border-dashed border-[#222222] rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function About() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const [showOverlay, setShowOverlay] = useState(true);
+
+  useEffect(() => {
+    if (isInView) {
+      const timer = setTimeout(() => setShowOverlay(false), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView]);
+
+  // ============================================================
+  // PLAQUE DESKTOP — Strictement contrainte à la zone
+  // ============================================================
+  const leftColRef = useRef(null);
+  const rawPlaqueX = useMotionValue(0);
+  const rawPlaqueY = useMotionValue(0);
+  const plaqueX = useSpring(rawPlaqueX, { stiffness: 60, damping: 20, mass: 0.5 });
+  const plaqueY = useSpring(rawPlaqueY, { stiffness: 60, damping: 20, mass: 0.5 });
+
+  const handleMouseMove = (e) => {
+    if (showOverlay || !leftColRef.current) return;
+    const rect = leftColRef.current.getBoundingClientRect();
+    
+    // On calcule la position locale de la souris
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Tailles de la plaque en pixels (équivalent à 15vw et 22vh)
+    const pw = window.innerWidth * 0.15; 
+    const ph = window.innerHeight * 0.22;
+    
+    // Clamp strict: ne peut jamais dépasser 0 (top/left) ou rect.width - pw (bottom/right)
+    rawPlaqueX.set(clamp(x - pw / 2, 0, rect.width - pw));
+    rawPlaqueY.set(clamp(y - ph / 2, 0, rect.height - ph));
+  };
+
+  // ============================================================
+  // PLAQUE MOBILE — Strictement contrainte
+  // ============================================================
+  const mobileTopRef = useRef(null);
+  const rawPlaqueXM = useMotionValue(0);
+  const rawPlaqueYM = useMotionValue(0);
+  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 60, damping: 20, mass: 0.5 });
+  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 60, damping: 20, mass: 0.5 });
+
+  const handlePointerMoveMobile = (e) => {
+    if (showOverlay || !mobileTopRef.current) return;
+    const rect = mobileTopRef.current.getBoundingClientRect();
+    
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const pw = rect.width * 0.40; // 40% de la largeur
+    const ph = rect.height * 0.30; // 30% de la hauteur
+    
+    rawPlaqueXM.set(clamp(x - pw / 2, 0, rect.width - pw));
+    rawPlaqueYM.set(clamp(y - ph / 2, 0, rect.height - ph));
+  };
+
+  return (
+    <>
+      {/* ============================================================
+          DESKTOP (>= lg)
+          ============================================================ */}
+      <section
+        ref={sectionRef}
+        className="hidden lg:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-4 py-4 gap-2"
+      >
+        <AnimatePresence>
+          {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
+        </AnimatePresence>
+        
+        <BackgroundGrid />
+
+        <div
+          ref={leftColRef}
+          onMouseMove={handleMouseMove}
+          className="relative flex-1 h-full flex flex-col justify-center items-start pl-4 z-10"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+            className="relative z-10 text-3xl xl:text-[1.8vw] uppercase tracking-wide text-white/70 my-2"
+          >
+            {smallIntro}
+          </motion.p>
+
+          {/* MOUNDIR : Fond blanc et écriture noire (Inversion active) */}
+          <GiantName isVisible={!showOverlay} className="relative z-10 text-[10vw] xl:text-[12vw] mb-3 p-1" />
+
+          <RevealParagraph
+            segments={introSegments}
+            isVisible={!showOverlay}
+            className="relative z-10 text-5xl xl:text-[2.8vw] text-start leading-tight normal-case max-w-[95%]"
+          />
+
+          {/* PLAQUE BLANCHE mix-blend-difference */}
+          <motion.div
+            style={{ x: plaqueX, y: plaqueY }}
+            initial={{ opacity: 0, scale: 0.2 }}
+            animate={!showOverlay ? { opacity: 1, scale: 1 } : { opacity: 0 }}
+            transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.2 }}
+            className="absolute z-20 top-0 left-0 w-[15vw] h-[22vh] bg-white rounded-3xl mix-blend-difference pointer-events-none"
+          />
+        </div>
+
+        <div className="flex flex-col flex-1 h-full py-4 pr-4 gap-6 z-10 overflow-hidden relative">
+          {/* Animation de collision au lancement (Top/Left vers Centre) */}
+          <motion.div
+            initial={{ x: '100%', y: '-50%', rotate: 15 }}
+            animate={!showOverlay ? { x: 0, y: 0, rotate: 0 } : {}}
+            transition={{ type: "spring", mass: 1.2, stiffness: 100, damping: 14 }}
+            className="flex-[0.45] w-full"
+          >
+            <ParcoursCard className="w-full h-full" mode="hover" />
+          </motion.div>
+          
+          {/* Animation de collision au lancement (Bottom/Right vers Centre) */}
+          <motion.div
+            initial={{ x: '100%', y: '50%', rotate: -15 }}
+            animate={!showOverlay ? { x: 0, y: 0, rotate: 0 } : {}}
+            transition={{ type: "spring", mass: 1.2, stiffness: 100, damping: 14 }}
+            className="flex-[0.55] w-full"
+          >
+            <TechCard
+              className="w-full h-full"
+              mode="hover"
+              keySizeClass="w-16 h-16 xl:w-[4.8vw] xl:h-[4.8vw]"
+              keyNameSize="text-[10px] xl:text-[0.7vw]"
+            />
           </motion.div>
         </div>
+      </section>
 
-        {/* --- CÔTÉ DROIT : CONTENU --- */}
-        <div className="flex flex-col text-center lg:text-right items-center lg:items-end z-10">
-          
-          <div className="inline-flex items-center gap-3 mb-10 bg-yellow-500/5 px-6 py-2.5 rounded-full border border-yellow-500/20 backdrop-blur-md">
-            <Terminal className="text-yellow-500" size={16} />
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="text-yellow-500 font-mono text-xs uppercase tracking-[0.5em] font-bold"
-              >
-                {current.job}
-              </motion.span>
-            </AnimatePresence>
-          </div>
+      {/* ============================================================
+          MOBILE / TABLETTE (< lg)
+          ============================================================ */}
+      <section
+        className="flex lg:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-3 gap-2"
+      >
+        <AnimatePresence>
+          {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
+        </AnimatePresence>
+        
+        <BackgroundGrid />
 
-          <AnimatePresence mode="wait">
-            <motion.h2 
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="text-7xl md:text-[100px] font-cartoon text-white uppercase leading-[0.8] mb-12 tracking-tighter"
-            >
-              {current.title.split(' ')[0]} <br />
-              <span className="text-transparent" style={{ WebkitTextStroke: "1px white" }}>
-                 {current.title.split(' ').slice(1).join(' ')}
-              </span>
-            </motion.h2>
-          </AnimatePresence>
+        <div
+          ref={mobileTopRef}
+          onPointerMove={handlePointerMoveMobile}
+          onPointerDown={handlePointerMoveMobile}
+          style={{ touchAction: "none" }}
+          className="relative flex-[0_0_40%] flex flex-col justify-center z-10 pt-16 pb-4"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="relative z-10 text-[4.5vw] uppercase tracking-wide text-white/70"
+          >
+            {smallIntro}
+          </motion.p>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-                key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.2 }}
-                className="max-w-xl"
-            >
-                <p className="text-white/50 text-xl md:text-3xl leading-snug font-light italic mb-8 border-r-4 border-yellow-500/30 pr-6">
-                    "{current.desc}"
-                </p>
-                <div className="flex justify-center lg:justify-end items-center gap-6">
-                    <Globe className="text-yellow-500/20" size={20} />
-                    <span className="text-[11px] font-black uppercase text-yellow-500 tracking-[1.2em]">Moundir</span>
-                </div>
-            </motion.div>
-          </AnimatePresence>
+          {/* MOUNDIR en inversion mobile aussi */}
+          <GiantName isVisible={!showOverlay} className="relative z-10 text-[20vw] p-3 mb-3 w-fit" />
+
+          <RevealParagraph
+            segments={introSegments}
+            isVisible={!showOverlay}
+            className="relative z-10 text-[4.5vw] sm:text-[4vw] leading-snug normal-case"
+          />
+
+          <motion.div
+            style={{ x: plaqueXM, y: plaqueYM }}
+            initial={{ opacity: 0, scale: 0.2 }}
+            animate={!showOverlay ? { opacity: 1, scale: 1, rotate: -6 } : { opacity: 0 }}
+            transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.2 }}
+            className="absolute z-20 top-[-6%] left-[-4%] w-[40%] h-[30%] bg-white rounded-[20px] mix-blend-difference pointer-events-none"
+          />
         </div>
-      </div>
 
-      {/* COMPOSANT AVATAR ANIMÉ SUR LA DROITE, EN BAS DE L'ÉCRAN */}
-      <FallingAvatarSequence size="lg" />
+        <div className="relative flex-1 min-h-0 w-full z-10">
+          {/* TechCard Mobile - Décalée avec animation de collision */}
+          <motion.div
+            initial={{ x: "100%", y: "100%", rotate: 20 }}
+            animate={!showOverlay ? { x: 0, y: 0, rotate: 2 } : {}}
+            transition={{ type: "spring", stiffness: 90, damping: 13 }}
+            className="absolute bottom-0 right-0 w-[85%] h-[85%] z-10"
+          >
+            <TechCard
+              className="w-full h-full border-2 border-dashed border-white/10 rounded-xl px-2 py-4 justify-between"
+              mode="click"
+              titleSize="text-[4.5vw]"
+              titleContainerClass="text-right w-[70%] ml-auto pr-2 mt-2" // Texte aligné à droite
+              gridContainerClass="justify-center sm:justify-end content-end mt-auto pt-[45%] pb-2 mb-2" // Touches repoussées tout en bas
+              keySizeClass="w-[10vw] h-[10vw]"
+              keyNameSize="text-[2.2vw]"
+              gapClass="gap-1.5 sm:gap-2"
+            />
+          </motion.div>
 
-      <style jsx>{`
-        .perspective-2000 {
-          perspective: 2000px;
-        }
-      `}</style>
-    </section>
+          {/* Parcours Mobile - Décalé avec animation de collision */}
+          <motion.div
+            initial={{ x: "-100%", y: "-100%", rotate: -20 }}
+            animate={!showOverlay ? { x: 0, y: 0, rotate: -3 } : {}}
+            transition={{ type: "spring", stiffness: 90, damping: 13 }}
+            className="absolute top-[2%] left-0 w-[70%] h-[50%] z-20 shadow-[6px_6px_0_rgba(0,0,0,.6)]"
+          >
+            <ParcoursCard
+              className="w-full h-full"
+              mode="click"
+              titleSize="text-[5vw]"
+              bodySize="text-[2.6vw]"
+            />
+          </motion.div>
+        </div>
+      </section>
+    </>
   );
 }
