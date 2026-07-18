@@ -16,7 +16,11 @@ function App() {
   const { index, goTo } = useFullPageScroll(sections.length);
 
   return (
-    <div className="relative w-full bg-[#050505] selection:bg-yellow-500 selection:text-black h-dvh overflow-hidden">
+    <div
+      className={`relative w-full bg-[#050505] selection:bg-yellow-500 selection:text-black ${
+        isDesktop ? "h-dvh overflow-hidden" : "min-h-screen"
+      }`}
+    >
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800;900&family=Inter:wght@300;400;600&family=Noto+Sans+Arabic:wght@400;700&display=swap');
@@ -31,25 +35,27 @@ function App() {
       <Navbar sections={sections} activeIndex={index} onNavigate={goTo} isDesktop={isDesktop} />
 
       <motion.main
-        className="flex flex-col w-full h-full"
-        // L'animation s'applique désormais de la même manière sur PC et Mobile
-        animate={{ y: `-${index * 100}%` }}
+        className={`flex flex-col w-full ${isDesktop ? "h-full" : ""}`}
+        animate={isDesktop ? { y: `-${index * 100}%` } : { y: 0 }}
         transition={{ type: "spring", stiffness: 220, damping: 32, mass: 1 }}
       >
         {sections.map(({ id, Component, className = "" }, i) => (
           <section
             key={id}
             id={id}
-            className={`w-full flex-shrink-0 h-dvh ${className}`}
+            className={`w-full flex-shrink-0 ${isDesktop ? "h-dvh" : ""} ${className}`}
           >
             <motion.div
               className="h-full w-full"
-              // Les mêmes effets visuels sur tous les appareils
-              animate={{
-                opacity: i === index ? 1 : 0.35,
-                scale: i === index ? 1 : 0.96,
-                filter: i === index ? "blur(0px)" : "blur(2px)",
-              }}
+              animate={
+                isDesktop
+                  ? {
+                      opacity: i === index ? 1 : 0.35,
+                      scale: i === index ? 1 : 0.96,
+                      filter: i === index ? "blur(0px)" : "blur(2px)",
+                    }
+                  : { opacity: 1, scale: 1, filter: "blur(0px)" }
+              }
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <Component />
