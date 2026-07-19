@@ -31,10 +31,10 @@ function App() {
       <Navbar sections={sections} activeIndex={index} onNavigate={goTo} isDesktop={isDesktop} />
 
       <motion.main
-        className="flex flex-col w-full h-full"
-        animate={{ y: `-${index * 100}%` }}
-        transition={{ type: "spring", stiffness: 220, damping: 32, mass: 1 }}
-      >
+  className="flex flex-col w-full h-full"
+  animate={{ y: `-${index * 100}%` }}
+  transition={{ type: "tween", duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
+>
         {sections.map(({ id, Component, className = "" }, i) => (
           <section key={id} id={id} className={`w-full h-dvh flex-shrink-0 ${className}`}>
             <motion.div

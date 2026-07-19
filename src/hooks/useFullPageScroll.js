@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-export function useFullPageScroll(sectionCount, { cooldown = 900, breakpoint = 1024 } = {}) {
+export function useFullPageScroll(sectionCount, { cooldown = 600, breakpoint = 1024 } = {}) {
   const [index, setIndex] = useState(0);
   const isAnimating = useRef(false);
   const wheelAccum = useRef(0);
