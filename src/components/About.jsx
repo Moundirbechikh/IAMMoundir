@@ -4,7 +4,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Star } from "lucide-react";
+import { GraduationCap, Star, ChevronUp, ChevronDown } from "lucide-react";
 
 function Highlight({ children, delay = 0, className = "" }) {
   return (
@@ -174,13 +174,78 @@ function TapHint() {
   );
 }
 
+// ============================================================
+// Diplômes — Master 2 en premier
+// ============================================================
+const parcoursEntries = [
+  { title: "Master 2 — SITW", years: "2024 — 2026", desc: "Systèmes d'Information & Technologie Web" },
+  { title: "Licence Informatique", years: "2021 — 2024", desc: "Spécialité Systèmes d'Information" },
+];
+
+function ParcoursEntryRow({ entry, iconClass, revealTitleSize, revealYearSize, revealDescSize }) {
+  return (
+    <div className="flex items-start gap-2 sm:gap-3 w-full">
+      <GraduationCap className={`text-black flex-shrink-0 mt-1 ${iconClass}`} strokeWidth={2.5} />
+      <div className="flex-1">
+        <div className="flex items-baseline justify-between gap-1 flex-wrap w-full">
+          <span className={`${revealTitleSize} font-black uppercase leading-none text-black drop-shadow-md`}>{entry.title}</span>
+          <span className={`${revealYearSize} font-bold text-white drop-shadow-md`}>{entry.years}</span>
+        </div>
+        <p className={`${revealDescSize} font-bold text-black mt-1 leading-tight`}>{entry.desc}</p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CARTE PARCOURS — design original intact.
+// Ajout : prop `paginate` (utilisée uniquement côté mobile) qui
+// affiche un diplôme à la fois avec flèches haut/bas + rotation
+// auto 10s, sans rien changer au style/dimensions existants.
+// ============================================================
 function ParcoursCard({
   className = "", titleSize = "text-3xl xl:text-[3.8vw]", bodySize = "text-lg xl:text-[1.8vw]", mode = "hover", compact = false, padding = "p-8",
   revealTitleSize = "text-xl xl:text-[2.5vw]", revealYearSize = "text-sm xl:text-[1.2vw]", revealDescSize = "text-sm xl:text-[1.5vw]",
   revealPadding = "p-6", revealGap = "gap-5 xl:gap-8", iconClass = "w-12 h-12 xl:w-[2.8vw] xl:h-[2.8vw]",
+  paginate = false,
 }) {
   const [open, setOpen] = useState(false);
+  const [degreeIndex, setDegreeIndex] = useState(0);
+  const rotateRef = useRef(null);
   const isClickMode = mode === "click";
+
+  const restartRotate = () => {
+    if (rotateRef.current) clearInterval(rotateRef.current);
+    if (!paginate) return;
+    rotateRef.current = setInterval(() => {
+      setDegreeIndex((i) => (i + 1) % parcoursEntries.length);
+    }, 10000);
+  };
+
+  useEffect(() => {
+    if (paginate && open) {
+      restartRotate();
+    } else if (rotateRef.current) {
+      clearInterval(rotateRef.current);
+    }
+    return () => {
+      if (rotateRef.current) clearInterval(rotateRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paginate, open]);
+
+  const goUpDegree = (e) => {
+    e.stopPropagation();
+    if (degreeIndex === 0) return;
+    setDegreeIndex((i) => i - 1);
+    restartRotate();
+  };
+  const goDownDegree = (e) => {
+    e.stopPropagation();
+    if (degreeIndex === parcoursEntries.length - 1) return;
+    setDegreeIndex((i) => i + 1);
+    restartRotate();
+  };
 
   return (
     <motion.div
@@ -208,27 +273,69 @@ function ParcoursCard({
       </motion.div>
 
       <motion.div variants={revealVariants} className={`absolute inset-0 z-20 ${revealPadding} flex flex-col justify-center ${revealGap} bg-yellow-400/20 backdrop-blur-md`}>
-        <div className="flex items-start gap-2 sm:gap-3 w-full">
-          <GraduationCap className={`text-black flex-shrink-0 mt-1 ${iconClass}`} strokeWidth={2.5} />
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between gap-1 flex-wrap w-full">
-              <span className={`${revealTitleSize} font-black uppercase leading-none text-black drop-shadow-md`}>Licence Informatique</span>
-              <span className={`${revealYearSize} font-bold text-white drop-shadow-md`}>2021 — 2024</span>
+        {paginate ? (
+          <div className="relative w-full flex items-center">
+            <div className="flex-1 pr-6 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={degreeIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28, ease: [0.65, 0, 0.35, 1] }}
+                >
+                  <ParcoursEntryRow
+                    entry={parcoursEntries[degreeIndex]}
+                    iconClass={iconClass}
+                    revealTitleSize={revealTitleSize}
+                    revealYearSize={revealYearSize}
+                    revealDescSize={revealDescSize}
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
-            <p className={`${revealDescSize} font-bold text-black mt-1 leading-tight`}>Spécialité Systèmes d'Information</p>
-          </div>
-        </div>
-        <div className="w-full h-[1px] bg-white/20 my-1 rounded-full" />
-        <div className="flex items-start gap-2 sm:gap-3 w-full">
-          <GraduationCap className={`text-black flex-shrink-0 mt-1 ${iconClass}`} strokeWidth={2.5} />
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between gap-1 flex-wrap w-full">
-              <span className={`${revealTitleSize} font-black uppercase leading-none text-black drop-shadow-md`}>Master 2 — SITW</span>
-              <span className={`${revealYearSize} font-bold text-white drop-shadow-md`}>2024 — 2026</span>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
+              <button
+                onClick={goUpDegree}
+                aria-label="Diplôme précédent"
+                className={`flex items-center justify-center w-5 h-4 rounded-full transition-opacity ${degreeIndex === 0 ? "opacity-25 pointer-events-none" : "opacity-100"}`}
+              >
+                <ChevronUp size={14} strokeWidth={3} className="text-black" />
+              </button>
+              <button
+                onClick={goDownDegree}
+                aria-label="Diplôme suivant"
+                className={`flex items-center justify-center w-5 h-4 rounded-full transition-opacity ${degreeIndex === parcoursEntries.length - 1 ? "opacity-25 pointer-events-none" : "opacity-100"}`}
+              >
+                <ChevronDown size={14} strokeWidth={3} className="text-black" />
+              </button>
             </div>
-            <p className={`${revealDescSize} font-bold text-black mt-1 leading-tight`}>Systèmes d'Information & Technologie Web</p>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-start gap-2 sm:gap-3 w-full">
+              <GraduationCap className={`text-black flex-shrink-0 mt-1 ${iconClass}`} strokeWidth={2.5} />
+              <div className="flex-1">
+                <div className="flex items-baseline justify-between gap-1 flex-wrap w-full">
+                  <span className={`${revealTitleSize} font-black uppercase leading-none text-black drop-shadow-md`}>Licence Informatique</span>
+                  <span className={`${revealYearSize} font-bold text-white drop-shadow-md`}>2021 — 2024</span>
+                </div>
+                <p className={`${revealDescSize} font-bold text-black mt-1 leading-tight`}>Spécialité Systèmes d'Information</p>
+              </div>
+            </div>
+            <div className="w-full h-[1px] bg-white/20 my-1 rounded-full" />
+            <div className="flex items-start gap-2 sm:gap-3 w-full">
+              <GraduationCap className={`text-black flex-shrink-0 mt-1 ${iconClass}`} strokeWidth={2.5} />
+              <div className="flex-1">
+                <div className="flex items-baseline justify-between gap-1 flex-wrap w-full">
+                  <span className={`${revealTitleSize} font-black uppercase leading-none text-black drop-shadow-md`}>Master 2 — SITW</span>
+                  <span className={`${revealYearSize} font-bold text-white drop-shadow-md`}>2024 — 2026</span>
+                </div>
+                <p className={`${revealDescSize} font-bold text-black mt-1 leading-tight`}>Systèmes d'Information & Technologie Web</p>
+              </div>
+            </div>
+          </>
+        )}
       </motion.div>
     </motion.div>
   );
@@ -417,7 +524,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* MOBILE (Version Optimisée Collision et Clavier) */}
+      {/* MOBILE (Version Optimisée Collision et Clavier — layout identique, Parcours paginé) */}
       <section className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-4 gap-2">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
@@ -457,12 +564,13 @@ export default function About() {
               compact 
               padding="p-3" 
               titleSize="text-[4.5vw]" 
-              revealTitleSize="text-[3.2vw]" 
-              revealYearSize="text-[2.5vw]" 
-              revealDescSize="text-[2.2vw]" 
+              revealTitleSize="text-[4.2vw]" 
+              revealYearSize="text-[3.5vw]" 
+              revealDescSize="text-[3.2vw]" 
               revealPadding="p-2" 
               revealGap="gap-2" 
-              iconClass="w-5 h-5" 
+              iconClass="w-8 h-8" 
+              paginate
             />
           </motion.div>
           
