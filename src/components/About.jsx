@@ -4,7 +4,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Star, ChevronUp, ChevronDown } from "lucide-react";
+import { GraduationCap, Star,Monitor, ChevronUp, ChevronDown } from "lucide-react";
 
 function Highlight({ children, delay = 0, className = "" }) {
   return (
@@ -417,7 +417,7 @@ function TechCard({
   // Rendu original pour Desktop intact
   return (
     <div className={`relative flex flex-col ${className}`}>
-      <Star className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 rotate-[15deg] top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16" fill="#facc15" strokeWidth={1.5} />
+      <Monitor className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 rotate-[15deg] top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16" fill="black" strokeWidth={1.5} />
       {showTitle && (
         <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
           Technologies et <Highlight className="ml-1 md:ml-2" delay={0.2}>Mes compétences</Highlight>

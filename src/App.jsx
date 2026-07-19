@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
+import ProjectsHolder from "./components/ProjectsHolder";
 import { useFullPageScroll } from "./hooks/useFullPageScroll";
 import { useIsDesktop } from "./hooks/useIsDesktop";
 
@@ -9,6 +10,7 @@ import { useIsDesktop } from "./hooks/useIsDesktop";
 const sections = [
   { id: "hero", label: "Accueil", Component: Hero, color: "#ffffff", text: "dark" },
   { id: "about", label: "Qui suis-je", Component: About, color: "#facc15", text: "dark" },
+  { id: "projects", label: "Mes Projets", Component: ProjectsHolder, color: "#ef4444", text: "light" },
 ];
 
 function App() {
