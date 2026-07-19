@@ -1,14 +1,10 @@
 import {
   motion,
-  useMotionValue,
-  useSpring,
   useInView,
   AnimatePresence,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Sparkles, Star } from "lucide-react";
-
-const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+import { GraduationCap, Star, Monitor } from "lucide-react";
 
 function Highlight({ children, delay = 0, className = "" }) {
   return (
@@ -17,7 +13,7 @@ function Highlight({ children, delay = 0, className = "" }) {
         initial={{ clipPath: "inset(0 100% 0 0)" }}
         animate={{ clipPath: "inset(0 0% 0 0)" }}
         transition={{ duration: 0.45, delay, ease: [0.65, 0, 0.35, 1] }}
-        className="absolute inset-0 bg-yellow-400"
+        className="absolute inset-0 bg-yellow-400 rounded-sm"
       />
       <span className="relative text-black px-1.5 font-black inline-block">
         {children}
@@ -47,6 +43,7 @@ function GiantName({ isVisible, className = "" }) {
   );
 }
 
+// Version Desktop originale (Révélation mot par mot sans surlignage jaune)
 function RevealParagraph({ segments, className = "", isVisible = false }) {
   let wordIndex = 0;
   return (
@@ -68,6 +65,37 @@ function RevealParagraph({ segments, className = "", isVisible = false }) {
           );
         })
       )}
+    </p>
+  );
+}
+
+// Version Mobile spécifique (Avec les Highlights jaunes sur les mots-clés)
+function IntroParagraphMobile({ isVisible, className = "" }) {
+  const fade = {
+    hidden: { opacity: 0, y: 8 },
+    visible: (i) => ({ 
+      opacity: 1, y: 0, 
+      transition: { duration: 0.35, delay: isVisible ? 0.1 + i * 0.1 : 0, ease: [0.65, 0, 0.35, 1] } 
+    })
+  };
+
+  return (
+    <p className={className}>
+      <motion.span custom={0} initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fade} className="inline-block mr-1">
+        <Highlight delay={0.3}>développeur Full Stack.</Highlight>
+      </motion.span>
+      <motion.span custom={1} initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fade} className="inline-block mr-1 mt-1">
+        Je transforme vos idées en
+      </motion.span>
+      <motion.span custom={2} initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fade} className="inline-block mr-1 mt-1">
+        <Highlight delay={0.6}>applications web</Highlight> modernes, fluides et performantes.
+      </motion.span>
+      <motion.span custom={3} initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fade} className="inline-block mr-1 mt-1">
+        De la conception d'interfaces intuitives à l'architecture backend robuste,
+      </motion.span>
+      <motion.span custom={4} initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fade} className="inline-block mt-1">
+        je crée des expériences numériques <Highlight delay={0.9}>immersives</Highlight> de bout en bout.
+      </motion.span>
     </p>
   );
 }
@@ -142,7 +170,7 @@ function BandsYellow() {
 
 function TapHint() {
   return (
-    <div className="absolute top-2 left-2 z-30 rounded-md border border-white/10 bg-white/10 backdrop-blur-md px-2 py-1 text-[3vw] sm:text-[1.8vw] md:text-[1vw] uppercase tracking-wider text-white/80 pointer-events-none">
+    <div className="absolute top-2 right-2 z-30 rounded-md border border-white/10 bg-white/10 backdrop-blur-md px-2 py-1 text-[3vw] sm:text-[1.8vw] md:text-[1vw] uppercase tracking-wider text-white/80 pointer-events-none">
       Appuyer
     </div>
   );
@@ -170,11 +198,11 @@ function ParcoursCard({
       {isClickMode && !open && <TapHint />}
 
       <motion.div variants={contentBlurVariants} className="relative z-0 flex flex-col items-center text-start justify-center h-full w-full">
-        <h2 className={`${titleSize} uppercase leading-none ${compact ? "" : "mb-6"} text-white`}>
+        <h2 className={`${titleSize} uppercase leading-none ${compact ? "" : "mb-6"} text-white text-center`}>
           Parcours académique ?
         </h2>
         {!compact && (
-          <p className={`${bodySize} text-white leading-relaxed max-w-xl mx-auto`}>
+          <p className={`${bodySize} text-white leading-relaxed max-w-xl mx-auto text-center mt-2`}>
             <Highlight delay={0.5}>5 ans d'études</Highlight> à l'Université Ahmed Ben Bella — Oran 1. <br />
             Une expérience <Highlight delay={0.9}>pleine de projets concrets</Highlight> et d'apprentissage intensif.
           </p>
@@ -236,7 +264,11 @@ function TechKey({ tech, mode = "hover", isActive, onClick, sizeClass = "w-16 h-
   );
 }
 
-function TechCard({ className = "", titleSize = "text-2xl xl:text-[3.2vw]", titleContainerClass = "text-center mb-4 lg:mb-6", gridContainerClass = "justify-center content-start", mode = "hover", keySizeClass, keyNameSize, gapClass = "gap-4 xl:gap-5", showTitle = true, titlePosition = "top" }) {
+function TechCard({ 
+  className = "", titleSize = "text-2xl xl:text-[3.2vw]", titleContainerClass = "text-center mb-4 lg:mb-6", 
+  gridContainerClass = "justify-center content-start", mode = "hover", keySizeClass, keyNameSize, 
+  gapClass = "gap-4 xl:gap-5", showTitle = true, isMobile = false 
+}) {
   const [activeKey, setActiveKey] = useState(null);
 
   useEffect(() => {
@@ -246,24 +278,36 @@ function TechCard({ className = "", titleSize = "text-2xl xl:text-[3.2vw]", titl
     return () => document.removeEventListener("pointerdown", handleOutsideClick);
   }, [mode]);
 
-  const titleEl = showTitle && (
-    <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
-      Technologies et <Highlight className="ml-1 md:ml-2" delay={0.2}>Mes compétences</Highlight>
-    </h2>
-  );
-
-  const gridEl = (
-    <div className={`relative z-0 flex flex-wrap ${gridContainerClass} ${gapClass}`}>
-      {techs.map((tech) => (
-        <TechKey key={tech.name} tech={tech} mode={mode} isActive={activeKey === tech.name} onClick={() => setActiveKey(activeKey === tech.name ? null : tech.name)} sizeClass={keySizeClass} nameSize={keyNameSize} />
-      ))}
-    </div>
-  );
-
   return (
     <div className={`relative flex flex-col ${className}`}>
-      <Star className="absolute top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16 text-yellow-400 rotate-[15deg] z-40 drop-shadow-lg pointer-events-none" fill="#facc15" strokeWidth={1.5} />
-      {titlePosition === "top" ? <>{titleEl}{gridEl}</> : <>{gridEl}{titleEl}</>}
+      {isMobile ? (
+        // Version Mobile: Icone PC Jaune à gauche, titre en haut à droite
+        <>
+          <Monitor className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 top-4 left-4 w-7 h-7 sm:w-10 sm:h-10" strokeWidth={2.5} />
+          {showTitle && (
+            <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] text-right w-full mb-4 pr-1`}>
+              Technologies et <br className="block sm:hidden" />
+              <Highlight className="ml-1" delay={0.2}>Mes compétences</Highlight>
+            </h2>
+          )}
+        </>
+      ) : (
+        // Version Desktop originale: Étoile en haut à droite, titre centré
+        <>
+          <Star className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 rotate-[15deg] top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16" fill="#facc15" strokeWidth={1.5} />
+          {showTitle && (
+            <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
+              Technologies et <Highlight className="ml-1 md:ml-2" delay={0.2}>Mes compétences</Highlight>
+            </h2>
+          )}
+        </>
+      )}
+
+      <div className={`relative z-0 flex flex-wrap ${gridContainerClass} ${gapClass}`}>
+        {techs.map((tech) => (
+          <TechKey key={tech.name} tech={tech} mode={mode} isActive={activeKey === tech.name} onClick={() => setActiveKey(activeKey === tech.name ? null : tech.name)} sizeClass={keySizeClass} nameSize={keyNameSize} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -279,7 +323,7 @@ function IntroOverlay({ startAnimation }) {
     }
   }, [startAnimation]);
 
-  const phrases = [ "Je suis qui ?", "Who am I?", "¿Quién soy?", "?? ??? ?", "Wer bin ich?", "Chi sono?", "Qui je suis ?", "Je suis qui ?", "Who am I?", "Chi sono?" ];
+  const phrases = [ "Je suis qui ?", "Who am I?", "¿Quién soy?", "من أنا ؟", "Wer bin ich?", "Chi sono?", "Qui je suis ?", "Je suis qui ?", "Who am I?", "Chi sono?" ];
 
   return (
     <motion.div exit={{ y: "-100%", opacity: 0 }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }} className="absolute inset-0 z-50 bg-[#080808] overflow-hidden flex items-center justify-center pointer-events-none">
@@ -326,93 +370,110 @@ export default function About() {
     }
   }, [isInView]);
 
-  const leftColRef = useRef(null);
-  const rawPlaqueX = useMotionValue(0);
-  const rawPlaqueY = useMotionValue(0);
-  const plaqueX = useSpring(rawPlaqueX, { stiffness: 40, damping: 15, mass: 0.8 });
-  const plaqueY = useSpring(rawPlaqueY, { stiffness: 40, damping: 15, mass: 0.8 });
-
-  const handleMouseMove = (e) => {
-    if (showOverlay || !leftColRef.current) return;
-    const rect = leftColRef.current.getBoundingClientRect();
-    const dx = e.clientX - rect.left - rect.width / 2;
-    const dy = e.clientY - rect.top - rect.height / 2;
-    const maxX = rect.width * 0.35; 
-    const maxY = rect.height * 0.42;
-    rawPlaqueX.set(clamp(dx * 0.55, -maxX, maxX));
-    rawPlaqueY.set(clamp(dy * 0.6, -maxY, maxY));
-  };
-
-  const mobileTopRef = useRef(null);
-  const rawPlaqueXM = useMotionValue(0);
-  const rawPlaqueYM = useMotionValue(0);
-  const plaqueXM = useSpring(rawPlaqueXM, { stiffness: 45, damping: 14, mass: 0.6 });
-  const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.6 });
-
-  const handlePointerMoveMobile = (e) => {
-    if (showOverlay || !mobileTopRef.current) return;
-    const rect = mobileTopRef.current.getBoundingClientRect();
-    const dx = e.clientX - rect.left - rect.width / 2;
-    const dy = e.clientY - rect.top - rect.height / 2;
-    const maxX = rect.width * 0.24; 
-    const maxY = rect.height * 0.35; 
-    rawPlaqueXM.set(clamp(dx, -maxX, maxX));
-    rawPlaqueYM.set(clamp(dy, -maxY, maxY));
-  };
-
   return (
-    // LA CORRECTION EST ICI : Une div globale qui détient le `ref` pour mobile ET desktop
     <div ref={sectionRef} className="w-full h-full relative">
       
-      {/* DESKTOP */}
-      <section className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-4 py-4 gap-2">
+      {/* DESKTOP (Version d'origine Intacte) */}
+      <section className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-6 py-6 gap-6">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
         </AnimatePresence>
         <BackgroundGrid />
 
-        <div ref={leftColRef} onMouseMove={handleMouseMove} className="relative flex-1 h-full flex flex-col justify-center items-start pl-4 z-10">
-          <motion.p initial={{ opacity: 0, y: 8 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.35, delay: 0.05 }} className="relative z-10 text-4xl lg:text-5xl xl:text-[3.2vw] uppercase tracking-wide text-white/70 mb-2 mt-6">
+        {/* Partie Gauche Desktop */}
+        <div className="relative flex-[0.45] h-full flex flex-col justify-end items-start pl-4 lg:pl-8 xl:pl-12 z-10">
+          <motion.p initial={{ opacity: 0, y: 8 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.35, delay: 0.05 }} className="relative z-10 text-4xl lg:text-5xl xl:text-[3.2vw] uppercase tracking-wide text-white/70 mb-2 mt-2">
             {smallIntro}
           </motion.p>
           <div className="relative inline-block select-none">
-            <GiantName isVisible={!showOverlay} className="relative z-10 text-[10vw] xl:text-[12vw] mb-3 p-1" />
-            <motion.div style={{ x: plaqueX, y: plaqueY }} initial={{ opacity: 0, scale: 0.2, rotate: -25 }} animate={!showOverlay ? { opacity: 1, scale: 1, rotate: -6 } : { opacity: 0 }} transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.7 }} className="absolute z-20 top-[-6%] left-[-4%] w-[45%] h-[110%] bg-white rounded-[20px] mix-blend-difference pointer-events-none" />
+            <GiantName isVisible={!showOverlay} className="relative z-10 text-[10vw] xl:text-[11vw] mb-3 p-1" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.2, rotate: -25 }} 
+              animate={!showOverlay ? { opacity: 1, scale: 1, rotate: -6 } : { opacity: 0 }} 
+              transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.7 }} 
+              className="absolute z-20 top-[-6%] left-[-4%] w-[110%] h-[100%] bg-white rounded-[20px] mix-blend-difference pointer-events-none" 
+            />
           </div>
-          <RevealParagraph segments={introSegments} isVisible={!showOverlay} className="relative z-10 text-5xl xl:text-[2.8vw] text-start leading-tight normal-case max-w-[95%]" />
+          {/* Reste en blanc pur sur Desktop */}
+          <RevealParagraph segments={introSegments} isVisible={!showOverlay} className="relative z-10 text-3xl lg:text-3xl xl:text-[2.6vw] text-start leading-tight normal-case max-w-[95%] mt-4" />
         </div>
 
-        <div className="flex flex-col flex-1 h-full py-2 gap-4 z-10">
+        {/* Partie Droite Desktop */}
+        <div className="flex flex-col flex-[0.55] h-full py-2 gap-6 z-10">
           <ParcoursCard className="flex-[0.45]" mode="hover" />
-          <TechCard className="flex-[0.55]" mode="hover" keySizeClass="w-14 h-14 xl:w-[4.4vw] xl:h-[4.4vw]" keyNameSize="text-[9px] xl:text-[0.6vw]" />
+          <TechCard className="flex-[0.55]" mode="hover" isMobile={false} titleContainerClass="text-center w-full mb-4 lg:mb-6" keySizeClass="w-14 h-14 xl:w-[4.4vw] xl:h-[4.4vw]" keyNameSize="text-[9px] xl:text-[0.6vw]" />
         </div>
       </section>
 
-      {/* MOBILE */}
-      <section className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-3 gap-2">
+      {/* MOBILE (Version Optimisée avec Highlights et PC Jaune) */}
+      <section className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-4 gap-2">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
         </AnimatePresence>
         <BackgroundGrid />
 
-        <div ref={mobileTopRef} onPointerMove={handlePointerMoveMobile} onPointerDown={handlePointerMoveMobile} style={{ touchAction: "none" }} className="relative flex-shrink-0 flex flex-col mt-3 justify-center z-10 pt-8 pb-2">
-          <motion.div style={{ x: plaqueXM, y: plaqueYM }} initial={{ opacity: 0, scale: 0.2 }} animate={!showOverlay ? { opacity: 1, scale: 1, rotate: -3 } : { opacity: 0 }} transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.5 }} className="absolute z-20 top-[35%] left-[24%] w-[52%] h-[25%] bg-white rounded-[18px] mix-blend-difference pointer-events-none" />
-          <motion.p initial={{ opacity: 0, y: 6 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }} transition={{ duration: 0.3, delay: 0.05 }} className="relative z-10 text-[6vw] sm:text-[5vw] uppercase tracking-wide text-white/70">
+        {/* Partie Haut Mobile */}
+        <div className="relative flex-shrink-0 flex flex-col justify-center z-10 pt-4 pb-1">
+          <motion.p initial={{ opacity: 0, y: 6 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }} transition={{ duration: 0.3, delay: 0.05 }} className="relative z-10 text-[6vw] sm:text-[5vw] uppercase tracking-wide text-white/70 mt-5">
             {smallIntro}
           </motion.p>
           <div className="relative inline-block select-none self-start z-10">
-            <GiantName isVisible={!showOverlay} className="relative z-10 text-[20vw] sm:text-[15vw] p-2 mb-3 w-fit" />
+            <GiantName isVisible={!showOverlay} className="relative z-10 text-[22vw] sm:text-[18vw] p-2 mb-3 w-fit" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.2 }} 
+              animate={!showOverlay ? { opacity: 1, scale: 1, rotate: -3 } : { opacity: 0 }} 
+              transition={{ type: "spring", stiffness: 65, damping: 14, delay: 0.5 }} 
+              className="absolute z-20 top-[-6%] left-[-4%] w-[110%] h-[90%] bg-white rounded-[18px] mix-blend-difference pointer-events-none" 
+            />
           </div>
-          <RevealParagraph segments={introSegments} isVisible={!showOverlay} className="relative z-10 text-[4.5vw] sm:text-[3.6vw] leading-snug normal-case" />
+          {/* Version Mobile avec arrière-plans jaunes */}
+          <IntroParagraphMobile isVisible={!showOverlay} className="relative z-10 text-[4.2vw] sm:text-[3.5vw] leading-snug normal-case text-white/90" />
         </div>
 
-        <div className="relative flex-1 min-h-0 z-10 mt-1">
-          <motion.div initial={{ opacity: 0, rotate: 5, y: 20 }} animate={!showOverlay ? { opacity: 1, rotate: 2, y: 0 } : {}} transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.3 }} className="absolute bottom-0 right-0 w-[92%] sm:w-[86%] h-[86%] sm:h-[84%] z-10">
-            <TechCard className="w-full h-full bg-[#0c0c0c] border-2 border-dashed border-white/10 rounded-xl px-3 pt-4 pb-3 justify-between" mode="click" titlePosition="bottom" showTitle titleSize="text-[5.5vw] sm:text-[4vw]" titleContainerClass="text-right w-full mt-2" gridContainerClass="justify-end mt-[30%] content-center" keySizeClass="w-[12.5vw] h-[12.5vw] sm:w-[10vw] sm:h-[10vw]" keyNameSize="text-[1.8vw] sm:text-[1.5vw]" gapClass="gap-3 sm:gap-4" />
+        {/* Partie Bas Mobile : Disposition en quinconce équilibrée */}
+        <div className="relative flex-1 min-h-0 z-10 mt-3 pb-2 w-full">
+          
+          {/* Bloc TechCard (En bas à droite - prend 68% de hauteur) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20, y: 15 }} 
+            animate={!showOverlay ? { opacity: 1, x: 0, y: 0 } : {}} 
+            transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.35 }} 
+            className="absolute bottom-0 right-0 w-[90%] h-[68%] z-10"
+          >
+            <TechCard 
+              className="w-full h-full bg-[#0c0c0c] border border-white/5 shadow-2xl rounded-xl px-4 pt-5 pb-4 justify-start" 
+              mode="click" 
+              showTitle 
+              isMobile={true}
+              titleSize="text-[4.5vw] sm:text-[4vw]" 
+              gridContainerClass="justify-end content-start gap-y-3 gap-x-[3vw]" 
+              keySizeClass="w-[11vw] h-[11vw] sm:w-[9vw] sm:h-[9vw]" 
+              keyNameSize="text-[1.8vw] sm:text-[1.5vw]" 
+            />
           </motion.div>
-          <motion.div initial={{ opacity: 0, rotate: -6, y: -10 }} animate={!showOverlay ? { opacity: 1, rotate: -3, y: 0 } : {}} transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.45 }} className="absolute top-0 left-0 w-[62%] sm:w-[45%] h-[38%] sm:h-[35%] z-20 shadow-[8px_8px_0_rgba(0,0,0,.5)]">
-            <ParcoursCard className="w-full h-full" mode="click" compact padding="p-4" titleSize="text-[5.5vw] sm:text-[4.5vw]" revealTitleSize="text-sm sm:text-base" revealYearSize="text-[10px] sm:text-xs" revealDescSize="text-xs" revealPadding="p-3" revealGap="gap-1 sm:gap-2" iconClass="w-6 h-6 sm:w-8 sm:h-8" />
+          
+          {/* Bloc ParcoursCard (En haut à gauche - prend 38% de hauteur, chevauchement minimal) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20, y: -10 }} 
+            animate={!showOverlay ? { opacity: 1, x: 0, y: 0 } : {}} 
+            transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.5 }} 
+            className="absolute top-0 left-0 w-[80%] h-[38%] z-20 shadow-[6px_8px_15px_rgba(0,0,0,.7)] rounded-lg"
+          >
+            <ParcoursCard 
+              className="w-full h-full border border-white/10" 
+              mode="click" 
+              compact 
+              padding="p-4" 
+              titleSize="text-[4.5vw]" 
+              revealTitleSize="text-[3vw]" 
+              revealYearSize="text-[2.5vw]" 
+              revealDescSize="text-[2.2vw]" 
+              revealPadding="p-3" 
+              revealGap="gap-2" 
+              iconClass="w-6 h-6" 
+            />
           </motion.div>
+          
         </div>
       </section>
 

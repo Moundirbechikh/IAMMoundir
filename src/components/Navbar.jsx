@@ -96,11 +96,6 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
     const target = sections[nextIdx];
     if (!target) return;
     onNavigate(nextIdx);
-    if (!isDesktop) {
-      requestAnimationFrame(() => {
-        document.getElementById(target.id)?.scrollIntoView({ behavior: "smooth" });
-      });
-    }
   };
 
   const goUp = () => canGoUp && move(activeIndex - 1);
