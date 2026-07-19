@@ -31,14 +31,27 @@ function App() {
       <Navbar sections={sections} activeIndex={index} onNavigate={goTo} isDesktop={isDesktop} />
 
       <motion.main
-  className="flex flex-col w-full h-full"
-  animate={{ y: `-${index * 100}%` }}
-  transition={{ type: "tween", duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
->
+        className="flex flex-col w-full h-full"
+        style={{ willChange: "transform" }}
+        animate={{ y: `-${index * 100}%` }}
+        transition={{ type: "tween", duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
+      >
         {sections.map(({ id, Component, className = "" }, i) => (
-          <section key={id} id={id} className={`w-full h-dvh flex-shrink-0 ${className}`}>
+          <section
+            key={id}
+            id={id}
+            className={`w-full h-dvh flex-shrink-0 ${className}`}
+            style={{
+              contentVisibility: i === index ? "visible" : "auto",
+              containIntrinsicSize: "100vw 100dvh",
+            }}
+          >
             <motion.div
               className="h-full w-full"
+              style={{
+                willChange: "opacity, transform, filter",
+                backfaceVisibility: "hidden",
+              }}
               animate={{
                 opacity: i === index ? 1 : 0.35,
                 scale: i === index ? 1 : 0.96,

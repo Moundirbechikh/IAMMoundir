@@ -4,7 +4,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Star, Monitor } from "lucide-react";
+import { GraduationCap, Star } from "lucide-react";
 
 function Highlight({ children, delay = 0, className = "" }) {
   return (
@@ -43,7 +43,6 @@ function GiantName({ isVisible, className = "" }) {
   );
 }
 
-// Version Desktop originale (Révélation mot par mot sans surlignage jaune)
 function RevealParagraph({ segments, className = "", isVisible = false }) {
   let wordIndex = 0;
   return (
@@ -69,7 +68,6 @@ function RevealParagraph({ segments, className = "", isVisible = false }) {
   );
 }
 
-// Version Mobile spécifique (Avec les Highlights jaunes sur les mots-clés)
 function IntroParagraphMobile({ isVisible, className = "" }) {
   const fade = {
     hidden: { opacity: 0, y: 8 },
@@ -254,10 +252,11 @@ function TechKey({ tech, mode = "hover", isActive, onClick, sizeClass = "w-16 h-
       whileTap={isClickMode ? { scale: 1.05 } : { scale: 0.95 }}
       variants={keyVariants}
       transition={{ duration: 0.35, ease: [0.2, 0.9, 0.3, 1.3] }}
-      className={`tech-key relative flex flex-col items-center justify-center rounded-lg border-2 bg-[#1a1a1a] select-none ${isClickMode ? "cursor-pointer" : "cursor-default"} ${sizeClass}`}
+      // Ajout de z-50 si la touche est active pour qu'elle passe au-dessus de tout
+      className={`tech-key relative flex flex-col items-center justify-center rounded-lg border-2 bg-[#1a1a1a] select-none ${isClickMode ? "cursor-pointer" : "cursor-default"} ${sizeClass} ${isActive ? 'z-50' : 'z-10'}`}
     >
       <motion.img src={tech.icon} alt={tech.name} variants={{ rest: { filter: "grayscale(1) brightness(1.4)" }, hover: { filter: "none" } }} className="w-[45%] h-[45%] object-contain pointer-events-none" />
-      <motion.span variants={{ rest: { opacity: 0, y: 6 }, hover: { opacity: 1, y: 0 } }} className={`absolute -bottom-5 font-cartoon tracking-wide whitespace-nowrap ${nameSize}`} style={{ color: tech.color }}>
+      <motion.span variants={{ rest: { opacity: 0, y: 6 }, hover: { opacity: 1, y: 0 } }} className={`absolute -bottom-5 font-cartoon tracking-wide whitespace-nowrap drop-shadow-md ${nameSize}`} style={{ color: tech.color }}>
         {tech.name}
       </motion.span>
     </motion.div>
@@ -278,31 +277,45 @@ function TechCard({
     return () => document.removeEventListener("pointerdown", handleOutsideClick);
   }, [mode]);
 
+  // NOUVELLE Version Mobile : L'icône est retirée et l'espacement est ajusté
+  if (isMobile) {
+    return (
+      <div className={`relative flex flex-col items-center justify-start ${className}`}>
+        {showTitle && (
+          <div className="w-full flex flex-col items-center justify-center text-center mb-4 z-10">
+            <h2 className={`${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] leading-[1.1]`}>
+              Technologies & <Highlight delay={0.2} className="mt-1">compétences</Highlight>
+            </h2>
+          </div>
+        )}
+
+        {/* Modification ici : gap-x-1.5 et gap-y-5 pour laisser l'espace au texte sans casser le look clavier */}
+        <div className="flex flex-wrap justify-center content-center w-full gap-x-1.5 gap-y-5 sm:gap-x-2 sm:gap-y-6 px-1 z-10">
+          {techs.map((tech) => (
+            <TechKey 
+              key={tech.name} 
+              tech={tech} 
+              mode={mode} 
+              isActive={activeKey === tech.name} 
+              onClick={() => setActiveKey(activeKey === tech.name ? null : tech.name)} 
+              sizeClass={keySizeClass} 
+              nameSize={keyNameSize} 
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Rendu original pour Desktop intact
   return (
     <div className={`relative flex flex-col ${className}`}>
-      {isMobile ? (
-        // Version Mobile: Icone PC Jaune à gauche, titre en haut à droite
-        <>
-          <Monitor className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 top-4 left-4 w-7 h-7 sm:w-10 sm:h-10" strokeWidth={2.5} />
-          {showTitle && (
-            <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] text-right w-full mb-4 pr-1`}>
-              Technologies et <br className="block sm:hidden" />
-              <Highlight className="ml-1" delay={0.2}>Mes compétences</Highlight>
-            </h2>
-          )}
-        </>
-      ) : (
-        // Version Desktop originale: Étoile en haut à droite, titre centré
-        <>
-          <Star className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 rotate-[15deg] top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16" fill="#facc15" strokeWidth={1.5} />
-          {showTitle && (
-            <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
-              Technologies et <Highlight className="ml-1 md:ml-2" delay={0.2}>Mes compétences</Highlight>
-            </h2>
-          )}
-        </>
+      <Star className="absolute z-40 drop-shadow-lg pointer-events-none text-yellow-400 rotate-[15deg] top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-16 md:h-16" fill="#facc15" strokeWidth={1.5} />
+      {showTitle && (
+        <h2 className={`relative z-30 ${titleSize} uppercase text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] ${titleContainerClass}`}>
+          Technologies et <Highlight className="ml-1 md:ml-2" delay={0.2}>Mes compétences</Highlight>
+        </h2>
       )}
-
       <div className={`relative z-0 flex flex-wrap ${gridContainerClass} ${gapClass}`}>
         {techs.map((tech) => (
           <TechKey key={tech.name} tech={tech} mode={mode} isActive={activeKey === tech.name} onClick={() => setActiveKey(activeKey === tech.name ? null : tech.name)} sizeClass={keySizeClass} nameSize={keyNameSize} />
@@ -394,7 +407,6 @@ export default function About() {
               className="absolute z-20 top-[-6%] left-[-4%] w-[110%] h-[100%] bg-white rounded-[20px] mix-blend-difference pointer-events-none" 
             />
           </div>
-          {/* Reste en blanc pur sur Desktop */}
           <RevealParagraph segments={introSegments} isVisible={!showOverlay} className="relative z-10 text-3xl lg:text-3xl xl:text-[2.6vw] text-start leading-tight normal-case max-w-[95%] mt-4" />
         </div>
 
@@ -405,7 +417,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* MOBILE (Version Optimisée avec Highlights et PC Jaune) */}
+      {/* MOBILE (Version Optimisée Collision et Clavier) */}
       <section className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-4 gap-2">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
@@ -426,51 +438,49 @@ export default function About() {
               className="absolute z-20 top-[-6%] left-[-4%] w-[110%] h-[90%] bg-white rounded-[18px] mix-blend-difference pointer-events-none" 
             />
           </div>
-          {/* Version Mobile avec arrière-plans jaunes */}
           <IntroParagraphMobile isVisible={!showOverlay} className="relative z-10 text-[4.2vw] sm:text-[3.5vw] leading-snug normal-case text-white/90" />
         </div>
 
-        {/* Partie Bas Mobile : Disposition en quinconce équilibrée */}
-        <div className="relative flex-1 min-h-0 z-10 mt-3 pb-2 w-full">
+        {/* Partie Bas Mobile : L'ACCIDENT ENTRE LES DEUX SECTIONS */}
+        <div className="relative flex-1 flex flex-col justify-end min-h-0 z-10 mt-2 pb-2 w-full">
           
-          {/* Bloc TechCard (En bas à droite - prend 68% de hauteur) */}
+          {/* Bloc ParcoursCard */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20, y: 20 }} 
+            animate={!showOverlay ? { opacity: 1, x: 0, y: 0 } : {}} 
+            transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.5 }} 
+            className="relative w-[85%] h-[110px] z-20 self-start -mb-6 rotate-[-4deg] shadow-[8px_10px_20px_rgba(0,0,0,.8)]"
+          >
+            <ParcoursCard 
+              className="w-full h-full border border-yellow-400/30 rounded-lg" 
+              mode="click" 
+              compact 
+              padding="p-3" 
+              titleSize="text-[4.5vw]" 
+              revealTitleSize="text-[3.2vw]" 
+              revealYearSize="text-[2.5vw]" 
+              revealDescSize="text-[2.2vw]" 
+              revealPadding="p-2" 
+              revealGap="gap-2" 
+              iconClass="w-5 h-5" 
+            />
+          </motion.div>
+          
+          {/* Bloc TechCard (Ajustement du padding pt-6 au lieu de pt-10 vu qu'il n'y a plus d'icône) */}
           <motion.div 
             initial={{ opacity: 0, x: 20, y: 15 }} 
             animate={!showOverlay ? { opacity: 1, x: 0, y: 0 } : {}} 
             transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.35 }} 
-            className="absolute bottom-0 right-0 w-[90%] h-[68%] z-10"
+            className="relative w-[94%] z-10 self-end"
           >
             <TechCard 
-              className="w-full h-full bg-[#0c0c0c] border border-white/5 shadow-2xl rounded-xl px-4 pt-5 pb-4 justify-start" 
+              className="w-full bg-[#0c0c0c] border border-white/10 shadow-2xl rounded-xl pt-6 pb-6 px-2" 
               mode="click" 
               showTitle 
               isMobile={true}
-              titleSize="text-[4.5vw] sm:text-[4vw]" 
-              gridContainerClass="justify-end content-start gap-y-3 gap-x-[3vw]" 
-              keySizeClass="w-[11vw] h-[11vw] sm:w-[9vw] sm:h-[9vw]" 
-              keyNameSize="text-[1.8vw] sm:text-[1.5vw]" 
-            />
-          </motion.div>
-          
-          {/* Bloc ParcoursCard (En haut à gauche - prend 38% de hauteur, chevauchement minimal) */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20, y: -10 }} 
-            animate={!showOverlay ? { opacity: 1, x: 0, y: 0 } : {}} 
-            transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.5 }} 
-            className="absolute top-0 left-0 w-[80%] h-[38%] z-20 shadow-[6px_8px_15px_rgba(0,0,0,.7)] rounded-lg"
-          >
-            <ParcoursCard 
-              className="w-full h-full border border-white/10" 
-              mode="click" 
-              compact 
-              padding="p-4" 
-              titleSize="text-[4.5vw]" 
-              revealTitleSize="text-[3vw]" 
-              revealYearSize="text-[2.5vw]" 
-              revealDescSize="text-[2.2vw]" 
-              revealPadding="p-3" 
-              revealGap="gap-2" 
-              iconClass="w-6 h-6" 
+              titleSize="text-[5vw] sm:text-[4.5vw]" 
+              keySizeClass="w-[12vw] h-[12vw] max-w-[45px] max-h-[45px]" 
+              keyNameSize="text-[7.5px] sm:text-[9px]" 
             />
           </motion.div>
           
