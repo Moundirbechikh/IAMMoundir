@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily: {
         'cartoon': ['Bangers', 'system-ui'],
+        'logo':['Kaushan Script', 'cursive'],
         'body': ['Fredoka', 'sans-serif'],
         'lobster': ['"Lobster"', 'cursive'],
         'parisienne': ['"Parisienne"', 'cursive'],

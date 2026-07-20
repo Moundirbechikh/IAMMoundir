@@ -1,9 +1,9 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { PencilRuler, ArrowLeft, ArrowUpRight } from "lucide-react";
+import { LayoutGrid, ArrowLeft, ArrowUpRight } from "lucide-react"; 
 import ProjectCard from "./ProjectCard";
 
-// --- IMPORTS ASSETS (identiques à l'existant) ---
+// --- IMPORTS ASSETS ---
 import logo1 from "../assets/logo1.jpg";
 import back1 from "../assets/back1.jpg";
 import back1Vid from "../assets/back1.mp4";
@@ -22,9 +22,9 @@ import backveVid from "../assets/backve.mp4";
 import phoneve from "../assets/phoneve.jpg";
 import phoneveVid from "../assets/phoneve.mp4";
 
-import back41 from "../assets/back4-1.jpg";
-import logo4 from "../assets/logo4.png";
-import back4Vid from "../assets/back4.mp4";
+import back41 from "../assets/seenIT.jpg";
+import logo4 from "../assets/logoSeenIt.png";
+import back4Vid from "../assets/SeenIT.mp4";
 
 import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
@@ -32,11 +32,6 @@ import phone14 from "../assets/phone14.jpg";
 import back14Vid from "../assets/back14.mp4";
 import phone14Vid from "../assets/phone14.mp4";
 
-// ============================================================
-// DONNÉES PROJETS
-// `altAccent` sur MyNewLife = la carte "vibe" mobile alterne entre
-// les deux couleurs (3s / 3s) tant qu'elle affiche ce projet.
-// ============================================================
 const projects = [
   {
     id: "01", title: "MaResturant", tech: "React / Node.js / MongoDB",
@@ -58,9 +53,9 @@ const projects = [
     logo: logo3, poster: backve, video: backveVid, posterM: phoneve, videoM: phoneveVid,
   },
   {
-    id: "04", title: "MyNewStyle", tech: "Next.js / Tailwind / Framer Motion",
-    desc: "Interface tech durable explorant des transitions fluides entre univers organiques.",
-    link: "#", font: "cursive", accent: "#22c55e", titleColor: "#fff",
+    id: "04", title: "SeenIt", tech: "React / Tailwind / MangoDB / Node.js",
+    desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
+    link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive", accent: "#0F172A", titleColor: "#F59E0B",
     logo: logo4, poster: back41, video: back4Vid, posterM: back41, videoM: null,
   },
   {
@@ -71,12 +66,13 @@ const projects = [
   },
 ];
 
+// PLUS DE POINTILLÉS (border-dashed supprimé, remplacé par border-solid transparent/subtil)
 function BackgroundGrid() {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center">
       <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-4 md:gap-6 justify-center content-center rotate-[-35deg]">
         {Array.from({ length: 160 }).map((_, i) => (
-          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border-2 border-dashed border-[#151515] rounded-xl" />
+          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border border-solid border-white/5 rounded-xl" />
         ))}
       </div>
     </div>
@@ -100,13 +96,8 @@ function GiantTitle({ isVisible, className = "", children }) {
   );
 }
 
-// ============================================================
-// OVERLAY D'INTRODUCTION — thème rouge, icône PencilRuler (plan /
-// conception) à la place du "?" — noir, minimaliste, dans le thème.
-// ============================================================
 function IntroOverlay({ startAnimation }) {
   const [phase, setPhase] = useState(0);
-
   useEffect(() => {
     if (startAnimation) {
       setPhase(1);
@@ -114,12 +105,7 @@ function IntroOverlay({ startAnimation }) {
       return () => clearTimeout(t);
     }
   }, [startAnimation]);
-
-  const phrases = [
-    "Mes projets ?", "My Projects?", "Mis Proyectos?", "مشاريعي ؟", "Meine Projekte?", "I Miei Progetti?",
-    "Mes projets ?", "My Projects?",
-  ];
-
+  const phrases = ["Mes projets ?", "My Projects?", "Mis Proyectos?", "Meine Projekte?", "I Miei Progetti?"];
   return (
     <motion.div
       exit={{ y: "-100%", opacity: 0 }}
@@ -133,39 +119,11 @@ function IntroOverlay({ startAnimation }) {
           return (
             <div key={i} className="relative w-24 h-24 md:w-36 md:h-36">
               {stacked && phase >= 1 && (
-                <div
-                  className={`absolute -bottom-3 -right-3 w-full h-full rounded-xl border-2 transition-all duration-300 ${
-                    phase === 1 ? "border-red-400/25 border-dashed" : "border-red-400/60 bg-red-500/30"
-                  }`}
-                />
+                <div className={`absolute -bottom-3 -right-3 w-full h-full rounded-xl border-2 transition-all duration-300 ${phase === 1 ? "border-red-400/25" : "border-red-400/60 bg-red-500/30"}`} />
               )}
-              <div
-                className={`relative w-full h-full flex items-center justify-center rounded-xl border-2 transition-all duration-300 ${
-                  phase === 0
-                    ? "border-transparent bg-transparent"
-                    : phase === 1
-                    ? "border-red-400/50 border-dashed bg-transparent"
-                    : "border-red-500 border-solid bg-red-500"
-                }`}
-              >
-                {phase === 1 && (
-                  <span
-                    className={`font-black text-center leading-tight px-1.5 text-lg md:text-2xl transition-opacity duration-300 text-white ${
-                      hasText ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    {phrases[i % phrases.length]}
-                  </span>
-                )}
-                {phase === 2 && (
-                  <motion.div
-                    initial={{ scale: 0.2, opacity: 0, rotate: -15 }}
-                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 11, delay: (i % 10) * 0.02 }}
-                  >
-                    <PencilRuler className="w-9 h-9 md:w-14 md:h-14 text-black" strokeWidth={2.2} />
-                  </motion.div>
-                )}
+              <div className={`relative w-full h-full flex items-center justify-center rounded-xl border-2 transition-all duration-300 ${phase === 0 ? "border-transparent bg-transparent" : phase === 1 ? "border-red-400/50 bg-transparent" : "border-red-500 border-solid bg-red-500"}`}>
+                {phase === 1 && <span className={`font-black text-center px-1.5 text-lg md:text-2xl text-white ${hasText ? "opacity-100" : "opacity-0"}`}>{phrases[i % phrases.length]}</span>}
+                {phase === 2 && <motion.div initial={{ scale: 0.2, opacity: 0, rotate: -15 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}><LayoutGrid className="w-14 h-14 text-black" strokeWidth={2.2} /></motion.div>}
               </div>
             </div>
           );
@@ -175,45 +133,36 @@ function IntroOverlay({ startAnimation }) {
   );
 }
 
-// ============================================================
-// VIBE CARD — mobile : une carte à la fois, couleur + font du
-// projet affiché, pour recréer son ambiance. Change toutes les 6s
-// (le composant parent gère la rotation), transition douce.
-// ============================================================
-function VibeCard({ project, colorPhase }) {
-  const bg = project.altAccent && colorPhase === 1 ? project.altAccent : project.accent;
-
+function VibeCard({ project }) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={`${project.id}-${colorPhase}`}
+        key={`${project.id}`}
         initial={{ opacity: 0, y: 16, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -16, scale: 0.96 }}
         transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
-        style={{ backgroundColor: bg }}
+        style={{ backgroundColor: project.accent }}
         className="absolute inset-0 rounded-2xl overflow-hidden flex flex-col items-center justify-center p-5 text-center shadow-2xl"
       >
-        <div className="w-14 h-14 bg-white rounded-lg p-2 shadow-lg mb-3 flex-shrink-0">
-          <img src={project.logo} className="w-full h-full object-contain" alt="" loading="lazy" />
+        <div className="w-16 h-16 bg-white rounded-lg p-2 shadow-lg mb-4 flex-shrink-0">
+          <img src={project.logo} className="w-full h-full object-contain" alt="" />
         </div>
         <h3
-          className="text-2xl leading-none font-black mb-2"
+          className="text-4xl leading-none font-black mb-3"
           style={{ fontFamily: project.font, color: project.titleColor }}
         >
           {project.title}
         </h3>
-        <p className="text-white/90 text-xs leading-snug px-2 line-clamp-3">{project.desc}</p>
+        <p className="text-white/90 text-sm leading-relaxed px-2 line-clamp-3">{project.desc}</p>
       </motion.div>
     </AnimatePresence>
   );
 }
 
-// ============================================================
-// GALERIE DÉTAIL PLEIN ÉCRAN — swipe/scroll horizontal, un projet
-// par écran, vidéo montée seulement pour l'écran actif, bouton
-// retour en haut.
-// ============================================================
+// ==========================================
+// VUE DÉTAIL MOBILE
+// ==========================================
 function ProjectDetailGallery({ startIndex = 0, onClose }) {
   const scrollRef = useRef(null);
   const [current, setCurrent] = useState(startIndex);
@@ -240,12 +189,14 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
       className="fixed inset-0 z-[200] bg-black"
     >
       <button
-        onClick={onClose}
-        className="absolute top-4 left-4 z-30 flex items-center gap-1.5 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-3 py-2 text-white text-xs font-cartoon uppercase tracking-wide"
+        // Met à jour la carte d'accueil mobile avec le projet qu'on était en train de regarder en quittant
+        onClick={() => onClose(current)} 
+        className="absolute top-20 left-4 z-50 flex items-center justify-center w-12 h-12 bg-[#ef4444] rounded-full shadow-lg border border-white/20 active:scale-90 transition-transform"
       >
-        <ArrowLeft size={14} /> Retour
+        <ArrowLeft className="text-white" size={24} strokeWidth={3} />
       </button>
 
+      {/* DÉFILEMENT MANUEL UNIQUEMENT (snap-mandatory) */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -256,7 +207,6 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
           <div key={project.id} className="relative w-full h-full flex-shrink-0 snap-center">
             <img
               src={project.posterM || project.poster}
-              loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"
               alt={project.title}
             />
@@ -264,35 +214,43 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
               <video
                 key={project.id}
                 src={project.videoM || project.video}
-                autoPlay muted loop playsInline preload="none"
+                autoPlay muted loop playsInline
                 className="absolute inset-0 w-full h-full object-cover"
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/30" />
-            <div className="absolute bottom-8 left-0 right-0 px-6 flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-lg p-1.5 shadow-lg flex-shrink-0">
-                <img src={project.logo} className="w-full h-full object-contain" alt="" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-white text-2xl font-cartoon uppercase leading-none truncate">{project.title}</h3>
-                <p className="text-white/70 text-[11px] mt-1 truncate">{project.tech}</p>
-              </div>
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noreferrer"
-                className="ml-auto flex-shrink-0 inline-flex items-center gap-1 bg-white text-black px-3 py-2 rounded text-[10px] font-black uppercase"
-              >
-                Voir <ArrowUpRight size={12} />
-              </a>
+            
+            <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-black/85 backdrop-blur-md border-t border-white/10 px-6 flex flex-col justify-center">
+               <div className="flex items-center gap-4 mb-2">
+                 <div className="w-12 h-12 bg-white rounded-lg p-1.5 shadow-lg flex-shrink-0">
+                   <img src={project.logo} className="w-full h-full object-contain" alt="" />
+                 </div>
+                 {/* POLICE DYNAMIQUE */}
+                 <h3 
+                   className="text-white text-3xl leading-none truncate"
+                   style={{ fontFamily: project.font, color: project.titleColor }}
+                 >
+                   {project.title}
+                 </h3>
+               </div>
+               <p className="text-red-400 font-bold text-xs mb-1 truncate">{project.tech}</p>
+               <p className="text-gray-300 text-[11px] leading-snug line-clamp-3 mb-2">{project.desc}</p>
+               
+               <a
+                 href={project.link}
+                 target="_blank"
+                 rel="noreferrer"
+                 className="inline-flex self-start items-center gap-1 bg-white text-black px-4 py-2 rounded text-[10px] font-black uppercase shadow-lg"
+               >
+                 Voir <ArrowUpRight size={14} />
+               </a>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-20">
+      <div className="absolute bottom-[27vh] left-0 right-0 flex justify-center gap-2 z-20 pointer-events-none">
         {projects.map((_, idx) => (
-          <span key={idx} className={`w-1.5 h-1.5 rounded-full ${idx === current ? "bg-red-500" : "bg-white/30"}`} />
+          <span key={idx} className={`w-2 h-2 rounded-full transition-colors ${idx === current ? "bg-red-500" : "bg-white/30"}`} />
         ))}
       </div>
     </motion.div>
@@ -303,9 +261,14 @@ export default function ProjectsHolder() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const [showOverlay, setShowOverlay] = useState(true);
-  const [activeProj, setActiveProj] = useState(0);
-  const [colorPhase, setColorPhase] = useState(0);
+  
+  // État Mobile (Plus d'intervalle automatique !)
+  const [activeProjMobile, setActiveProjMobile] = useState(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  
+  // État Desktop
+  const [activeProjDesktop, setActiveProjDesktop] = useState(null);
+  const isDesktopActive = activeProjDesktop !== null;
 
   useEffect(() => {
     if (isInView) {
@@ -314,136 +277,140 @@ export default function ProjectsHolder() {
     }
   }, [isInView]);
 
-  // Rotation principale de la vibe card : un projet toutes les 6s
-  useEffect(() => {
-    const mainTimer = setInterval(() => {
-      setActiveProj((i) => (i + 1) % projects.length);
-      setColorPhase(0);
-    }, 6000);
-    return () => clearInterval(mainTimer);
-  }, []);
-
-  // Si le projet affiché a 2 couleurs, on alterne toutes les 3s
-  useEffect(() => {
-    const project = projects[activeProj];
-    if (!project.altAccent) return;
-    const colorTimer = setInterval(() => setColorPhase((p) => (p + 1) % 2), 3000);
-    return () => clearInterval(colorTimer);
-  }, [activeProj]);
-
-  const totalRows = Math.ceil(projects.length / 2);
-
   return (
     <div ref={sectionRef} className="w-full h-full relative">
-      {/* ============================================================
-          DESKTOP (>= md)
-          ============================================================ */}
+      <div className="hidden">
+        {projects.map(p => (
+           <img key={p.id} src={p.poster} loading="eager" alt="" />
+        ))}
+      </div>
+
+      {/* DESKTOP (>= md) */}
       <section className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-6 py-6 gap-6">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
         </AnimatePresence>
-        <BackgroundGrid />
+        
+        <motion.div 
+           animate={{ filter: isDesktopActive ? "blur(12px)" : "blur(0px)", opacity: isDesktopActive ? 0.2 : 1 }} 
+           className="absolute inset-0 z-0 pointer-events-none transition-all duration-500"
+        >
+          <BackgroundGrid />
+        </motion.div>
 
-        {/* Gauche — titre impressionnant + meilleure intro */}
-        <div className="relative flex-[0.34] h-full flex flex-col justify-center z-10">
-          <GiantTitle isVisible={!showOverlay} className="text-[8vw] xl:text-[6.5vw] mb-4">
+        {/* Côté Gauche (Texte) */}
+        <motion.div
+          animate={{ filter: isDesktopActive ? "blur(10px)" : "blur(0px)", opacity: isDesktopActive ? 0.2 : 1 }}
+          transition={{ duration: 0.4 }}
+          className="relative flex-[0.34] h-full flex flex-col justify-end mb-12 z-10"
+        >
+          <GiantTitle isVisible={!showOverlay} className="text-[8vw] xl:text-[9vw] mb-4">
             MES
             <br />
             <span className="text-red-500">PROJETS</span>
           </GiantTitle>
-          <motion.p
+          
+          <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="relative z-10 text-base xl:text-[1.25vw] text-white/80 leading-relaxed max-w-[92%] normal-case"
+            className="relative z-10 text-base xl:text-[1.3vw] text-white/80 leading-relaxed max-w-[95%] normal-case space-y-4"
           >
-            Chaque projet est pensé de bout en bout : une conception réfléchie, une architecture solide et une attention portée à chaque détail, du premier wireframe jusqu'à la mise en ligne.
-          </motion.p>
+            <p>
+              Chaque projet est pensé de bout en bout : <span className="bg-red-500 px-2 text-black font-bold xl:text-[1.4vw]">une conception réfléchie</span>, une architecture solide et une attention portée à chaque détail, du premier wireframe jusqu'au <span className="bg-red-500 px-2 text-black font-bold xl:text-[1.4vw]">déploiement</span>{""}
+              Voici une sélection de mes projets actuellement mis en ligne{""} <span className="bg-red-500 px-2 text-black font-bold xl:text-[1.4vw]">sur Vercel et Render</span>
+            .
+            </p>
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={{ duration: 0.4, delay: 0.55 }}
-            className="relative z-10 mt-4 font-cartoon text-sm xl:text-[1.1vw] text-red-400 border-l-2 border-red-500 pl-3 normal-case leading-snug"
+            className="relative z-10 mt-6 font-cartoon text-sm xl:text-[1.4vw] text-red-400 border-l-2 border-red-500 pl-3 normal-case leading-snug"
           >
-            ⚠ Render peut mettre quelques secondes à démarrer (cold start) — patiente un instant si la page met du temps à charger.
+            Render peut mettre quelques secondes à démarrer (cold start) — patiente un instant si la page met du temps à charger.
           </motion.p>
-        </div>
+        </motion.div>
 
-        {/* Droite — grille 2 colonnes, cartes larges (format "Unicheck") */}
+        {/* Côté Droit (Cartes de Projets) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={!showOverlay ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="relative flex-[0.66] h-full grid grid-cols-2 gap-4 z-10"
-          style={{ gridTemplateRows: `repeat(${totalRows}, 1fr)` }}
+          className="relative flex-[0.66] h-full z-10" 
         >
-          {projects.map((project, idx) => {
-            const row = Math.floor(idx / 2);
-            const isLastItemAlone = idx === projects.length - 1 && projects.length % 2 !== 0;
-            return (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                className={isLastItemAlone ? "col-span-2" : ""}
-                dropUp={row === totalRows - 1}
-              />
-            );
-          })}
+          {projects.map((project, idx) => (
+             <ProjectCard 
+                key={project.id} 
+                project={project} 
+                index={idx} 
+                isActive={activeProjDesktop === project.id}
+                isBlurred={isDesktopActive && activeProjDesktop !== project.id}
+                onClick={() => setActiveProjDesktop(activeProjDesktop === project.id ? null : project.id)}
+             />
+          ))}
         </motion.div>
       </section>
 
-      {/* ============================================================
-          MOBILE / TABLETTE (< md)
-          Haut : titre géant à gauche façon "Moundir" dans About.
-          Bas : une seule vibe-card qui tourne toutes les 6s, puis un
-          bouton "Voir détail" qui ouvre la galerie plein écran.
-          ============================================================ */}
+      {/* MOBILE / TABLETTE (< md) */}
       <section className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 py-3 gap-2">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
         </AnimatePresence>
         <BackgroundGrid />
 
-        {/* Haut — même placement que Moundir dans About : petit mot, puis géant, aligné à gauche */}
-        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pt-8 pb-2">
+        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pt-16 pb-2">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative z-10 text-[4.5vw] sm:text-[3vw] uppercase tracking-wide text-white/70"
+            className="relative z-10 text-[6vw] sm:text-[4vw] uppercase tracking-wide text-white/70"
           >
             Mes
           </motion.p>
-          <GiantTitle isVisible={!showOverlay} className="text-[16vw] sm:text-[11vw] mb-2 text-red-500">
+          <GiantTitle isVisible={!showOverlay} className="text-[20vw] sm:text-[14vw] mb-2 text-white">
             PROJETS
           </GiantTitle>
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="relative z-10 text-[3.6vw] sm:text-[2.6vw] text-white/80 leading-snug normal-case max-w-[95%]"
+            className="relative z-10 text-[4vw] sm:text-[3vw] text-white/80 leading-snug normal-case mt-2 max-w-[95%] space-y-2"
           >
-            Chaque projet est pensé de bout en bout : une conception réfléchie, une architecture solide et une attention portée à chaque détail.
-          </motion.p>
+            <p>
+              Chaque projet est pensé de bout en bout : <span className="bg-red-500 px-1 text-black font-bold">une conception réfléchie</span> et une attention portée à <span className="bg-red-500 px-1 text-black font-bold">chaque détail.</span>
+            </p>
+            {/* NOUVELLE PHRASE MOBILE */}
+            <p className="text-[3.2vw] text-white/60">
+              Ceci est une sélection de mes projets mis en ligne (pas l'intégralité de mes codes).
+            </p>
+          </motion.div>
         </div>
 
-        {/* Bas — vibe card qui tourne + bouton Voir détail */}
-        <div className="relative flex-1 min-h-0 flex flex-col z-10 pb-3 pt-2 gap-3">
+        <div className="relative flex-1 min-h-0 flex flex-col z-10 pb-3 pt-4 gap-4">
           <div className="relative flex-1 min-h-0">
-            <VibeCard project={projects[activeProj]} colorPhase={colorPhase} />
+            <VibeCard project={projects[activeProjMobile]} />
           </div>
           <button
             onClick={() => setGalleryOpen(true)}
-            className="flex-shrink-0 self-center font-cartoon uppercase tracking-wide text-sm bg-red-500 text-white px-6 py-2.5 rounded-full shadow-lg"
+            className="flex-shrink-0 self-center font-cartoon uppercase tracking-wide text-lg bg-red-500 text-white px-8 py-3 rounded-full shadow-lg mt-2 active:scale-95 transition-transform"
           >
-            Voir Détail
+            Voir Les Projets
           </button>
         </div>
       </section>
 
       <AnimatePresence>
         {galleryOpen && (
-          <ProjectDetailGallery startIndex={activeProj} onClose={() => setGalleryOpen(false)} />
+          <ProjectDetailGallery 
+            startIndex={activeProjMobile} 
+            // Met à jour la carte affichée sur l'accueil mobile à la fermeture
+            onClose={(lastIndex) => {
+              setGalleryOpen(false);
+              setActiveProjMobile(lastIndex);
+            }} 
+          />
         )}
       </AnimatePresence>
     </div>
