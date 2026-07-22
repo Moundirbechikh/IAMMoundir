@@ -13,10 +13,9 @@ import back8 from "../assets/back8.png";
 import back9Vid from "../assets/back9.mp4";
 import back11Vid from "../assets/back11.mp4";
 
-// Ajout de la prop "isBlurred" pour flouter le fond quand une carte est active
 function BackgroundGrid({ isBlurred }) {
   return (
-    <div 
+    <div
       className={`absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center transition-all duration-700 ${
         isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"
       }`}
@@ -134,72 +133,75 @@ export default function ArchiveHolder() {
 
   const handleBackgroundClick = () => setActiveId(null);
 
-  // mTop/mLeft/mRotate modifiés pour recréer l'effet éparpillé de ton illustration (image_7e2a3b.jpg)
+  // mTop/mLeft repositionnés en deck 2 colonnes x 4 rangées, resserré,
+  // juste sous le titre, avec léger effet éparpillé (rotation faible)
   const oldProjects = [
     {
       id: "A-01", date: "Sep. 2023", type: "wide", isVideo: true, title: "Ma Bibliothèque",
       purpose: "C'est une version améliorée (remake) de mon projet PFE de Licence. Un système de bibliothèque informatisé gérant trois types d'accès.",
       how: "React + Supabase", media: back5,
       top: "30%", left: "20%", rotate: -9, zIndex: 10,
-      mTop: "24%", mLeft: "32%", mRotate: -12,
+      mTop: "14%", mLeft: "32%", mRotate: -6,
     },
     {
       id: "A-02", date: "Jan. 2023", type: "regular", isVideo: true, title: "Finding the perfect movie",
       purpose: "Un système complet où l'user choisit son mode : similitude, tendance ou acteurs. Filtrage poussé.",
       how: "Python + Streamlit", media: back9Vid,
       top: "24%", left: "46%", rotate: 7, zIndex: 12,
-      mTop: "28%", mLeft: "76%", mRotate: 15,
+      mTop: "18%", mLeft: "68%", mRotate: 8,
     },
     {
       id: "A-03", date: "Sep. 2025", type: "wide", isVideo: true, title: "Brain Box",
       purpose: "Web app pour organiser le travail en entreprise : classement des documents, activités et tâches par employé.",
       how: "Vite + React + Node.js + MongoDB", media: back12,
       top: "45%", left: "78%", rotate: -5, zIndex: 15,
-      mTop: "44%", mLeft: "34%", mRotate: 8,
+      mTop: "34%", mLeft: "28%", mRotate: 5,
     },
     {
       id: "A-04", date: "Aou. 2024", type: "regular", isVideo: true, title: "Fast Bite",
       purpose: "Mon premier gros site de restaurant 100% fonctionnel. Gestion des commandes réelles, menus dynamiques.",
       how: "Node.js + React + MongoDB", media: back11Vid,
       top: "62%", left: "22%", rotate: -6, zIndex: 18,
-      mTop: "52%", mLeft: "74%", mRotate: -6,
+      mTop: "38%", mLeft: "70%", mRotate: -7,
     },
     {
       id: "A-05", date: "Oct. 2025", type: "wide", isVideo: true, title: "My New Style",
       purpose: "Une application e-commerce hyper classe pour vendre des habits classiques. Design épuré.",
       how: "Next.js + Firebase", media: back10Vid,
       top: "50%", left: "52%", rotate: 3, zIndex: 25,
-      mTop: "66%", mLeft: "30%", mRotate: -14,
+      mTop: "54%", mLeft: "32%", mRotate: -9,
     },
     {
       id: "A-06", date: "Dec. 2023", type: "regular", isVideo: false, title: "Enrichissement d'articles",
       purpose: "Système qui prend une phrase en input, cherche sur le web via APIs pour extraire les infos manquantes.",
       how: "APIs + Spacy + Python + BeautifulSoup", media: back6,
       top: "70%", left: "80%", rotate: 6, zIndex: 16,
-      mTop: "74%", mLeft: "72%", mRotate: 10,
+      mTop: "58%", mLeft: "68%", mRotate: 6,
     },
     {
       id: "A-07", date: "Fev. 2024", type: "wide", isVideo: false, title: "Analyse Football",
       purpose: "Étude sur une liste d'attaquants utilisant 12 variables techniques. ACP, corrélation et K-Means.",
       how: "Python + Matplotlib + Seaborn", media: back8,
       top: "74%", left: "48%", rotate: -4, zIndex: 22,
-      mTop: "88%", mLeft: "36%", mRotate: 5,
+      mTop: "76%", mLeft: "30%", mRotate: 4,
     },
     {
       id: "A-08", date: "Avr. 2022", type: "regular", isVideo: false, title: "Brotherhood",
       purpose: "Mon tout premier site de restaurant créé en première année de dev web. Il regroupe toutes les bases.",
       how: "HTML + CSS + Vanilla JS", media: back7,
       top: "32%", left: "68%", rotate: 2, zIndex: 20,
-      mTop: "92%", mLeft: "78%", mRotate: -8,
+      mTop: "80%", mLeft: "68%", mRotate: -5,
     },
   ];
 
+  const focusedProject = oldProjects.find((p) => p.id === activeId);
+
   return (
     <div ref={sectionRef} className="w-full h-full relative">
-      {/* --- DESKTOP --- */}
+      {/* --- DESKTOP (inchangé) --- */}
       <section
         onClick={handleBackgroundClick}
-        className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-6 py-6 gap-6"
+        className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row py-6 gap-6"
       >
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
@@ -207,7 +209,11 @@ export default function ArchiveHolder() {
 
         <BackgroundGrid isBlurred={activeId !== null} />
 
-        <div className="relative flex-[0.24] h-full flex flex-col justify-end items-start pl-4 lg:pl-3 xl:pl-2 z-10">
+        <div
+          className={`relative flex-[0.24] h-full flex flex-col justify-end items-start pl-8 lg:pl-6 xl:pl-4 z-10 transition-all duration-500 ${
+            activeId ? "blur-md opacity-40" : ""
+          }`}
+        >
           <GiantTitle isVisible={!showOverlay} className="text-[8.5vw] xl:text-[9vw] mb-4">
             Mes <br />
             <span className="bg-gray-400 text-black">ARCHIVES</span>
@@ -225,7 +231,7 @@ export default function ArchiveHolder() {
           </motion.div>
         </div>
 
-        <div className="relative flex-[0.76] h-full z-10">
+        <div className="relative flex-[0.76] h-full z-10 pr-4">
           {oldProjects.map((proj) => (
             <div
               key={proj.id}
@@ -251,46 +257,45 @@ export default function ArchiveHolder() {
       {/* --- MOBILE --- */}
       <section
         onClick={handleBackgroundClick}
-        className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 pt-14 pb-3"
+        className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 pt-8 pb-3"
       >
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
         </AnimatePresence>
-        
-        {/* Grille floutée dynamiquement sur mobile */}
+
         <BackgroundGrid isBlurred={activeId !== null} />
 
-        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pb-2">
+        <div
+          className={`relative flex-shrink-0 flex flex-col items-start mt-5 z-10 transition-all duration-500 ${
+            activeId ? "blur-md opacity-40" : ""
+          }`}
+        >
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative z-10 text-[7vw] uppercase text-black bg-gray-300 px-0"
+            className="relative z-10 text-[9vw] uppercase text-black bg-gray-300 px-0"
           >
             Mes
           </motion.p>
-          {/* Titre agrandi (17vw) */}
-          <GiantTitle isVisible={!showOverlay} className="text-[17vw] mb-0 mt-1 leading-[0.8] text-white">
+          <GiantTitle isVisible={!showOverlay} className="text-[17vw] mb-0 mt-0 leading-[0.8] text-white">
             ARCHIVES
           </GiantTitle>
         </div>
 
-        <div className="relative flex-1 min-h-0 w-full z-10 mt-2">
+        <div className="relative flex-1 min-h-0 w-full z-10 mt-1">
           {oldProjects.map((proj) => {
             const isActive = activeId === proj.id;
             const isBlurred = activeId !== null && !isActive;
             return (
-              <motion.div
+              <div
                 key={proj.id}
-                animate={{
-                  top: isActive ? "50%" : proj.mTop,
-                  left: isActive ? "50%" : proj.mLeft,
-                }}
-                transition={{ type: "spring", stiffness: 280, damping: 26 }}
                 style={{
                   position: "absolute",
+                  top: proj.mTop,
+                  left: proj.mLeft,
                   transform: "translate(-50%, -50%)",
-                  zIndex: isActive ? 999 : proj.zIndex,
+                  zIndex: proj.zIndex,
                 }}
               >
                 <ArchiveCard
@@ -300,23 +305,47 @@ export default function ArchiveHolder() {
                   isBlurred={isBlurred}
                   onActive={() => setActiveId(proj.id)}
                 />
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
-        {/* Message d'indication au clic */}
+        {/* Overlay focus (inchangé, tu l'as validé) */}
         <AnimatePresence>
-          {activeId && (
+          {focusedProject && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-8 left-0 w-full z-[1000] flex justify-center pointer-events-none"
+              key="focus-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveId(null);
+              }}
+              className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 backdrop-blur-sm px-6"
             >
-              <span className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-[10px] font-sans tracking-wide shadow-xl">
-                Touchez n'importe où pour fermer
-              </span>
+              <motion.div
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.7, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ArchiveCard
+                  project={{ ...focusedProject, rotate: 0 }}
+                  isMobile={true}
+                  isFocused={true}
+                  isActiveInParent={true}
+                  isBlurred={false}
+                  onActive={() => {}}
+                />
+              </motion.div>
+
+              <div className="absolute bottom-8 left-0 w-full flex justify-center pointer-events-none">
+                <span className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-[10px] font-sans tracking-wide shadow-xl">
+                  Touchez n'importe où pour fermer
+                </span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
