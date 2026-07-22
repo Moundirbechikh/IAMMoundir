@@ -13,9 +13,14 @@ import back8 from "../assets/back8.png";
 import back9Vid from "../assets/back9.mp4";
 import back11Vid from "../assets/back11.mp4";
 
-function BackgroundGrid() {
+// Ajout de la prop "isBlurred" pour flouter le fond quand une carte est active
+function BackgroundGrid({ isBlurred }) {
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center">
+    <div 
+      className={`absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center transition-all duration-700 ${
+        isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"
+      }`}
+    >
       <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-4 md:gap-6 justify-center content-center rotate-[-35deg]">
         {Array.from({ length: 160 }).map((_, i) => (
           <div key={i} className="w-24 h-24 md:w-32 md:h-32 border-2 border-dashed border-white/10 rounded-xl" />
@@ -129,70 +134,69 @@ export default function ArchiveHolder() {
 
   const handleBackgroundClick = () => setActiveId(null);
 
-  // top/left       : positions desktop (scatter, comportement hover d'origine intact)
-  // mTop/mLeft/mRotate : positions mobile en pile compacte (camera-roll), tout tient dans l'écran
+  // mTop/mLeft/mRotate modifiés pour recréer l'effet éparpillé de ton illustration (image_7e2a3b.jpg)
   const oldProjects = [
     {
       id: "A-01", date: "Sep. 2023", type: "wide", isVideo: true, title: "Ma Bibliothèque",
-      purpose: "C'est une version améliorée (remake) de mon projet PFE de Licence. Un système de bibliothèque informatisé gérant trois types d'accès : les employés, les clients et le responsable.",
+      purpose: "C'est une version améliorée (remake) de mon projet PFE de Licence. Un système de bibliothèque informatisé gérant trois types d'accès.",
       how: "React + Supabase", media: back5,
       top: "30%", left: "20%", rotate: -9, zIndex: 10,
-      mTop: "10%", mLeft: "35%", mRotate: -8,
+      mTop: "24%", mLeft: "32%", mRotate: -12,
     },
     {
       id: "A-02", date: "Jan. 2023", type: "regular", isVideo: true, title: "Finding the perfect movie",
-      purpose: "Un système complet où l'user choisit son mode : similitude, tendance ou acteurs. La méthode classique inclut un filtrage poussé pour trouver exactement ce qu'on cherche.",
+      purpose: "Un système complet où l'user choisit son mode : similitude, tendance ou acteurs. Filtrage poussé.",
       how: "Python + Streamlit", media: back9Vid,
       top: "24%", left: "46%", rotate: 7, zIndex: 12,
-      mTop: "24%", mLeft: "68%", mRotate: 6,
+      mTop: "28%", mLeft: "76%", mRotate: 15,
     },
     {
       id: "A-03", date: "Sep. 2025", type: "wide", isVideo: true, title: "Brain Box",
-      purpose: "Web app pour organiser le travail en entreprise : classement des documents, activités et tâches par employé avec historique complet. Inclut un chatbot IA et système d'auth.",
+      purpose: "Web app pour organiser le travail en entreprise : classement des documents, activités et tâches par employé.",
       how: "Vite + React + Node.js + MongoDB", media: back12,
       top: "45%", left: "78%", rotate: -5, zIndex: 15,
-      mTop: "38%", mLeft: "30%", mRotate: -5,
+      mTop: "44%", mLeft: "34%", mRotate: 8,
     },
     {
       id: "A-04", date: "Aou. 2024", type: "regular", isVideo: true, title: "Fast Bite",
-      purpose: "Mon premier gros site de restaurant 100% fonctionnel. Gestion des commandes réelles, menus dynamiques, panier interactif et avis clients avec un flux super fluide.",
+      purpose: "Mon premier gros site de restaurant 100% fonctionnel. Gestion des commandes réelles, menus dynamiques.",
       how: "Node.js + React + MongoDB", media: back11Vid,
       top: "62%", left: "22%", rotate: -6, zIndex: 18,
-      mTop: "50%", mLeft: "65%", mRotate: 8,
+      mTop: "52%", mLeft: "74%", mRotate: -6,
     },
     {
       id: "A-05", date: "Oct. 2025", type: "wide", isVideo: true, title: "My New Style",
-      purpose: "Une application e-commerce hyper classe pour vendre des habits classiques. Le focus est mis sur un design épuré et une expérience utilisateur chique.",
+      purpose: "Une application e-commerce hyper classe pour vendre des habits classiques. Design épuré.",
       how: "Next.js + Firebase", media: back10Vid,
       top: "50%", left: "52%", rotate: 3, zIndex: 25,
-      mTop: "62%", mLeft: "35%", mRotate: 4,
+      mTop: "66%", mLeft: "30%", mRotate: -14,
     },
     {
       id: "A-06", date: "Dec. 2023", type: "regular", isVideo: false, title: "Enrichissement d'articles",
-      purpose: "Système qui prend une phrase en input, cherche sur le web via APIs pour extraire les infos manquantes non présentes au départ pour générer un article complet.",
+      purpose: "Système qui prend une phrase en input, cherche sur le web via APIs pour extraire les infos manquantes.",
       how: "APIs + Spacy + Python + BeautifulSoup", media: back6,
       top: "70%", left: "80%", rotate: 6, zIndex: 16,
-      mTop: "74%", mLeft: "68%", mRotate: -6,
+      mTop: "74%", mLeft: "72%", mRotate: 10,
     },
     {
-      id: "A-07", date: "Fev. 2024", type: "wide", isVideo: false, title: "Analyse Football (Buteurs)",
-      purpose: "Étude sur une liste d'attaquants utilisant 12 variables techniques. Objectif : trouver combien de profils types existent via l'ACP, la corrélation et K-Means.",
+      id: "A-07", date: "Fev. 2024", type: "wide", isVideo: false, title: "Analyse Football",
+      purpose: "Étude sur une liste d'attaquants utilisant 12 variables techniques. ACP, corrélation et K-Means.",
       how: "Python + Matplotlib + Seaborn", media: back8,
       top: "74%", left: "48%", rotate: -4, zIndex: 22,
-      mTop: "86%", mLeft: "32%", mRotate: 5,
+      mTop: "88%", mLeft: "36%", mRotate: 5,
     },
     {
       id: "A-08", date: "Avr. 2022", type: "regular", isVideo: false, title: "Brotherhood",
-      purpose: "Mon tout premier site de restaurant créé en première année de dev web. Il regroupe toutes les bases (HTML/CSS/JS) pour une interface simple.",
+      purpose: "Mon tout premier site de restaurant créé en première année de dev web. Il regroupe toutes les bases.",
       how: "HTML + CSS + Vanilla JS", media: back7,
       top: "32%", left: "68%", rotate: 2, zIndex: 20,
-      mTop: "94%", mLeft: "65%", mRotate: -3,
+      mTop: "92%", mLeft: "78%", mRotate: -8,
     },
   ];
 
   return (
     <div ref={sectionRef} className="w-full h-full relative">
-      {/* DESKTOP (>= md) — comportement hover d'origine intact */}
+      {/* --- DESKTOP --- */}
       <section
         onClick={handleBackgroundClick}
         className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-6 py-6 gap-6"
@@ -201,13 +205,9 @@ export default function ArchiveHolder() {
           {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
         </AnimatePresence>
 
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <BackgroundGrid />
-        </div>
+        <BackgroundGrid isBlurred={activeId !== null} />
 
-        {/* Côté gauche : un peu plus étroit pour ne plus toucher les cartes */}
         <div className="relative flex-[0.24] h-full flex flex-col justify-end items-start pl-4 lg:pl-3 xl:pl-2 z-10">
-
           <GiantTitle isVisible={!showOverlay} className="text-[8.5vw] xl:text-[9vw] mb-4">
             Mes <br />
             <span className="bg-gray-400 text-black">ARCHIVES</span>
@@ -220,12 +220,11 @@ export default function ArchiveHolder() {
             className="relative z-10 text-base xl:text-[1.7vw] mb-12 text-white/80 leading-relaxed max-w-[92%] normal-case space-y-3"
           >
             <p>
-            Chaque projet ici raconte une étape de <span className="bg-gray-400 text-black">ma progression.</span> Des premières lignes de code aux architectures complexes, c'est la trace visible de <span className="bg-gray-400 text-black">mon apprentissage</span> constant <span className="bg-gray-400 text-black">en développement</span> et en design.
+              Chaque projet ici raconte une étape de <span className="bg-gray-400 text-black">ma progression.</span> Des premières lignes de code aux architectures complexes, c'est la trace visible de <span className="bg-gray-400 text-black">mon apprentissage</span> constant <span className="bg-gray-400 text-black">en développement</span> et en design.
             </p>
           </motion.div>
         </div>
 
-        {/* Côté droit : le holder des cartes, hover simple comme avant */}
         <div className="relative flex-[0.76] h-full z-10">
           {oldProjects.map((proj) => (
             <div
@@ -249,7 +248,7 @@ export default function ArchiveHolder() {
         </div>
       </section>
 
-      {/* MOBILE / TABLETTE (< md) — pile compacte, clic = carte au centre + agrandie + reste flouté */}
+      {/* --- MOBILE --- */}
       <section
         onClick={handleBackgroundClick}
         className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 pt-14 pb-3"
@@ -257,9 +256,11 @@ export default function ArchiveHolder() {
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
         </AnimatePresence>
-        <BackgroundGrid />
+        
+        {/* Grille floutée dynamiquement sur mobile */}
+        <BackgroundGrid isBlurred={activeId !== null} />
 
-        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pb-1">
+        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pb-2">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
@@ -268,13 +269,13 @@ export default function ArchiveHolder() {
           >
             Mes
           </motion.p>
-          <GiantTitle isVisible={!showOverlay} className="text-[14vw] mb-1 text-white">
+          {/* Titre agrandi (17vw) */}
+          <GiantTitle isVisible={!showOverlay} className="text-[17vw] mb-0 mt-1 leading-[0.8] text-white">
             ARCHIVES
           </GiantTitle>
         </div>
 
-        {/* Zone scatter : occupe tout l'espace restant, aucune carte ne dépasse (pas de scroll) */}
-        <div className="relative flex-1 min-h-0 w-full z-10">
+        <div className="relative flex-1 min-h-0 w-full z-10 mt-2">
           {oldProjects.map((proj) => {
             const isActive = activeId === proj.id;
             const isBlurred = activeId !== null && !isActive;
@@ -303,6 +304,22 @@ export default function ArchiveHolder() {
             );
           })}
         </div>
+
+        {/* Message d'indication au clic */}
+        <AnimatePresence>
+          {activeId && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-8 left-0 w-full z-[1000] flex justify-center pointer-events-none"
+            >
+              <span className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-[10px] font-sans tracking-wide shadow-xl">
+                Touchez n'importe où pour fermer
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
     </div>
   );

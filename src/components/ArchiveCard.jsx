@@ -6,12 +6,10 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
   const [isActive, setIsActive] = useState(false);
   const videoRef = useRef(null);
 
-  // Synchronisation avec le parent
   useEffect(() => {
     setIsActive(isActiveInParent);
   }, [isActiveInParent]);
 
-  // Fix autoplay vidéo : on force muted + play() manuellement après montage
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.muted = true;
@@ -22,8 +20,7 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
 
   const isWide = project.type === "wide";
 
-  // Desktop : tailles inchangées (scatter classique + hover)
-  // Mobile : cartes plus petites et compactes pour que la pile tienne dans l'écran
+  // Tailles identiques à ta demande initiale
   const cardWidth = isMobile
     ? isWide ? "w-[125px]" : "w-[100px]"
     : isWide ? "w-[300px]" : "w-[200px]";
@@ -37,12 +34,10 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
     onActive();
   };
 
-  // Desktop : comportement d'origine intact (hover -> scale + y -10)
-  // Mobile : la carte grossit davantage au clic (elle est repositionnée au centre par le parent),
-  // et se floute/s'assombrit si une AUTRE carte est active
+  // Mobile : scale passe à 2 pour doubler le volume de la carte au clic
   const cardAnimate = isMobile
     ? {
-        scale: isActive ? 1.55 : 1,
+        scale: isActive ? 2 : 1, 
         rotate: isActive ? 0 : project.rotate,
         opacity: isBlurred ? 0.35 : 1,
         filter: isBlurred ? "blur(4px)" : "blur(0px)",
@@ -53,6 +48,13 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
         y: isActive ? -10 : 0,
         x: 0,
       };
+
+  // Logique de couleur : Couleur naturelle + pleine opacité si actif, sinon noir et blanc
+  const mediaStyles = `w-full h-full object-cover transition-all duration-500 ${
+    isActive 
+      ? "grayscale-0 opacity-100" 
+      : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-40"
+  }`;
 
   return (
     <motion.div
@@ -71,25 +73,25 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
             loop
             muted
             playsInline
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-40 transition-all duration-500"
+            className={mediaStyles}
           />
         ) : (
           <img
             src={project.media}
             alt={project.title}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 opacity-70 group-hover:opacity-40 transition-all duration-500"
+            className={mediaStyles}
           />
         )}
 
-        {/* Petit indice "cliquable" tant que la carte n'est pas active */}
         {!isActive && (
           <div className="absolute top-1 right-1 z-20 rounded-md border border-white/10 bg-white/10 backdrop-blur-md p-1">
             <Hand className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 text-white/90" strokeWidth={2.2} />
           </div>
         )}
 
+        {/* Le fond noir semi-transparent reste pour garantir la lisibilité du texte par dessus l'image en couleur */}
         <div
-          className={`absolute inset-0 p-2 md:p-3 flex flex-col justify-center items-center text-center bg-black/60 backdrop-blur-[2px] transition-opacity duration-300 ${
+          className={`absolute inset-0 p-2 md:p-3 flex flex-col justify-center items-center text-center bg-black/70 backdrop-blur-[2px] transition-opacity duration-300 ${
             isActive ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -105,7 +107,7 @@ export default function ArchiveCard({ project, onActive, isActiveInParent, isMob
             </div>
             <div>
               <p className="text-cyan-400 font-black text-[7px] md:text-[9px] uppercase">Stack :</p>
-              <p className="text-white/80 text-[8px] md:text-[10px] font-medium">{project.how}</p>
+              <p className="text-white/90 text-[8px] md:text-[10px] font-medium">{project.how}</p>
             </div>
           </div>
         </div>
