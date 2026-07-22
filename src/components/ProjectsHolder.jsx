@@ -30,7 +30,6 @@ import back4Vid from "../assets/seenIT.mp4";
 
 // --- NOUVEAUX ASSETS : thèmes SeenIt (à ajouter dans /assets) ---
 import seenIT1 from "../assets/seenIT.jpg";
-import seenIT1Vid from "../assets/seenIT.mp4";
 import seenIT2 from "../assets/seenIT1.jpg";
 import seenIT2Vid from "../assets/seenIT1.mp4";
 import seenIT3 from "../assets/seenIT2.jpg";
@@ -79,7 +78,7 @@ const projects = [
     desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
     link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
     accent: "#0F172A", titleColor: "#F59E0B", // thème par défaut = "Nuit" (midnight)
-    logo: logo4, poster:  seenIT1, video:  seenIT1Vid, posterM: back41, videoM: null,
+    logo: logo4, poster:  seenIT1, video:  back4Vid, posterM: back41, videoM: null,
     // 6 thèmes du site SeenIt, cyclés toutes les 8s sur la carte desktop
     themes: [
       { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
