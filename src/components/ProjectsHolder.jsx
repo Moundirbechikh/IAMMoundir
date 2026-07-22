@@ -26,7 +26,7 @@ import phoneveVid from "../assets/phoneve.mp4";
 
 import back41 from "../assets/seenIT.jpg";
 import logo4 from "../assets/logoSeenIt.png";
-import back4Vid from "../assets/SeenIT.mp4";
+import back4Vid from "../assets/seenIT.mp4";
 
 // --- NOUVEAUX ASSETS : thèmes SeenIt (à ajouter dans /assets) ---
 import seenIT1 from "../assets/seenIT.jpg";
