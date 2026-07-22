@@ -3,14 +3,15 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
 import ProjectsHolder from "./components/ProjectsHolder";
+import ArchiveHolder from "./components/ArchiveHolder";
 import { useFullPageScroll } from "./hooks/useFullPageScroll";
 import { useIsDesktop } from "./hooks/useIsDesktop";
 
-// On définit ici uniquement ce qu'on veut afficher
 const sections = [
   { id: "hero", label: "Accueil", Component: Hero, color: "#ffffff", text: "dark" },
   { id: "about", label: "Qui suis-je", Component: About, color: "#facc15", text: "dark" },
-  { id: "projects", label: "Mes Projets", Component: ProjectsHolder, color: "#ef4444", text: "light" },
+  { id: "projects", label: "Projets", Component: ProjectsHolder, color: "#ef4444", text: "light" },
+  { id: "archives", label: "Archives", Component: ArchiveHolder, color: "#6b7280", text: "light" },
 ];
 
 function App() {
@@ -61,7 +62,8 @@ function App() {
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <Component />
+              {/* sections + onNavigate passés pour permettre à Hero de naviguer comme la navbar */}
+              <Component sections={sections} onNavigate={goTo} />
             </motion.div>
           </section>
         ))}

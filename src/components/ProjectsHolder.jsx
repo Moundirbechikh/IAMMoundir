@@ -1,6 +1,6 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { LayoutGrid, ArrowLeft, ArrowUpRight } from "lucide-react"; 
+import { FolderKanban, ArrowLeft, ArrowUpRight } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 
 // --- IMPORTS ASSETS ---
@@ -18,13 +18,29 @@ import phone2Vid from "../assets/phone2.mp4";
 
 import logo3 from "../assets/logo.png";
 import backve from "../assets/back.jpg";
+import backv from "../assets/backv.jpg";
 import backveVid from "../assets/backve.mp4";
+import backvVid from "../assets/backv.mp4";
 import phoneve from "../assets/phoneve.jpg";
 import phoneveVid from "../assets/phoneve.mp4";
 
 import back41 from "../assets/seenIT.jpg";
 import logo4 from "../assets/logoSeenIt.png";
 import back4Vid from "../assets/SeenIT.mp4";
+
+// --- NOUVEAUX ASSETS : thèmes SeenIt (à ajouter dans /assets) ---
+import seenIT1 from "../assets/seenIT.jpg";
+import seenIT1Vid from "../assets/seenIT.mp4";
+import seenIT2 from "../assets/seenIT1.jpg";
+import seenIT2Vid from "../assets/seenIT1.mp4";
+import seenIT3 from "../assets/seenIT2.jpg";
+import seenIT3Vid from "../assets/seenIT2.mp4";
+import seenIT4 from "../assets/seenIT3.jpg";
+import seenIT4Vid from "../assets/seenIT3.mp4";
+import seenIT5 from "../assets/seenIT4.jpg";
+import seenIT5Vid from "../assets/seenIT4.mp4";
+import seenIT6 from "../assets/seenIT5.jpg";
+import seenIT6Vid from "../assets/seenIT5.mp4";
 
 import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
@@ -51,12 +67,28 @@ const projects = [
     link: "https://my-new-life-blond.vercel.app/", font: "'Lobster', cursive",
     accent: "#365314", altAccent: "#6b21a8", titleColor: "#fff",
     logo: logo3, poster: backve, video: backveVid, posterM: phoneve, videoM: phoneveVid,
+    // Système multi-thème desktop : change de couleur toutes les 8s (lime -> purple -> lime...)
+    // ⚠️ Pas de média distinct pour l'instant : ajoute poster/video ici si tu en as.
+    themes: [
+      { id: "lime", accent: "#365314", titleColor: "#fff" ,poster: backve, video: backveVid},
+      { id: "purple", accent: "#6b21a8", titleColor: "#fff",poster: backv, video: backvVid },
+    ],
   },
   {
     id: "04", title: "SeenIt", tech: "React / Tailwind / MangoDB / Node.js",
     desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
-    link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive", accent: "#0F172A", titleColor: "#F59E0B",
-    logo: logo4, poster: back41, video: back4Vid, posterM: back41, videoM: null,
+    link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
+    accent: "#0F172A", titleColor: "#F59E0B", // thème par défaut = "Nuit" (midnight)
+    logo: logo4, poster:  seenIT1, video:  seenIT1Vid, posterM: back41, videoM: null,
+    // 6 thèmes du site SeenIt, cyclés toutes les 8s sur la carte desktop
+    themes: [
+      { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
+      { id: "midnight", accent: "#0F172A", titleColor: "#F59E0B", poster: seenIT2, video: seenIT2Vid },
+      { id: "matrix", accent: "#022C22", titleColor: "#10B981", poster: seenIT3, video: seenIT3Vid },
+      { id: "noir", accent: "#0A0A0A", titleColor: "#F5F5F5", poster: seenIT4, video: seenIT4Vid },
+      { id: "vintage", accent: "#292524", titleColor: "#D97706", poster: seenIT5, video: seenIT5Vid },
+      { id: "iconic", accent: "#C9960C", titleColor: "#C9960C", poster: seenIT6, video: seenIT6Vid },
+    ],
   },
   {
     id: "05", title: "Unicheck", tech: "React / Tailwind / Spring Boot / PostgreSQL",
@@ -66,13 +98,13 @@ const projects = [
   },
 ];
 
-// PLUS DE POINTILLÉS (border-dashed supprimé, remplacé par border-solid transparent/subtil)
+// Fond en pointillés (même logique que About), teinté rouge pour la section Projets
 function BackgroundGrid() {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center">
       <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-4 md:gap-6 justify-center content-center rotate-[-35deg]">
         {Array.from({ length: 160 }).map((_, i) => (
-          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border border-solid border-white/5 rounded-xl" />
+          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border-2 border-dashed border-red-500/10 rounded-xl" />
         ))}
       </div>
     </div>
@@ -123,7 +155,7 @@ function IntroOverlay({ startAnimation }) {
               )}
               <div className={`relative w-full h-full flex items-center justify-center rounded-xl border-2 transition-all duration-300 ${phase === 0 ? "border-transparent bg-transparent" : phase === 1 ? "border-red-400/50 bg-transparent" : "border-red-500 border-solid bg-red-500"}`}>
                 {phase === 1 && <span className={`font-black text-center px-1.5 text-lg md:text-2xl text-white ${hasText ? "opacity-100" : "opacity-0"}`}>{phrases[i % phrases.length]}</span>}
-                {phase === 2 && <motion.div initial={{ scale: 0.2, opacity: 0, rotate: -15 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}><LayoutGrid className="w-14 h-14 text-black" strokeWidth={2.2} /></motion.div>}
+                {phase === 2 && <motion.div initial={{ scale: 0.2, opacity: 0, rotate: -15 }} animate={{ scale: 1, opacity: 1, rotate: 0 }}><FolderKanban className="w-14 h-14 text-black" strokeWidth={2.2} /></motion.div>}
               </div>
             </div>
           );
@@ -224,7 +256,6 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
                  <div className="w-12 h-12 bg-white rounded-lg p-1.5 shadow-lg flex-shrink-0">
                    <img src={project.logo} className="w-full h-full object-contain" alt="" />
                  </div>
-                 {/* POLICE DYNAMIQUE */}
                  <h3 
                    className="text-white text-3xl leading-none truncate"
                    style={{ fontFamily: project.font, color: project.titleColor }}
@@ -262,7 +293,7 @@ export default function ProjectsHolder() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const [showOverlay, setShowOverlay] = useState(true);
   
-  // État Mobile (Plus d'intervalle automatique !)
+  // État Mobile
   const [activeProjMobile, setActiveProjMobile] = useState(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
   
@@ -276,6 +307,16 @@ export default function ProjectsHolder() {
       return () => clearTimeout(timer);
     }
   }, [isInView]);
+
+  // Rotation automatique infinie de la carte mobile toutes les 5s.
+  // En pause pendant que la galerie "Voir Les Projets" est ouverte (swipe = manuel côté user).
+  useEffect(() => {
+    if (galleryOpen) return undefined;
+    const interval = setInterval(() => {
+      setActiveProjMobile((prev) => (prev + 1) % projects.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [galleryOpen]);
 
   return (
     <div ref={sectionRef} className="w-full h-full relative">
@@ -307,7 +348,7 @@ export default function ProjectsHolder() {
           <GiantTitle isVisible={!showOverlay} className="text-[8vw] xl:text-[9vw] mb-4">
             MES
             <br />
-            <span className="text-red-500">PROJETS</span>
+            <span className="bg-red-500 text-black">PROJETS</span>
           </GiantTitle>
           
           <motion.div
@@ -365,24 +406,23 @@ export default function ProjectsHolder() {
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative z-10 text-[6vw] sm:text-[4vw] uppercase tracking-wide text-white/70"
+            className="relative z-10 text-[9vw] sm:text-[4vw] uppercase tracking-wide text-black bg-red-500 px-1 "
           >
             Mes
           </motion.p>
-          <GiantTitle isVisible={!showOverlay} className="text-[20vw] sm:text-[14vw] mb-2 text-white">
+          <GiantTitle isVisible={!showOverlay} className="text-[22vw] sm:text-[14vw] mb-2 text-white">
             PROJETS
           </GiantTitle>
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="relative z-10 text-[4vw] sm:text-[3vw] text-white/80 leading-snug normal-case mt-2 max-w-[95%] space-y-2"
+            className="relative z-10 text-[6vw] sm:text-[3vw] text-white/80 leading-snug normal-case mt-2 max-w-[95%] space-y-2"
           >
             <p>
-              Chaque projet est pensé de bout en bout : <span className="bg-red-500 px-1 text-black font-bold">une conception réfléchie</span> et une attention portée à <span className="bg-red-500 px-1 text-black font-bold">chaque détail.</span>
+              Chaque projet est pensé de bout en bout: <span className="bg-red-500 px-1 text-black font-bold">une conception réfléchie</span> et une attention portée à <span className="bg-red-500 px-1 text-black font-bold">chaque détail.</span>
             </p>
-            {/* NOUVELLE PHRASE MOBILE */}
-            <p className="text-[3.2vw] text-white/60">
+            <p className="text-[5.5vw] text-white/80">
               Ceci est une sélection de mes projets mis en ligne (pas l'intégralité de mes codes).
             </p>
           </motion.div>
@@ -405,7 +445,6 @@ export default function ProjectsHolder() {
         {galleryOpen && (
           <ProjectDetailGallery 
             startIndex={activeProjMobile} 
-            // Met à jour la carte affichée sur l'accueil mobile à la fermeture
             onClose={(lastIndex) => {
               setGalleryOpen(false);
               setActiveProjMobile(lastIndex);

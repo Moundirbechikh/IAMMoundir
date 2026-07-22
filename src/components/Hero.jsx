@@ -2,10 +2,6 @@ import { motion, useMotionValue, useSpring, useScroll, useTransform, useMotionVa
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { Hand, Smile } from "lucide-react";
 
-// ============================================================
-// HOOK — révèle une icône uniquement quand la plaque la recouvre
-// réellement à l'écran (comparaison de bounding boxes en live)
-// ============================================================
 function useRevealOnOverlap(plaqueRef, targetRef, mvX, mvY) {
   const [revealed, setRevealed] = useState(false);
 
@@ -40,7 +36,7 @@ function useRevealOnOverlap(plaqueRef, targetRef, mvX, mvY) {
   return revealed;
 }
 
-export default function Hero() {
+export default function Hero({ sections = [], onNavigate }) {
   const introLeft = "Bonjour je suis";
   const introRight = "Qui suis je ?";
   const introMiddle = "Mes projets ?";
@@ -48,8 +44,14 @@ export default function Hero() {
 
   const clamp = (value, max) => Math.max(-max, Math.min(max, value));
 
+  // Navigue vers une section par son id, exactement comme les flèches de la navbar
+  const goToSection = (id) => {
+    const idx = sections.findIndex((s) => s.id === id);
+    if (idx !== -1 && typeof onNavigate === "function") onNavigate(idx);
+  };
+
   // ============================================================
-  // PARALLAX SOURIS — DESKTOP (range of motion augmenté)
+  // PARALLAX SOURIS — DESKTOP
   // ============================================================
   const rawPlaqueX = useMotionValue(0);
   const rawPlaqueY = useMotionValue(0);
@@ -74,7 +76,6 @@ export default function Hero() {
     const dx = e.clientX - rect.left - rect.width / 2;
     const dy = e.clientY - rect.top - rect.height / 2;
 
-    // Range of motion augmenté : la plaque peut aller jusqu'en haut/bas complet
     const maxX = rect.width * 0.36;
     const maxY = rect.height * 0.42;
 
@@ -82,7 +83,6 @@ export default function Hero() {
     rawPlaqueY.set(clamp(dy * 0.6, maxY));
   };
 
-  // Refs pour la détection de superposition — DESKTOP
   const plaqueRef = useRef(null);
   const waveRef = useRef(null);
   const smileRef = useRef(null);
@@ -90,7 +90,7 @@ export default function Hero() {
   const smileRevealed = useRevealOnOverlap(plaqueRef, smileRef, plaqueX, plaqueY);
 
   // ============================================================
-  // PARALLAX TACTILE ET CONTRAINTES — MOBILE (inchangé)
+  // PARALLAX TACTILE ET CONTRAINTES — MOBILE
   // ============================================================
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
@@ -129,7 +129,6 @@ export default function Hero() {
 
   const plaqueTiltM = useTransform(scrollProgressM, [0, 1], [-6, -2]);
 
-  // Refs pour la détection de superposition — MOBILE
   const plaqueRefM = useRef(null);
   const waveRefM = useRef(null);
   const smileRefM = useRef(null);
@@ -184,7 +183,7 @@ export default function Hero() {
       title: "qui suis je",
       barColorClass: "bg-yellow-400",
       frameColor: "#facc15",
-      cta: { label: "More about me", href: "#about" },
+      cta: { label: "More about me", targetId: "about" },
       content: "Je suis développeur fullstack spécialisé en frontend et design. J'ai 23 ans, de Oran. Je propulse vos idées en expériences visuelles radicales.",
       teaser: "Développeur fullstack — frontend & design. 23 ans, Oran.",
     },
@@ -192,7 +191,7 @@ export default function Hero() {
       title: "Mes projets ?",
       barColorClass: "bg-red-500",
       frameColor: "#ef4444",
-      cta: { label: "Voir plus", href: "#projets" },
+      cta: { label: "Voir plus", targetId: "projects" },
       content: "Découvrez une sélection de mes réalisations alliant design immersif et défis techniques.",
       teaser: "Design immersif & défis techniques.",
     },
@@ -200,7 +199,8 @@ export default function Hero() {
       title: "parcours ?",
       barColorClass: "bg-green-500",
       frameColor: "#22c55e",
-      cta: { label: "Explorer", href: "#parcours" },
+      // Le parcours est intégré dans la section "About", donc ce bouton navigue aussi vers "about"
+      cta: { label: "Explorer", targetId: "about" },
       content: "L'évolution de mes compétences et de ma passion pour la tech au fil des années.",
       teaser: "L'évolution de mes compétences dans le temps.",
     },
@@ -219,7 +219,6 @@ export default function Hero() {
         <div className="absolute w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-[150px] pointer-events-none z-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
 
         <div className="relative z-10 w-[58vw] flex flex-col items-start justify-center text-left space-y-3 pl-[1vw]">
-          {/* "Bonjour je suis" + coucou révélé quand la plaque monte jusqu'ici */}
           <motion.div
             variants={typewriterLeft}
             initial="hidden"
@@ -250,7 +249,6 @@ export default function Hero() {
               Moundir
             </motion.h1>
 
-            {/* Smiley révélé — visible dès que la plaque le recouvre (dès le repos) */}
             <RevealSmile
               ref={smileRef}
               revealed={smileRevealed}
@@ -314,8 +312,9 @@ export default function Hero() {
             </motion.p>
           </motion.div>
 
-          <motion.a
-            href="#projets"
+          <motion.button
+            type="button"
+            onClick={() => goToSection(cardsData.projets.cta.targetId)}
             variants={ctaVariants}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="group absolute left-6 bottom-5 z-20 inline-flex items-center gap-2 overflow-hidden rounded-[10px] border-2 border-white px-5 py-2 uppercase tracking-tight text-white text-xl"
@@ -323,7 +322,7 @@ export default function Hero() {
             <span className="absolute inset-0 bg-red-500 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             <span className="relative z-10 transition-colors duration-300 group-hover:text-black">Voir plus</span>
             <span className="relative z-10 transition-all duration-300 group-hover:text-black group-hover:translate-x-1">?</span>
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         <motion.div
@@ -363,8 +362,9 @@ export default function Hero() {
             </motion.p>
           </motion.div>
 
-          <motion.a
-            href="#parcours"
+          <motion.button
+            type="button"
+            onClick={() => goToSection(cardsData.parcours.cta.targetId)}
             variants={ctaVariants}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="group absolute left-6 bottom-5 z-20 inline-flex items-center gap-2 overflow-hidden rounded-[10px] border-2 border-white px-5 py-2 uppercase tracking-tight text-white text-xl"
@@ -372,7 +372,7 @@ export default function Hero() {
             <span className="absolute inset-0 bg-green-500 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             <span className="relative z-10 transition-colors duration-300 group-hover:text-black">Explorer</span>
             <span className="relative z-10 transition-all duration-300 group-hover:text-black group-hover:translate-x-1">?</span>
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         <motion.div initial="rest" whileHover="hover" className="relative w-[32vw] flex flex-col items-start justify-center p-10">
@@ -416,8 +416,9 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          <motion.a
-            href="#about"
+          <motion.button
+            type="button"
+            onClick={() => goToSection(cardsData.about.cta.targetId)}
             variants={ctaVariants}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="group absolute left-10 bottom-5 z-20 inline-flex items-center gap-3 overflow-hidden rounded-[14px] border-2 border-white px-10 py-4 uppercase tracking-tight text-white text-2xl"
@@ -425,7 +426,7 @@ export default function Hero() {
             <span className="absolute inset-0 bg-yellow-400 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             <span className="relative z-10 transition-colors duration-300 group-hover:text-black">More about me</span>
             <span className="relative z-10 transition-all duration-300 group-hover:text-black group-hover:translate-x-1">?</span>
-          </motion.a>
+          </motion.button>
         </motion.div>
       </section>
 
@@ -450,7 +451,7 @@ export default function Hero() {
           className="absolute z-20 top-[39%] left-[24%] w-[52%] h-[22%] bg-white rounded-[18px] mix-blend-difference pointer-events-none"
         />
 
-        {/* ---------- ROW 1 : Bonjour je suis (+ coucou) & Mes projets ---------- */}
+        {/* ---------- ROW 1 ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3" style={{ flex: "0 0 14%" }}>
           <div className="w-[45%] flex flex-col justify-center items-start pl-1">
             <motion.div
@@ -477,7 +478,7 @@ export default function Hero() {
             transition={{ delay: 2.1, duration: 0.5, ease: "easeOut" }}
             className="w-[48%] h-full"
           >
-            <MobileCard cardData={cardsData.projets}>
+            <MobileCard cardData={cardsData.projets} onCtaClick={() => goToSection(cardsData.projets.cta.targetId)}>
               <span className="block font-cartoon uppercase tracking-tight text-white text-[8vw] sm:text-[4.5vw] md:text-[3.5vw] leading-none text-center mb-1">
                 Mes
                 <br />
@@ -490,7 +491,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* ---------- ROW 2 : MOUNDIR (+ smiley avant "dir") ---------- */}
+        {/* ---------- ROW 2 ---------- */}
         <div className="relative z-10 flex items-center justify-center w-full" style={{ flex: "0 0 40%" }}>
           <motion.h1
             initial={{ opacity: 0, scale: 0.75, y: 20 }}
@@ -511,7 +512,7 @@ export default function Hero() {
           </motion.h1>
         </div>
 
-        {/* ---------- ROW 3 : Qui suis je (grande carte) | Bienvenue + Parcours ---------- */}
+        {/* ---------- ROW 3 ---------- */}
         <div className="relative z-10 flex w-full gap-2 sm:gap-3 flex-1 min-h-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -522,6 +523,7 @@ export default function Hero() {
             <MobileCard
               cardData={cardsData.about}
               revealContent="Je propulse vos idées en expériences visuelles radicales."
+              onCtaClick={() => goToSection(cardsData.about.cta.targetId)}
             >
               <div className="flex flex-col items-center justify-center text-center w-full h-full px-1">
                 <span className="block font-cartoon uppercase tracking-tight text-white text-[10vw] sm:text-[6vw] md:text-[4vw] leading-none mb-3">
@@ -561,7 +563,7 @@ export default function Hero() {
               transition={{ delay: 2.1, duration: 0.5, ease: "easeOut" }}
               className="flex-1 min-h-0"
             >
-              <MobileCard cardData={cardsData.parcours}>
+              <MobileCard cardData={cardsData.parcours} onCtaClick={() => goToSection(cardsData.parcours.cta.targetId)}>
                 <span className="block font-cartoon uppercase tracking-tight text-white text-[7.5vw] sm:text-[4.2vw] md:text-[3.2vw] leading-none text-center mb-1">
                   parcours ?
                 </span>
@@ -578,8 +580,7 @@ export default function Hero() {
 }
 
 // ============================================================
-// EMOJIS "TROUVAILLE" — révélés seulement quand ils sont
-// géométriquement recouverts par la plaque (voir useRevealOnOverlap)
+// EMOJIS "TROUVAILLE"
 // ============================================================
 const RevealWave = forwardRef(function RevealWave({ revealed, className = "", color = "#ffffff" }, ref) {
   return (
@@ -619,7 +620,7 @@ const RevealSmile = forwardRef(function RevealSmile({ revealed, className = "", 
 });
 
 // ============================================================
-// COMPOSANTS SUPPORTS DESKTOP (inchangés)
+// COMPOSANTS SUPPORTS DESKTOP
 // ============================================================
 const barOuterTop = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0 } } };
 const barOuterBottom = { rest: { scaleY: 0 }, hover: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0 } } };
@@ -663,7 +664,7 @@ function MiniHighlight({ children, delay = 0 }) {
 // ============================================================
 // CARTE MOBILE
 // ============================================================
-function MobileCard({ cardData, children, revealContent, topTitle, centerBody }) {
+function MobileCard({ cardData, children, revealContent, topTitle, centerBody, onCtaClick }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleClick = () => {
     setIsOpen((v) => !v);
@@ -722,13 +723,16 @@ function MobileCard({ cardData, children, revealContent, topTitle, centerBody })
               {revealContent ?? cardData.content}
             </div>
 
-            <a
-              href={cardData.cta.href}
-              onClick={(e) => e.stopPropagation()}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCtaClick?.();
+              }}
               className="mt-2 group relative inline-flex items-center gap-1 overflow-hidden rounded-[8px] border border-transparent bg-white px-4 py-2 uppercase tracking-tight text-black text-[3.6vw] sm:text-[1.5vw] md:text-[1vw] font-bold shadow-md"
             >
               <span className="relative z-10">{cardData.cta.label}</span>
-            </a>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
