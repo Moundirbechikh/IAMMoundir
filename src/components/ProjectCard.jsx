@@ -1,11 +1,16 @@
+// components/ProjectCard.jsx — SEUL changement : défaut robuste sur "crimson"
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 
-// Cycle automatiquement entre les thèmes d'un projet (couleur + média) toutes les `intervalMs` ms.
-// Si le projet n'a pas de `themes` (ou un seul), rien ne se passe : comportement statique inchangé.
-function useThemeCycle(themes, intervalMs = 8000) {
-  const [index, setIndex] = useState(0);
+function useThemeCycle(themes, intervalMs = 8000, defaultId = "crimson") {
+  const getDefaultIndex = () => {
+    if (!themes || !themes.length) return 0;
+    const idx = themes.findIndex((t) => t.id === defaultId);
+    return idx >= 0 ? idx : 0;
+  };
+
+  const [index, setIndex] = useState(getDefaultIndex);
 
   useEffect(() => {
     if (!themes || themes.length < 2) return undefined;
@@ -21,7 +26,6 @@ function useThemeCycle(themes, intervalMs = 8000) {
 export default function ProjectCard({ project, index, isActive, isBlurred, onClick }) {
   const [hovered, setHovered] = useState(false);
 
-  // Thème actif (couleur/poster/vidéo) — retombe sur les champs du projet si pas de "themes"
   const activeTheme = useThemeCycle(project.themes);
   const current = activeTheme ? { ...project, ...activeTheme } : project;
 
@@ -60,7 +64,6 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
     >
       {isActive ? (
         <>
-          {/* BARRE DE NAVIGATEUR */}
           <div className="h-12 bg-[#2d2d2d] flex items-center px-4 justify-between shrink-0 border-b border-black/50">
             <div className="flex items-center gap-4">
               <div className="flex gap-2 w-16">
@@ -92,7 +95,6 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
             </div>
           </div>
 
-          {/* VIDÉO / IMAGE — crossfade fluide quand le thème change */}
           <div className="relative flex-1 bg-[#111] w-full overflow-hidden">
             <AnimatePresence mode="sync">
               {current.video ? (
@@ -123,7 +125,6 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
             </AnimatePresence>
           </div>
 
-          {/* BARRE D'INFORMATIONS — couleur transition douce */}
           <div
             className="h-24 shrink-0 flex items-center px-6"
             style={{ backgroundColor: current.accent, transition: "background-color 0.8s ease" }}
