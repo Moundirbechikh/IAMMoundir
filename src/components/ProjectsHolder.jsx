@@ -30,6 +30,7 @@ import logo4 from "../assets/logoSeenIt.png";
 import back4Vid from "../assets/seenIT1.mp4";
 
 import seenIT1 from "../assets/seenIT.jpg";
+import seenITphone from "../assets/seenITphone.jpg";
 import seenIT2 from "../assets/seenIT1.jpg";
 import seenIT2Vid from "../assets/seenIT1.mp4";
 import seenIT3 from "../assets/seenIT2.jpg";
@@ -76,7 +77,7 @@ const projects = [
     desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
     link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
     accent: "#09090B", titleColor: "#E11D48", // défaut = crimson (cohérent avec themes[0])
-    logo: logo4, poster: seenIT1, video: back4Vid, posterM: back41, videoM: null,
+    logo: logo4, poster: seenIT1, video: back4Vid, posterM: seenITphone, videoM: seenITphone,
     themes: [
       { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
       { id: "midnight", accent: "#0F172A", titleColor: "#F59E0B", poster: seenIT2, video: seenIT2Vid },
