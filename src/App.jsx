@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
+import Evolution from "./components/Evolution"; // 1. Import du composant
 import ProjectsHolder from "./components/ProjectsHolder";
 import ArchiveHolder from "./components/ArchiveHolder";
 import { useFullPageScroll } from "./hooks/useFullPageScroll";
@@ -10,8 +11,11 @@ import { useIsDesktop } from "./hooks/useIsDesktop";
 const sections = [
   { id: "hero", label: "Accueil", Component: Hero, color: "#ffffff", text: "dark" },
   { id: "about", label: "Qui suis-je", Component: About, color: "#facc15", text: "dark" },
+  // 2. Ajout de la section Parcours avec la couleur green-500 (#22c55e)
+
   { id: "projects", label: "Projets", Component: ProjectsHolder, color: "#ef4444", text: "light" },
   { id: "archives", label: "Archives", Component: ArchiveHolder, color: "#6b7280", text: "light" },
+  { id: "parcours", label: "Parcours", Component: Evolution, color: "#22c55e", text: "light" },
 ];
 
 function App() {
@@ -62,7 +66,6 @@ function App() {
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              {/* sections + onNavigate passés pour permettre à Hero de naviguer comme la navbar */}
               <Component sections={sections} onNavigate={goTo} />
             </motion.div>
           </section>
