@@ -178,7 +178,6 @@ function Parchment() {
     <>
       <div className="absolute inset-0 -z-10 opacity-90" style={{ background: "linear-gradient(135deg,#a67c52,#8b643a)", clipPath: TORN_CLIP, transform: "rotate(1.6deg) scale(1.02)", filter: "blur(2px)" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 18% 28%, rgba(90,65,40,.18), transparent 26%), radial-gradient(circle at 82% 68%, rgba(90,65,40,.15), transparent 30%), radial-gradient(circle at 55% 15%, rgba(90,65,40,.12), transparent 22%), radial-gradient(circle at 30% 85%, rgba(90,65,40,.14), transparent 24%), linear-gradient(135deg, #ebd8af, #dfc99b 55%, #d4b882)", clipPath: TORN_CLIP, boxShadow: "inset 0 0 120px rgba(60,40,15,.5), inset 0 0 30px rgba(60,40,15,.4)", transform: "rotate(-1.4deg)" }} />
-      {/* Texture de grain mathématique pour le réalisme ultime */}
       <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-25" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, clipPath: TORN_CLIP, transform: "rotate(-1.4deg)" }} />
     </>
   );
@@ -187,12 +186,11 @@ function Parchment() {
 function Pin() {
   return (
     <div className="absolute z-30 w-[22px] h-[22px] bg-green-500 shadow-lg" style={{ top: -12, left: "50%", borderRadius: "50% 50% 50% 0", transform: "translateX(-50%) rotate(-45deg)" }}>
-      <div className="absolute w-2 h-2 rounded-full bg-[#0c0c0c]" style={{ top: 5, left: 5 }} />
+      <div className="absolute w-3 h-3 rounded-full bg-[#0c0c0c]" style={{ top: 5, left: 6 }} />
     </div>
   );
 }
 
-// Sceau déplacé en HAUT À DROITE
 function WaxSeal({ count, total }) {
   return (
     <div className="absolute top-[6%] right-[5%] z-30 w-[60px] h-[60px] rounded-full bg-green-500 border-[3px] border-dashed border-black/25 flex flex-col items-center justify-center shadow-xl rotate-[12deg]">
@@ -202,24 +200,73 @@ function WaxSeal({ count, total }) {
   );
 }
 
-// Décorations de la Chasse au Trésor (Dessins à l'encre)
+// Décorations de la Chasse au Trésor
 function MapDoodles({ isMobile }) {
   return (
-    <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-40">
-      {/* Montagnes au centre bas */}
-      <Mountain className="absolute w-14 h-14 bottom-[15%] left-[45%]" strokeWidth={1} />
-      <TreePine className="absolute w-8 h-8 bottom-[13%] left-[53%]" strokeWidth={1} />
-      <TreePine className="absolute w-6 h-6 bottom-[17%] left-[41%]" strokeWidth={1} />
+    <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-50">
+      
+      {/* Montagnes Agrandies au centre bas */}
+      <Mountain className="absolute w-24 h-24 bottom-[10%] left-[40%]" strokeWidth={1} />
+      <TreePine className="absolute w-10 h-10 bottom-[10%] left-[55%]" strokeWidth={1} />
+      <TreePine className="absolute w-8 h-8 bottom-[18%] left-[36%]" strokeWidth={1} />
       
       {/* Océan & Danger */}
       <Waves className="absolute w-12 h-12 top-[60%] left-[85%]" strokeWidth={1.5} />
       <Anchor className="absolute w-8 h-8 top-[72%] left-[88%] -rotate-12" strokeWidth={1.2} />
-      <Skull className="absolute w-10 h-10 top-[15%] left-[80%] rotate-12" strokeWidth={1.2} />
+      <Skull className="absolute w-16 h-16 top-[15%] left-[80%] rotate-12" strokeWidth={1.5} />
       
-      {/* Le Trésor "X" sous l'étape Finale (07 Cloud) */}
+{/* LE COFFRE AU TRÉSOR ULTRA-DÉTAILLÉ ET AGRANDI */}
+<svg 
+  className="absolute w-28 h-28 sm:w-32 sm:h-32 -rotate-12 drop-shadow-xl z-10 pointer-events-none" 
+  style={isMobile ? { top: '35%', left: '32%' } : { top: '42%', left: '30%' }} 
+  viewBox="0 0 64 64" 
+  fill="none" 
+  stroke="#3f2d1c" 
+  strokeWidth="2" 
+  strokeLinecap="round" 
+  strokeLinejoin="round"
+>
+  {/* Éclat / Pièces d'or et joyaux qui sortent du coffre */}
+  <circle cx="32" cy="14" r="3" fill="#eab308" stroke="#3f2d1c" />
+  <circle cx="25" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+  <circle cx="39" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+  <path d="M29 11l3-3 3 3-3 3z" fill="#eab308" stroke="#3f2d1c" strokeWidth="1.5" />
+
+  {/* Corps principal du coffre (bois) */}
+  <path d="M12 30v20c0 2.2 1.8 4 4 4h32c2.2 0 4-1.8 4-4V30" fill="#dfc99b" fillOpacity="0.6" />
+  <path d="M10 24h44v8H10z" fill="#b08d57" />
+  <path d="M12 32h40v20H12z" />
+  
+  {/* Lignes de planches de bois */}
+  <line x1="12" y1="38" x2="52" y2="38" strokeWidth="1.5" opacity="0.7" />
+  <line x1="12" y1="46" x2="52" y2="46" strokeWidth="1.5" opacity="0.7" />
+
+  {/* Renforts métalliques verticaux */}
+  <path d="M20 32v20M44 32v20" strokeWidth="3" strokeLinecap="square" />
+
+  {/* Couvercle bombé */}
+  <path d="M10 24c0-10 7-14 22-14s22 4 22 14" fill="#ebd8af" fillOpacity="0.8" />
+  <path d="M10 24c0-10 7-14 22-14s22 4 22 14" strokeWidth="2.5" />
+  
+  {/* Sangle centrale du couvercle */}
+  <path d="M32 10v22" strokeWidth="3" />
+
+  {/* Serrure et plaque centrale */}
+  <rect x="27" y="22" width="10" height="12" rx="2" fill="#3f2d1c" />
+  <circle cx="32" cy="27" r="2" fill="#ebd8af" />
+  <path d="M32 29v3" stroke="#ebd8af" strokeWidth="1.5" />
+
+  {/* Rivets et clous décoratifs */}
+  <circle cx="16" cy="28" r="1.2" fill="#3f2d1c" />
+  <circle cx="48" cy="28" r="1.2" fill="#3f2d1c" />
+  <circle cx="16" cy="42" r="1.2" fill="#3f2d1c" />
+  <circle cx="48" cy="42" r="1.2" fill="#3f2d1c" />
+</svg>
+
+      {/* Le Trésor "X" */}
       <div 
-        className="absolute font-cartoon text-red-700/80 text-6xl font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 rotate-12" 
-        style={isMobile ? { top: '96%', left: '25%' } : { top: '65%', left: '15%' }}
+        className="absolute font-cartoon text-red-700/80 text-[6rem] sm:text-[9rem] font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 rotate-12" 
+        style={isMobile ? { top: '88%', left: '25%' } : { top: '65%', left: '15%' }}
       >
         X
       </div>
@@ -228,7 +275,7 @@ function MapDoodles({ isMobile }) {
 }
 
 // ============================================================
-// MARQUEUR D'ÉTAPE ET PANNEAU (ZÉRO BUG DE CARRÉ NOIR)
+// MARQUEUR D'ÉTAPE ET PANNEAU
 // ============================================================
 function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
   return (
@@ -241,27 +288,26 @@ function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
     >
       <motion.div
         animate={{ scale: isActive ? 1.15 : 1, backgroundColor: isActive ? "#22c55e" : "#f4e9cf", color: isActive ? "#000" : "#3f2d1c" }}
-        transition={{ duration: 0.2 }}
-        className="relative z-10 w-11 h-11 sm:w-12 sm:h-12 rounded-full border-[2.5px] border-[#3f2d1c] flex items-center justify-center font-cartoon text-lg sm:text-xl shadow-lg cursor-pointer"
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-[#3f2d1c] flex items-center justify-center font-cartoon text-xl sm:text-2xl shadow-xl cursor-pointer"
       >
         {step.id}
       </motion.div>
 
-      <p className="mt-1 font-cartoon text-[10px] sm:text-[11px] uppercase tracking-wide text-[#3f2d1c] text-center max-w-[80px] sm:max-w-[90px] mx-auto">
+      <p className="mt-1 font-cartoon text-[11px] sm:text-[13px] uppercase tracking-wide text-[#3f2d1c] text-center max-w-[100px] sm:max-w-[110px] mx-auto font-bold">
         {step.title}
       </p>
 
-      {/* AnimatePresence GARANTIT que le panneau disparaît complètement (fini le carré noir) */}
       <AnimatePresence>
         {isActive && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            initial={{ opacity: 0, scale: 0.8, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            transition={{ type: "spring", stiffness: 350, damping: 22 }}
             style={isMobile ? getMobilePanelStyle(step.mx, step.my) : getDesktopPanelStyle(step.x, step.y)}
             className="absolute z-50 min-h-[170px] flex flex-col items-start justify-start pt-3 pb-5 px-5 bg-[#0c0c0c] rounded-lg shadow-2xl pointer-events-auto cursor-default"
-            onClick={(e) => isMobile && e.stopPropagation()} // Évite de fermer au clic sur le panneau
+            onClick={(e) => isMobile && e.stopPropagation()} 
           >
             <AnimatedFrame hoverColor="#22c55e" />
             
@@ -275,7 +321,7 @@ function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
             </div>
 
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
               className="relative z-20 flex flex-col w-full h-full text-black"
             >
               <h3 className="font-cartoon uppercase text-3xl leading-none text-black mb-1">{step.title}</h3>
@@ -359,9 +405,19 @@ export default function Evolution() {
             <CompassRose />
             <MapDoodles isMobile={false} />
 
-            {/* Tracé en Pointillés */}
+            {/* TRACÉ MODIFIÉ : Traits irréguliers au lieu de points ronds */}
             <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" preserveAspectRatio="none">
-              <polyline points={routeDesktop} fill="none" stroke="#5c4033" strokeOpacity="0.75" strokeWidth="4" strokeDasharray="10 10" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              <polyline 
+                points={routeDesktop} 
+                fill="none" 
+                stroke="#3f2d1c" 
+                strokeOpacity="0.85" 
+                strokeWidth="4" 
+                strokeDasharray="15 12 25 15 10 18" 
+                strokeLinecap="butt" 
+                strokeLinejoin="round" 
+                vectorEffect="non-scaling-stroke" 
+              />
             </svg>
 
             {evolutionSteps.map((step) => (
@@ -390,8 +446,19 @@ export default function Evolution() {
             <CompassRose size={70} opacity={0.22} />
             <MapDoodles isMobile={true} />
 
+            {/* TRACÉ MODIFIÉ MOBILE : Traits irréguliers */}
             <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" preserveAspectRatio="none">
-              <polyline points={routeMobile} fill="none" stroke="#5c4033" strokeOpacity="0.75" strokeWidth="3" strokeDasharray="8 8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              <polyline 
+                points={routeMobile} 
+                fill="none" 
+                stroke="#3f2d1c" 
+                strokeOpacity="0.85" 
+                strokeWidth="3.5" 
+                strokeDasharray="12 10 20 12 8 15" 
+                strokeLinecap="butt" 
+                strokeLinejoin="round" 
+                vectorEffect="non-scaling-stroke" 
+              />
             </svg>
 
             {evolutionSteps.map((step) => (
