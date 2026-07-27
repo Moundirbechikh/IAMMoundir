@@ -200,7 +200,7 @@ export default function Hero({ sections = [], onNavigate }) {
       barColorClass: "bg-green-500",
       frameColor: "#22c55e",
       // Le parcours est intégré dans la section "About", donc ce bouton navigue aussi vers "about"
-      cta: { label: "Explorer", targetId: "about" },
+      cta: { label: "Explorer", targetId: "parcours" },
       content: "L'évolution de mes compétences et de ma passion pour la tech au fil des années.",
       teaser: "L'évolution de mes compétences dans le temps.",
     },

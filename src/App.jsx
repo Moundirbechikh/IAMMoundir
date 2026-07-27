@@ -5,6 +5,7 @@ import About from "./components/About";
 import Evolution from "./components/Evolution"; // 1. Import du composant
 import ProjectsHolder from "./components/ProjectsHolder";
 import ArchiveHolder from "./components/ArchiveHolder";
+import Contact from "./components/Contact";
 import { useFullPageScroll } from "./hooks/useFullPageScroll";
 import { useIsDesktop } from "./hooks/useIsDesktop";
 
@@ -16,6 +17,7 @@ const sections = [
   { id: "projects", label: "Projets", Component: ProjectsHolder, color: "#ef4444", text: "light" },
   { id: "archives", label: "Archives", Component: ArchiveHolder, color: "#6b7280", text: "light" },
   { id: "parcours", label: "Parcours", Component: Evolution, color: "#22c55e", text: "light" },
+  { id: "contact", label: "contact", Component: Contact, color: "#3b82f6", text: "dark" },
 ];
 
 function App() {

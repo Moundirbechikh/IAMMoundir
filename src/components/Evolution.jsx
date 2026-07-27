@@ -12,7 +12,6 @@ const evolutionSteps = [
   { id: "04", title: "Fullstack", subtitle: "Écosystème", desc: "Architectures complètes, IA (NLP), plateformes de bout en bout.", techs: ["React", "Node", "Mongo"], x: 82, y: 45, mx: 82, my: 53 },
   { id: "05", title: "Avancées", subtitle: "BaaS & Front", desc: "Frameworks modernes SSR, BaaS pour le temps réel sécurisé.", techs: ["Next.js", "Firebase"], x: 65, y: 65, mx: 15, my: 62 },
   { id: "06", title: "Data Science", subtitle: "Données", desc: "Analyse statistique, clustering, réduction de dimension avancée.", techs: ["Streamlit", "K-Means"], x: 45, y: 80, mx: 71, my: 76 },
-  // L'étape 7 a été remontée sur Desktop (y: 58) et Mobile (my: 80) pour éviter que le titre ne soit coupé
   { id: "07", title: "Cloud", subtitle: "Production", desc: "Environnements de production, serveurs, déploiement complet.", techs: ["Render", "Vercel"], x: 22, y: 58, mx: 20, my: 88 },
 ];
 
@@ -74,7 +73,7 @@ function getDesktopPanelStyle(x, y) {
 // ============================================================
 function Highlight({ children, className = "" }) {
   return (
-    <span className={`inline-block bg-green-500 text-black px-2.5 py-0.5 mx-1 rounded-sm font-black font-cartoon uppercase tracking-wide whitespace-nowrap ${className}`}>
+    <span className={`inline-block bg-green-500 text-black  py-0.3 mx-1  font-black font-cartoon uppercase tracking-wide whitespace-nowrap ${className}`}>
       {children}
     </span>
   );
@@ -177,7 +176,6 @@ function Parchment() {
       <div className="absolute inset-0 -z-10 opacity-90" style={{ background: "linear-gradient(135deg,#a67c52,#8b643a)", clipPath: TORN_CLIP, transform: "rotate(1.6deg) scale(1.02)", filter: "blur(2px)" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 18% 28%, rgba(90,65,40,.18), transparent 26%), radial-gradient(circle at 82% 68%, rgba(90,65,40,.15), transparent 30%), radial-gradient(circle at 55% 15%, rgba(90,65,40,.12), transparent 22%), radial-gradient(circle at 30% 85%, rgba(90,65,40,.14), transparent 24%), linear-gradient(135deg, #ebd8af, #dfc99b 55%, #d4b882)", clipPath: TORN_CLIP, boxShadow: "inset 0 0 120px rgba(60,40,15,.5), inset 0 0 30px rgba(60,40,15,.4)", transform: "rotate(-1.4deg)" }} />
       <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-25" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, clipPath: TORN_CLIP, transform: "rotate(-1.4deg)" }} />
-      {/* Coins noirs retirés comme demandé */}
     </>
   );
 }
@@ -204,7 +202,6 @@ function WaxSeal({ count, total }) {
 // ============================================================
 function MapDoodles({ isMobile }) {
   if (isMobile) {
-    // DISPOSITION MOBILE : Icônes plus grandes et ajustées
     return (
       <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-60">
         <Waves className="absolute w-16 h-16 top-[6%] left-[55%]" strokeWidth={2} />
@@ -232,24 +229,21 @@ function MapDoodles({ isMobile }) {
           <path d="M32 29v3" stroke="#ebd8af" strokeWidth="1.5" />
         </svg>
 
-        {/* Le grand X final (remonté à 85%) */}
+        {/* Le grand X final */}
         <div className="absolute font-cartoon text-red-700/80 text-[6rem] font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 rotate-12" style={{ top: '75%', left: '70%' }}>X</div>
       </div>
     );
   }
 
-  // DISPOSITION DESKTOP : Décoration épique et icônes ajoutées/agrandies
   return (
     <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-65">
       <Mountain className="absolute w-36 h-36 bottom-[6%] left-[10%]" strokeWidth={1.5} />
       <TreePine className="absolute w-16 h-16 bottom-[12%] left-[55%]" strokeWidth={1.5} />
       <TreePine className="absolute w-12 h-12 bottom-[18%] left-[62%]" strokeWidth={1.5} />
       
-      {/* Nouveaux Emojis/Icones intégrés au desktop */}
       <Waves className="absolute w-20 h-20 top-[8%] left-[24%] opacity-70" strokeWidth={2} />
       <Anchor className="absolute w-18 h-18 bottom-[31%] left-[82%] -rotate-12 opacity-70" strokeWidth={2} />
       
-      {/* Navire Pirate Dessiné */}
       <svg className="absolute w-28 h-28 drop-shadow-sm" style={{ top: '10%', left: '48%', transform: 'translate(-50%, -50%) rotate(-5deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 42 Q 32 50 50 42 L 46 52 Q 32 58 18 52 Z" fill="#b08d57" fillOpacity="0.8" />
         <line x1="26" y1="44" x2="26" y2="12" strokeWidth="2.5" />
@@ -260,87 +254,38 @@ function MapDoodles({ isMobile }) {
         <path d="M10 52 Q 15 48 25 52 T 45 52 T 55 52" stroke="#3f2d1c" strokeWidth="1.5" />
       </svg>
 
-{/* Épées Croisées Perfectionnées */}
-<svg 
-  className="absolute w-24 h-24 drop-shadow-sm" 
-  style={{ top: '40%', left: '15%', transform: 'translate(-50%, -50%) rotate(12deg)' }} 
-  viewBox="0 0 64 64" 
-  fill="none" 
-  stroke="#3f2d1c" 
-  strokeWidth="1.8" 
-  strokeLinecap="round" 
-  strokeLinejoin="round"
->
-  {/* Épée 1 (Diagonale Haut-Gauche -> Bas-Droite) */}
-  <g>
-    {/* Poignée & Pommeau */}
-    <circle cx="12" cy="52" r="2.5" fill="#3f2d1c" />
-    <path d="M 12 52 L 18 46" strokeWidth="2.5" />
-    {/* Garde de sabre pirate */}
-    <path d="M 16 50 C 13 46, 15 42, 22 42 C 22 44, 20 48, 16 50 Z" fill="#b08d57" strokeWidth="1.2" />
-    {/* Lame courbe */}
-    <path d="M 21 43 Q 32 30, 52 12 C 42 22, 30 35, 19 41 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
-    {/* Arête centrale de la lame */}
-    <path d="M 21 42 Q 32 30, 52 12" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
-  </g>
+      {/* Épées Croisées Perfectionnées */}
+      <svg className="absolute w-24 h-24 drop-shadow-sm" style={{ top: '40%', left: '15%', transform: 'translate(-50%, -50%) rotate(12deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <g>
+          <circle cx="12" cy="52" r="2.5" fill="#3f2d1c" />
+          <path d="M 12 52 L 18 46" strokeWidth="2.5" />
+          <path d="M 16 50 C 13 46, 15 42, 22 42 C 22 44, 20 48, 16 50 Z" fill="#b08d57" strokeWidth="1.2" />
+          <path d="M 21 43 Q 32 30, 52 12 C 42 22, 30 35, 19 41 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
+          <path d="M 21 42 Q 32 30, 52 12" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
+        </g>
+        <g>
+          <circle cx="12" cy="12" r="2.5" fill="#3f2d1c" />
+          <path d="M 12 12 L 18 18" strokeWidth="2.5" />
+          <path d="M 16 14 C 13 18, 15 22, 22 22 C 22 20, 20 16, 16 14 Z" fill="#b08d57" strokeWidth="1.2" />
+          <path d="M 21 21 Q 32 34, 52 52 C 42 42, 30 29, 19 23 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
+          <path d="M 21 22 Q 32 34, 52 52" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
+        </g>
+      </svg>
 
-  {/* Épée 2 (Diagonale Bas-Gauche -> Haut-Droite) */}
-  <g>
-    {/* Poignée & Pommeau */}
-    <circle cx="12" cy="12" r="2.5" fill="#3f2d1c" />
-    <path d="M 12 12 L 18 18" strokeWidth="2.5" />
-    {/* Garde */}
-    <path d="M 16 14 C 13 18, 15 22, 22 22 C 22 20, 20 16, 16 14 Z" fill="#b08d57" strokeWidth="1.2" />
-    {/* Lame courbe */}
-    <path d="M 21 21 Q 32 34, 52 52 C 42 42, 30 29, 19 23 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
-    {/* Arête centrale */}
-    <path d="M 21 22 Q 32 34, 52 52" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
-  </g>
-</svg>
-
-{/* Kraken Perfectionné */}
-<svg 
-  className="absolute w-32 h-32 drop-shadow-md" 
-  style={{ top: '25%', left: '85%', transform: 'translate(-50%, -50%)' }} 
-  viewBox="0 0 64 64" 
-  fill="none" 
-  stroke="#3f2d1c" 
-  strokeWidth="1.8" 
-  strokeLinecap="round" 
-  strokeLinejoin="round"
->
-  {/* Tentacule Principal (Majeur) */}
-  <path 
-    d="M 18 54 Q 10 32, 22 18 Q 30 8, 42 12 Q 48 15, 42 22 Q 34 26, 28 32 Q 22 40, 26 54 Z" 
-    fill="#b08d57" 
-    fillOpacity="0.5" 
-  />
-  {/* Ventouses du Tentacule Principal */}
-  <circle cx="20" cy="30" r="1.5" fill="#3f2d1c" />
-  <circle cx="25" cy="22" r="1.5" fill="#3f2d1c" />
-  <circle cx="32" cy="16" r="1.5" fill="#3f2d1c" />
-  <circle cx="39" cy="16" r="1.2" fill="#3f2d1c" />
-
-  {/* Tentacule Secondaire (Gauche) */}
-  <path 
-    d="M 8 54 Q 2 40, 10 30 Q 16 22, 12 16 Q 8 22, 4 34 Q 2 44, 12 54 Z" 
-    fill="#a67c52" 
-    fillOpacity="0.4" 
-  />
-  
-  {/* Tentacule Secondaire (Droit) */}
-  <path 
-    d="M 34 54 Q 40 42, 52 38 Q 60 36, 56 30 Q 48 32, 42 40 Q 36 46, 38 54 Z" 
-    fill="#a67c52" 
-    fillOpacity="0.4" 
-  />
-  <circle cx="48" cy="37" r="1.2" fill="#3f2d1c" />
-  <circle cx="43" cy="42" r="1.2" fill="#3f2d1c" />
-
-  {/* Vagues et remous d'eau au pied du Kraken */}
-  <path d="M 2 54 Q 10 50, 18 54 T 34 54 T 50 54 T 62 54" strokeWidth="2" />
-  <path d="M 6 58 Q 14 55, 22 58 T 38 58 T 54 58" strokeWidth="1" opacity="0.6" />
-</svg>
+      {/* Kraken Perfectionné */}
+      <svg className="absolute w-32 h-32 drop-shadow-md" style={{ top: '25%', left: '85%', transform: 'translate(-50%, -50%)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M 18 54 Q 10 32, 22 18 Q 30 8, 42 12 Q 48 15, 42 22 Q 34 26, 28 32 Q 22 40, 26 54 Z" fill="#b08d57" fillOpacity="0.5" />
+        <circle cx="20" cy="30" r="1.5" fill="#3f2d1c" />
+        <circle cx="25" cy="22" r="1.5" fill="#3f2d1c" />
+        <circle cx="32" cy="16" r="1.5" fill="#3f2d1c" />
+        <circle cx="39" cy="16" r="1.2" fill="#3f2d1c" />
+        <path d="M 8 54 Q 2 40, 10 30 Q 16 22, 12 16 Q 8 22, 4 34 Q 2 44, 12 54 Z" fill="#a67c52" fillOpacity="0.4" />
+        <path d="M 34 54 Q 40 42, 52 38 Q 60 36, 56 30 Q 48 32, 42 40 Q 36 46, 38 54 Z" fill="#a67c52" fillOpacity="0.4" />
+        <circle cx="48" cy="37" r="1.2" fill="#3f2d1c" />
+        <circle cx="43" cy="42" r="1.2" fill="#3f2d1c" />
+        <path d="M 2 54 Q 10 50, 18 54 T 34 54 T 50 54 T 62 54" strokeWidth="2" />
+        <path d="M 6 58 Q 14 55, 22 58 T 38 58 T 54 58" strokeWidth="1" opacity="0.6" />
+      </svg>
 
       {/* Le Coffre au Trésor Géant */}
       <svg className="absolute w-36 h-36 -rotate-12 drop-shadow-2xl z-10 pointer-events-none" style={{ top: '48%', left: '52%', transform: 'translate(-50%, -50%) rotate(-8deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -442,6 +387,42 @@ function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
 }
 
 // ============================================================
+// LOGIQUE DE COURBES EN VAGUE (S-CURVES) AU LIEU DE LIGNES DIRECTES
+// ============================================================
+const generateWavyPath = (steps, isMobile) => {
+  if (steps.length === 0) return "";
+  let path = `M ${isMobile ? steps[0].mx : steps[0].x} ${isMobile ? steps[0].my : steps[0].y}`;
+  
+  for (let i = 0; i < steps.length - 1; i++) {
+    const p1 = { x: isMobile ? steps[i].mx : steps[i].x, y: isMobile ? steps[i].my : steps[i].y };
+    const p2 = { x: isMobile ? steps[i+1].mx : steps[i+1].x, y: isMobile ? steps[i+1].my : steps[i+1].y };
+    
+    // Distance entre les points
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    
+    // Vecteur perpendiculaire pour créer la "vague" (décalage)
+    const nx = -dy / dist;
+    const ny = dx / dist;
+    
+    // Alterner la direction pour chaque segment pour que ce soit organique (S-curve)
+    const dir = i % 2 === 0 ? 1 : -1;
+    const curve = dist * 0.35; // Intensité de la vague proportionnelle à la distance
+    
+    // Calcul de points de contrôle de courbe de bézier en forme de 'S' (comme sur l'image)
+    const cp1x = p1.x + dx * 0.3 + nx * curve * dir;
+    const cp1y = p1.y + dy * 0.3 + ny * curve * dir;
+    
+    const cp2x = p2.x - dx * 0.3 - nx * curve * dir;
+    const cp2y = p2.y - dy * 0.3 - ny * curve * dir;
+    
+    path += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x},${p2.y}`;
+  }
+  return path;
+};
+
+// ============================================================
 // COMPOSANT PRINCIPAL
 // ============================================================
 export default function Evolution() {
@@ -469,8 +450,9 @@ export default function Evolution() {
     });
   };
 
-  const routeDesktop = evolutionSteps.map((s) => `${s.x},${s.y}`).join(" ");
-  const routeMobile = evolutionSteps.map((s) => `${s.mx},${s.my}`).join(" ");
+  // Appel de notre nouvelle fonction au lieu du simple join
+  const routeDesktop = generateWavyPath(evolutionSteps, false);
+  const routeMobile = generateWavyPath(evolutionSteps, true);
 
   return (
     <div ref={sectionRef} className="relative w-full h-[100dvh] bg-[#080808] font-cartoon text-white overflow-hidden select-none">
@@ -509,10 +491,10 @@ export default function Evolution() {
             <CompassRose />
             <MapDoodles isMobile={false} />
 
-            {/* TRACÉ DESKTOP : Traits épaissis et en pointillés plus larges ------- */}
+            {/* TRACÉ DESKTOP : Transformation en 'path' avec le nouveau 'd' pour la courbure ------- */}
             <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <polyline 
-                points={routeDesktop} 
+              <path 
+                d={routeDesktop} 
                 fill="none" 
                 stroke="#3f2d1c" 
                 strokeOpacity="0.6" 
@@ -550,10 +532,10 @@ export default function Evolution() {
             <CompassRose size={70} opacity={0.22} />
             <MapDoodles isMobile={true} />
 
-            {/* TRACÉ MOBILE : Traits épaissis et en pointillés larges ____ */}
+            {/* TRACÉ MOBILE : Transformation en 'path' avec courbure ____ */}
             <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <polyline 
-                points={routeMobile} 
+              <path 
+                d={routeMobile} 
                 fill="none" 
                 stroke="#3f2d1c" 
                 strokeOpacity="0.6" 
