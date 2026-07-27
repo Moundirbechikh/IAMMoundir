@@ -7,16 +7,17 @@ import { Compass, Map, Mountain, Waves, Anchor, Skull, TreePine } from "lucide-r
 // ============================================================
 const evolutionSteps = [
   { id: "01", title: "Fondations", subtitle: "Logique pure", desc: "Avant de peindre, il faut savoir fabriquer la toile. Apprentissage de l'architecture mémoire.", techs: ["Algo", "C", "Matlab"], x: 15, y: 15, mx: 25, my: 12 },
-  { id: "02", title: "Virage Web", subtitle: "Premiers pixels", desc: "Découverte du navigateur, interfaces visuelles, compréhension du DOM sans framework.", techs: ["HTML5", "CSS3", "JS"], x: 35, y: 30, mx: 75, my: 26 },
-  { id: "03", title: "Logiciel", subtitle: "Mécanique lourde", desc: "Création de vrais moteurs, jeux 2D et traitement de grosses bases de données.", techs: ["Java", "Python", "SQL"], x: 60, y: 20, mx: 25, my: 40 },
-  { id: "04", title: "Fullstack", subtitle: "Écosystème", desc: "Architectures complètes, IA (NLP), plateformes de bout en bout.", techs: ["React", "Node", "Mongo"], x: 82, y: 45, mx: 75, my: 55 },
-  { id: "05", title: "Avancées", subtitle: "BaaS & Front", desc: "Frameworks modernes SSR, BaaS pour le temps réel sécurisé.", techs: ["Next.js", "Firebase"], x: 65, y: 65, mx: 25, my: 70 },
-  { id: "06", title: "Data Science", subtitle: "Données", desc: "Analyse statistique, clustering, réduction de dimension avancée.", techs: ["Streamlit", "K-Means"], x: 40, y: 85, mx: 75, my: 85 },
-  { id: "07", title: "Cloud", subtitle: "Production", desc: "Environnements de production, serveurs, déploiement complet.", techs: ["Render", "Vercel"], x: 15, y: 65, mx: 25, my: 96 },
+  { id: "02", title: "Virage Web", subtitle: "Premiers pixels", desc: "Découverte du navigateur, interfaces visuelles, compréhension du DOM sans framework.", techs: ["HTML5", "CSS3", "JS"], x: 35, y: 30, mx: 75, my: 27 },
+  { id: "03", title: "Logiciel", subtitle: "Mécanique lourde", desc: "Création de vrais moteurs, jeux 2D et traitement de grosses bases de données.", techs: ["Java", "Python", "SQL"], x: 60, y: 20, mx: 35, my: 35 },
+  { id: "04", title: "Fullstack", subtitle: "Écosystème", desc: "Architectures complètes, IA (NLP), plateformes de bout en bout.", techs: ["React", "Node", "Mongo"], x: 82, y: 45, mx: 82, my: 53 },
+  { id: "05", title: "Avancées", subtitle: "BaaS & Front", desc: "Frameworks modernes SSR, BaaS pour le temps réel sécurisé.", techs: ["Next.js", "Firebase"], x: 65, y: 65, mx: 15, my: 62 },
+  { id: "06", title: "Data Science", subtitle: "Données", desc: "Analyse statistique, clustering, réduction de dimension avancée.", techs: ["Streamlit", "K-Means"], x: 45, y: 80, mx: 71, my: 76 },
+  // L'étape 7 a été remontée sur Desktop (y: 58) et Mobile (my: 80) pour éviter que le titre ne soit coupé
+  { id: "07", title: "Cloud", subtitle: "Production", desc: "Environnements de production, serveurs, déploiement complet.", techs: ["Render", "Vercel"], x: 22, y: 58, mx: 20, my: 88 },
 ];
 
 // ============================================================
-// ANIMATIONS ET STYLES DU HOVER (Style Hero)
+// ANIMATIONS ET STYLES DU HOVER
 // ============================================================
 const barOuterTop = { initial: { scaleY: 0 }, animate: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0 } } };
 const barOuterBottom = { initial: { scaleY: 0 }, animate: { scaleY: 1, transition: { duration: 0.45, ease: "easeInOut", delay: 0 } } };
@@ -37,7 +38,7 @@ function AnimatedFrame({ hoverColor = "#22c55e" }) {
 }
 
 // ============================================================
-// LOGIQUE DE POSITIONNEMENT (ANTI-DÉBORDEMENT)
+// LOGIQUE DE POSITIONNEMENT
 // ============================================================
 function getMobilePanelStyle(mx, my) {
   const style = { position: 'absolute', width: '220px' };
@@ -73,7 +74,7 @@ function getDesktopPanelStyle(x, y) {
 // ============================================================
 function Highlight({ children, className = "" }) {
   return (
-    <span className={`inline-block bg-green-500 text-black px-2 rounded-sm font-black font-cartoon uppercase ${className}`}>
+    <span className={`inline-block bg-green-500 text-black px-2.5 py-0.5 mx-1 rounded-sm font-black font-cartoon uppercase tracking-wide whitespace-nowrap ${className}`}>
       {children}
     </span>
   );
@@ -108,7 +109,6 @@ function GiantTitle({ isVisible, className = "", children }) {
   );
 }
 
-// Overlay d'intro
 function EvolutionIntroOverlay({ startAnimation }) {
   const [phase, setPhase] = useState(0);
   const [itemCount, setItemCount] = useState(130);
@@ -151,7 +151,6 @@ function EvolutionIntroOverlay({ startAnimation }) {
   );
 }
 
-// Boussole placée à droite
 function CompassRose({ size = 110, opacity = 0.28 }) {
   return (
     <div className="absolute right-[5%] bottom-[8%] pointer-events-none z-[5]" style={{ width: size, height: size, opacity }}>
@@ -170,7 +169,6 @@ function CompassRose({ size = 110, opacity = 0.28 }) {
   );
 }
 
-// Le Parchemin Ultra-Réaliste avec Grain/Bruit
 const TORN_CLIP = "polygon(2% 4%,8% 1%,15% 3%,22% 0%,30% 2%,40% 0%,50% 3%,60% 1%,70% 3%,80% 0%,90% 2%,98% 4%,99% 12%,97% 22%,100% 32%,98% 42%,100% 52%,97% 62%,99% 72%,96% 82%,99% 92%,97% 98%,90% 99%,80% 97%,70% 100%,60% 98%,50% 100%,40% 97%,30% 99%,20% 97%,10% 100%,2% 97%,0% 90%,3% 80%,0% 70%,2% 60%,0% 50%,3% 40%,0% 30%,2% 20%,0% 10%)";
 
 function Parchment() {
@@ -179,6 +177,7 @@ function Parchment() {
       <div className="absolute inset-0 -z-10 opacity-90" style={{ background: "linear-gradient(135deg,#a67c52,#8b643a)", clipPath: TORN_CLIP, transform: "rotate(1.6deg) scale(1.02)", filter: "blur(2px)" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 18% 28%, rgba(90,65,40,.18), transparent 26%), radial-gradient(circle at 82% 68%, rgba(90,65,40,.15), transparent 30%), radial-gradient(circle at 55% 15%, rgba(90,65,40,.12), transparent 22%), radial-gradient(circle at 30% 85%, rgba(90,65,40,.14), transparent 24%), linear-gradient(135deg, #ebd8af, #dfc99b 55%, #d4b882)", clipPath: TORN_CLIP, boxShadow: "inset 0 0 120px rgba(60,40,15,.5), inset 0 0 30px rgba(60,40,15,.4)", transform: "rotate(-1.4deg)" }} />
       <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-25" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, clipPath: TORN_CLIP, transform: "rotate(-1.4deg)" }} />
+      {/* Coins noirs retirés comme demandé */}
     </>
   );
 }
@@ -200,76 +199,175 @@ function WaxSeal({ count, total }) {
   );
 }
 
-// Décorations de la Chasse au Trésor
+// ============================================================
+// DESSINS ET ICÔNES DE LA CARTE AU TRÉSOR (ÉPIQUE)
+// ============================================================
 function MapDoodles({ isMobile }) {
+  if (isMobile) {
+    // DISPOSITION MOBILE : Icônes plus grandes et ajustées
+    return (
+      <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-60">
+        <Waves className="absolute w-16 h-16 top-[6%] left-[55%]" strokeWidth={2} />
+        <Skull className="absolute w-20 h-20 top-[18%] left-[2%] rotate-12" strokeWidth={2} />
+        <Anchor className="absolute w-16 h-16 top-[30%] left-[75%] rotate-12" strokeWidth={2} />
+        <Mountain className="absolute w-14 h-14 top-[82%] left-[35%]" strokeWidth={1.5} />
+
+        {/* Le Coffre (Mobile) */}
+        <svg className="absolute w-24 h-24 drop-shadow-xl z-10" style={{ top: '55%', left: '45%', transform: 'translate(-50%, -50%) rotate(-5deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="32" cy="14" r="3" fill="#eab308" stroke="#3f2d1c" />
+          <circle cx="25" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+          <circle cx="39" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+          <path d="M29 11l3-3 3 3-3 3z" fill="#eab308" stroke="#3f2d1c" strokeWidth="1.5" />
+          <path d="M12 30v20c0 2.2 1.8 4 4 4h32c2.2 0 4-1.8 4-4V30" fill="#dfc99b" fillOpacity="0.6" />
+          <path d="M10 24h44v8H10z" fill="#b08d57" />
+          <path d="M12 32h40v20H12z" />
+          <line x1="12" y1="38" x2="52" y2="38" strokeWidth="1.5" opacity="0.7" />
+          <line x1="12" y1="46" x2="52" y2="46" strokeWidth="1.5" opacity="0.7" />
+          <path d="M20 32v20M44 32v20" strokeWidth="3" strokeLinecap="square" />
+          <path d="M10 24c0-10 7-14 22-14s22 4 22 14" fill="#ebd8af" fillOpacity="0.8" />
+          <path d="M10 24c0-10 7-14 22-14s22 4 22 14" strokeWidth="2.5" />
+          <path d="M32 10v22" strokeWidth="3" />
+          <rect x="27" y="22" width="10" height="12" rx="2" fill="#3f2d1c" />
+          <circle cx="32" cy="27" r="2" fill="#ebd8af" />
+          <path d="M32 29v3" stroke="#ebd8af" strokeWidth="1.5" />
+        </svg>
+
+        {/* Le grand X final (remonté à 85%) */}
+        <div className="absolute font-cartoon text-red-700/80 text-[6rem] font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 rotate-12" style={{ top: '75%', left: '70%' }}>X</div>
+      </div>
+    );
+  }
+
+  // DISPOSITION DESKTOP : Décoration épique et icônes ajoutées/agrandies
   return (
-    <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-50">
+    <div className="absolute inset-0 pointer-events-none z-[4] text-[#3f2d1c] opacity-65">
+      <Mountain className="absolute w-36 h-36 bottom-[6%] left-[10%]" strokeWidth={1.5} />
+      <TreePine className="absolute w-16 h-16 bottom-[12%] left-[55%]" strokeWidth={1.5} />
+      <TreePine className="absolute w-12 h-12 bottom-[18%] left-[62%]" strokeWidth={1.5} />
       
-      {/* Montagnes Agrandies au centre bas */}
-      <Mountain className="absolute w-24 h-24 bottom-[10%] left-[40%]" strokeWidth={1} />
-      <TreePine className="absolute w-10 h-10 bottom-[10%] left-[55%]" strokeWidth={1} />
-      <TreePine className="absolute w-8 h-8 bottom-[18%] left-[36%]" strokeWidth={1} />
+      {/* Nouveaux Emojis/Icones intégrés au desktop */}
+      <Waves className="absolute w-20 h-20 top-[8%] left-[24%] opacity-70" strokeWidth={2} />
+      <Anchor className="absolute w-18 h-18 bottom-[31%] left-[82%] -rotate-12 opacity-70" strokeWidth={2} />
       
-      {/* Océan & Danger */}
-      <Waves className="absolute w-12 h-12 top-[60%] left-[85%]" strokeWidth={1.5} />
-      <Anchor className="absolute w-8 h-8 top-[72%] left-[88%] -rotate-12" strokeWidth={1.2} />
-      <Skull className="absolute w-16 h-16 top-[15%] left-[80%] rotate-12" strokeWidth={1.5} />
-      
-{/* LE COFFRE AU TRÉSOR ULTRA-DÉTAILLÉ ET AGRANDI */}
+      {/* Navire Pirate Dessiné */}
+      <svg className="absolute w-28 h-28 drop-shadow-sm" style={{ top: '10%', left: '48%', transform: 'translate(-50%, -50%) rotate(-5deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 42 Q 32 50 50 42 L 46 52 Q 32 58 18 52 Z" fill="#b08d57" fillOpacity="0.8" />
+        <line x1="26" y1="44" x2="26" y2="12" strokeWidth="2.5" />
+        <line x1="42" y1="46" x2="42" y2="20" strokeWidth="2.5" />
+        <path d="M26 12 Q 38 22 26 36 Z" fill="#ebd8af" fillOpacity="0.9" />
+        <path d="M42 20 Q 52 28 42 40 Z" fill="#ebd8af" fillOpacity="0.9" />
+        <path d="M8 42 L 56 42" strokeWidth="2" />
+        <path d="M10 52 Q 15 48 25 52 T 45 52 T 55 52" stroke="#3f2d1c" strokeWidth="1.5" />
+      </svg>
+
+{/* Épées Croisées Perfectionnées */}
 <svg 
-  className="absolute w-28 h-28 sm:w-32 sm:h-32 -rotate-12 drop-shadow-xl z-10 pointer-events-none" 
-  style={isMobile ? { top: '35%', left: '32%' } : { top: '42%', left: '30%' }} 
+  className="absolute w-24 h-24 drop-shadow-sm" 
+  style={{ top: '40%', left: '15%', transform: 'translate(-50%, -50%) rotate(12deg)' }} 
   viewBox="0 0 64 64" 
   fill="none" 
   stroke="#3f2d1c" 
-  strokeWidth="2" 
+  strokeWidth="1.8" 
   strokeLinecap="round" 
   strokeLinejoin="round"
 >
-  {/* Éclat / Pièces d'or et joyaux qui sortent du coffre */}
-  <circle cx="32" cy="14" r="3" fill="#eab308" stroke="#3f2d1c" />
-  <circle cx="25" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
-  <circle cx="39" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
-  <path d="M29 11l3-3 3 3-3 3z" fill="#eab308" stroke="#3f2d1c" strokeWidth="1.5" />
+  {/* Épée 1 (Diagonale Haut-Gauche -> Bas-Droite) */}
+  <g>
+    {/* Poignée & Pommeau */}
+    <circle cx="12" cy="52" r="2.5" fill="#3f2d1c" />
+    <path d="M 12 52 L 18 46" strokeWidth="2.5" />
+    {/* Garde de sabre pirate */}
+    <path d="M 16 50 C 13 46, 15 42, 22 42 C 22 44, 20 48, 16 50 Z" fill="#b08d57" strokeWidth="1.2" />
+    {/* Lame courbe */}
+    <path d="M 21 43 Q 32 30, 52 12 C 42 22, 30 35, 19 41 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
+    {/* Arête centrale de la lame */}
+    <path d="M 21 42 Q 32 30, 52 12" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
+  </g>
 
-  {/* Corps principal du coffre (bois) */}
-  <path d="M12 30v20c0 2.2 1.8 4 4 4h32c2.2 0 4-1.8 4-4V30" fill="#dfc99b" fillOpacity="0.6" />
-  <path d="M10 24h44v8H10z" fill="#b08d57" />
-  <path d="M12 32h40v20H12z" />
-  
-  {/* Lignes de planches de bois */}
-  <line x1="12" y1="38" x2="52" y2="38" strokeWidth="1.5" opacity="0.7" />
-  <line x1="12" y1="46" x2="52" y2="46" strokeWidth="1.5" opacity="0.7" />
-
-  {/* Renforts métalliques verticaux */}
-  <path d="M20 32v20M44 32v20" strokeWidth="3" strokeLinecap="square" />
-
-  {/* Couvercle bombé */}
-  <path d="M10 24c0-10 7-14 22-14s22 4 22 14" fill="#ebd8af" fillOpacity="0.8" />
-  <path d="M10 24c0-10 7-14 22-14s22 4 22 14" strokeWidth="2.5" />
-  
-  {/* Sangle centrale du couvercle */}
-  <path d="M32 10v22" strokeWidth="3" />
-
-  {/* Serrure et plaque centrale */}
-  <rect x="27" y="22" width="10" height="12" rx="2" fill="#3f2d1c" />
-  <circle cx="32" cy="27" r="2" fill="#ebd8af" />
-  <path d="M32 29v3" stroke="#ebd8af" strokeWidth="1.5" />
-
-  {/* Rivets et clous décoratifs */}
-  <circle cx="16" cy="28" r="1.2" fill="#3f2d1c" />
-  <circle cx="48" cy="28" r="1.2" fill="#3f2d1c" />
-  <circle cx="16" cy="42" r="1.2" fill="#3f2d1c" />
-  <circle cx="48" cy="42" r="1.2" fill="#3f2d1c" />
+  {/* Épée 2 (Diagonale Bas-Gauche -> Haut-Droite) */}
+  <g>
+    {/* Poignée & Pommeau */}
+    <circle cx="12" cy="12" r="2.5" fill="#3f2d1c" />
+    <path d="M 12 12 L 18 18" strokeWidth="2.5" />
+    {/* Garde */}
+    <path d="M 16 14 C 13 18, 15 22, 22 22 C 22 20, 20 16, 16 14 Z" fill="#b08d57" strokeWidth="1.2" />
+    {/* Lame courbe */}
+    <path d="M 21 21 Q 32 34, 52 52 C 42 42, 30 29, 19 23 Z" fill="#ebd8af" fillOpacity="0.7" strokeWidth="1.8" />
+    {/* Arête centrale */}
+    <path d="M 21 22 Q 32 34, 52 52" strokeWidth="1" strokeDasharray="1 1" opacity="0.6" />
+  </g>
 </svg>
 
-      {/* Le Trésor "X" */}
-      <div 
-        className="absolute font-cartoon text-red-700/80 text-[6rem] sm:text-[9rem] font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 rotate-12" 
-        style={isMobile ? { top: '88%', left: '25%' } : { top: '65%', left: '15%' }}
-      >
-        X
-      </div>
+{/* Kraken Perfectionné */}
+<svg 
+  className="absolute w-32 h-32 drop-shadow-md" 
+  style={{ top: '25%', left: '85%', transform: 'translate(-50%, -50%)' }} 
+  viewBox="0 0 64 64" 
+  fill="none" 
+  stroke="#3f2d1c" 
+  strokeWidth="1.8" 
+  strokeLinecap="round" 
+  strokeLinejoin="round"
+>
+  {/* Tentacule Principal (Majeur) */}
+  <path 
+    d="M 18 54 Q 10 32, 22 18 Q 30 8, 42 12 Q 48 15, 42 22 Q 34 26, 28 32 Q 22 40, 26 54 Z" 
+    fill="#b08d57" 
+    fillOpacity="0.5" 
+  />
+  {/* Ventouses du Tentacule Principal */}
+  <circle cx="20" cy="30" r="1.5" fill="#3f2d1c" />
+  <circle cx="25" cy="22" r="1.5" fill="#3f2d1c" />
+  <circle cx="32" cy="16" r="1.5" fill="#3f2d1c" />
+  <circle cx="39" cy="16" r="1.2" fill="#3f2d1c" />
+
+  {/* Tentacule Secondaire (Gauche) */}
+  <path 
+    d="M 8 54 Q 2 40, 10 30 Q 16 22, 12 16 Q 8 22, 4 34 Q 2 44, 12 54 Z" 
+    fill="#a67c52" 
+    fillOpacity="0.4" 
+  />
+  
+  {/* Tentacule Secondaire (Droit) */}
+  <path 
+    d="M 34 54 Q 40 42, 52 38 Q 60 36, 56 30 Q 48 32, 42 40 Q 36 46, 38 54 Z" 
+    fill="#a67c52" 
+    fillOpacity="0.4" 
+  />
+  <circle cx="48" cy="37" r="1.2" fill="#3f2d1c" />
+  <circle cx="43" cy="42" r="1.2" fill="#3f2d1c" />
+
+  {/* Vagues et remous d'eau au pied du Kraken */}
+  <path d="M 2 54 Q 10 50, 18 54 T 34 54 T 50 54 T 62 54" strokeWidth="2" />
+  <path d="M 6 58 Q 14 55, 22 58 T 38 58 T 54 58" strokeWidth="1" opacity="0.6" />
+</svg>
+
+      {/* Le Coffre au Trésor Géant */}
+      <svg className="absolute w-36 h-36 -rotate-12 drop-shadow-2xl z-10 pointer-events-none" style={{ top: '48%', left: '52%', transform: 'translate(-50%, -50%) rotate(-8deg)' }} viewBox="0 0 64 64" fill="none" stroke="#3f2d1c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="32" cy="14" r="3" fill="#eab308" stroke="#3f2d1c" />
+        <circle cx="25" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+        <circle cx="39" cy="16" r="2.5" fill="#eab308" stroke="#3f2d1c" />
+        <path d="M29 11l3-3 3 3-3 3z" fill="#eab308" stroke="#3f2d1c" strokeWidth="1.5" />
+        <path d="M12 30v20c0 2.2 1.8 4 4 4h32c2.2 0 4-1.8 4-4V30" fill="#dfc99b" fillOpacity="0.6" />
+        <path d="M10 24h44v8H10z" fill="#b08d57" />
+        <path d="M12 32h40v20H12z" />
+        <line x1="12" y1="38" x2="52" y2="38" strokeWidth="1.5" opacity="0.7" />
+        <line x1="12" y1="46" x2="52" y2="46" strokeWidth="1.5" opacity="0.7" />
+        <path d="M20 32v20M44 32v20" strokeWidth="3" strokeLinecap="square" />
+        <path d="M10 24c0-10 7-14 22-14s22 4 22 14" fill="#ebd8af" fillOpacity="0.8" />
+        <path d="M10 24c0-10 7-14 22-14s22 4 22 14" strokeWidth="2.5" />
+        <path d="M32 10v22" strokeWidth="3" />
+        <rect x="27" y="22" width="10" height="12" rx="2" fill="#3f2d1c" />
+        <circle cx="32" cy="27" r="2" fill="#ebd8af" />
+        <path d="M32 29v3" stroke="#ebd8af" strokeWidth="1.5" />
+        <circle cx="16" cy="28" r="1.2" fill="#3f2d1c" />
+        <circle cx="48" cy="28" r="1.2" fill="#3f2d1c" />
+        <circle cx="16" cy="42" r="1.2" fill="#3f2d1c" />
+        <circle cx="48" cy="42" r="1.2" fill="#3f2d1c" />
+      </svg>
+
+      {/* Le Trésor "X" Final */}
+      <div className="absolute font-cartoon text-red-700/80 text-[8rem] font-black drop-shadow-sm -translate-x-1/2 -translate-y-1/2 -rotate-12" style={{ top: '60%', left: '25%' }}>X</div>
     </div>
   );
 }
@@ -383,7 +481,7 @@ export default function Evolution() {
       <BackgroundGrid />
 
       {/* ============================================================
-          ================   VERSION DESKTOP (>= lg)   ================
+          ================  VERSION DESKTOP (>= lg)  ================
           ============================================================ */}
       <div className="hidden lg:flex relative z-10 w-full h-full flex-row p-12 gap-10">
         <div className="relative flex-[0.34] h-full flex flex-col justify-end pb-12">
@@ -391,7 +489,13 @@ export default function Evolution() {
             MON<br /><span className="bg-green-500 text-black px-1">ÉVOLUTION</span>
           </GiantTitle>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.4, delay: 0.4 }} className="font-cartoon text-xl text-white/80 leading-relaxed max-w-[95%] uppercase space-y-4">
-            <p>Chaque étape ici raconte une partie de <Highlight className="text-sm">mon apprentissage.</Highlight> Des premières lignes de code aux architectures complexes — une véritable carte de mon <Highlight className="text-sm">parcours technique,</Highlight> à explorer lieu par lieu.</p>
+            <p>
+              Chaque étape ici raconte une partie de 
+              <Highlight className="text-[1.1em]">mon apprentissage</Highlight>. 
+              Des premières lignes de code aux architectures complexes — une véritable carte de mon 
+              <Highlight className="text-[1.1em]">parcours technique</Highlight>, 
+              à explorer lieu par lieu.
+            </p>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={!showOverlay ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.6 }} className="mt-6 flex items-center gap-2 text-white/40 uppercase text-xs tracking-widest font-cartoon">
             <Map className="w-5 h-5 text-green-500" /> Survole un lieu pour révéler l'étape
@@ -405,16 +509,16 @@ export default function Evolution() {
             <CompassRose />
             <MapDoodles isMobile={false} />
 
-            {/* TRACÉ MODIFIÉ : Traits irréguliers au lieu de points ronds */}
-            <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" preserveAspectRatio="none">
+            {/* TRACÉ DESKTOP : Traits épaissis et en pointillés plus larges ------- */}
+            <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
               <polyline 
                 points={routeDesktop} 
                 fill="none" 
                 stroke="#3f2d1c" 
-                strokeOpacity="0.85" 
+                strokeOpacity="0.6" 
                 strokeWidth="4" 
-                strokeDasharray="15 12 25 15 10 18" 
-                strokeLinecap="butt" 
+                strokeDasharray="12 12" 
+                strokeLinecap="round" 
                 strokeLinejoin="round" 
                 vectorEffect="non-scaling-stroke" 
               />
@@ -430,7 +534,7 @@ export default function Evolution() {
       </div>
 
       {/* ============================================================
-          ================   VERSION MOBILE (< lg)   ===================
+          ================  VERSION MOBILE (< lg)  ===================
           ============================================================ */}
       <div className="flex lg:hidden relative z-10 w-full h-full flex-col px-4 pt-16 pb-3">
         <div className="flex-shrink-0 flex flex-col items-start z-10 pb-2">
@@ -446,16 +550,16 @@ export default function Evolution() {
             <CompassRose size={70} opacity={0.22} />
             <MapDoodles isMobile={true} />
 
-            {/* TRACÉ MODIFIÉ MOBILE : Traits irréguliers */}
-            <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" preserveAspectRatio="none">
+            {/* TRACÉ MOBILE : Traits épaissis et en pointillés larges ____ */}
+            <svg className="absolute inset-0 w-full h-full z-[6] pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
               <polyline 
                 points={routeMobile} 
                 fill="none" 
                 stroke="#3f2d1c" 
-                strokeOpacity="0.85" 
-                strokeWidth="3.5" 
-                strokeDasharray="12 10 20 12 8 15" 
-                strokeLinecap="butt" 
+                strokeOpacity="0.6" 
+                strokeWidth="4" 
+                strokeDasharray="12 12"
+                strokeLinecap="round" 
                 strokeLinejoin="round" 
                 vectorEffect="non-scaling-stroke" 
               />
