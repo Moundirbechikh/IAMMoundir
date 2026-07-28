@@ -352,7 +352,7 @@ export default function Contact() {
     <div ref={sectionRef} className="w-full h-full relative">
 
       {/* ============================ DESKTOP ============================ */}
-      <section className="hidden lg:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row pt-8 px-10 pb-8 gap-8">
+      <section className="hidden lg:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row pt-8 pr-10 pl-8 pb-8 gap-8">
         <AnimatePresence>{showOverlay && <IntroOverlay key="intro-contact-d" startAnimation={isInView} />}</AnimatePresence>
         <BackgroundGrid />
 

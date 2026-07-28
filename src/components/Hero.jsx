@@ -41,6 +41,7 @@ export default function Hero({ sections = [], onNavigate }) {
   const introRight = "Qui suis je ?";
   const introMiddle = "Mes projets ?";
   const introJourney = "parcours ?";
+  const introContact = "contact ?";
 
   const clamp = (value, max) => Math.max(-max, Math.min(max, value));
 
@@ -146,6 +147,10 @@ export default function Hero({ sections = [], onNavigate }) {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.6 } },
   };
+  const typewritercontact = {
+    hidden: { opacity: 1 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.6 } },
+  };
   const typewriterJourney = {
     hidden: { opacity: 1 },
     visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.0 } },
@@ -203,6 +208,15 @@ export default function Hero({ sections = [], onNavigate }) {
       cta: { label: "Explorer", targetId: "parcours" },
       content: "L'évolution de mes compétences et de ma passion pour la tech au fil des années.",
       teaser: "L'évolution de mes compétences dans le temps.",
+    },
+    contact: {
+      title: "contact ?",
+      barColorClass: "bg-bleu-500",
+      frameColor: "#3b82f6",
+      // Le parcours est intégré dans la section "About", donc ce bouton navigue aussi vers "about"
+      cta: { label: "Hire me", targetId: "contact" },
+      content: "Mes coordonnées et mes réseaux sociaux ",
+      teaser: "Mes coordonnées et mes réseaux sociaux",
     },
   };
 
@@ -276,13 +290,66 @@ export default function Hero({ sections = [], onNavigate }) {
           </motion.div>
         </div>
 
+
+
         <motion.div
           initial="rest"
           whileHover="hover"
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.4 }}
           style={{ opacity: 0, y: 30 }}
-          className="absolute left-[36%] top-[3%] w-[340px] min-h-[200px] flex flex-col items-start justify-start p-6 bg-[#0c0c0c] z-40"
+          className="absolute left-[18.4%] top-[3%] w-[230px] h-[100px] flex flex-col items-center justify-start pl-4 p-1 bg-[#0c0c0c] z-40"
+        >
+          <AnimatedFrame hoverColor="#3b82f6" />
+          <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-10">
+            <div className="absolute w-[260%] h-[260%] top-[-80%] left-[-80%] rotate-[-35deg] flex flex-col">
+              <motion.div variants={barOuterTop} className="w-full h-[25%] bg-blue-500 origin-top" />
+              <motion.div variants={barInnerTop} className="w-full h-[25%] bg-blue-500 origin-top" />
+              <motion.div variants={barInnerBottom} className="w-full h-[25%] bg-blue-500 origin-bottom" />
+              <motion.div variants={barOuterBottom} className="w-full h-[25%] bg-blue-500 origin-bottom" />
+            </div>
+          </div>
+
+          <motion.div variants={contentBlurVariants} className="relative z-0 flex flex-col items-start w-full pb-10">
+            <motion.h2 variants={typewritercontact} initial="hidden" animate="visible" className="text-4xl uppercase leading-none mb-3 block text-white">
+              {introContact.split("").map((char, index) => (
+                <motion.span key={index} variants={letterAnimation} className="inline-block">
+                  {char === " " ? "\u00A0" : char}
+                </motion.span>
+              ))}
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3, duration: 0.5 }}
+              className="text-white uppercase font-light text-md tracking-tight leading-snug"
+            >
+           coordonnées et réseaux sociaux
+            </motion.p>
+          </motion.div>
+
+          <motion.button
+            type="button"
+            onClick={() => goToSection(cardsData.contact.cta.targetId)}
+            variants={ctaVariants}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="group absolute left-6 bottom-5 z-20 inline-flex items-center gap-2 overflow-hidden rounded-[10px] border-2 border-white px-5 py-2 uppercase tracking-tight text-white text-xl"
+          >
+            <span className="absolute inset-0 bg-blue-500 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+            <span className="relative z-10 transition-colors duration-300 group-hover:text-black">hire me</span>
+            <span className="relative z-10 transition-all duration-300 group-hover:text-black group-hover:translate-x-1">?</span>
+          </motion.button>
+        </motion.div>
+
+
+
+        <motion.div
+          initial="rest"
+          whileHover="hover"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.4 }}
+          style={{ opacity: 0, y: 30 }}
+          className="absolute left-[37%] top-[3%] w-[340px] min-h-[200px] flex flex-col items-start justify-start p-6 bg-[#0c0c0c] z-40"
         >
           <AnimatedFrame hoverColor="#ef4444" />
           <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-10">
