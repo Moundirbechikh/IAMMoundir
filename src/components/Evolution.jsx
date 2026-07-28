@@ -7,7 +7,7 @@ import { Compass, Map, Mountain, Waves, Anchor, Skull, TreePine } from "lucide-r
 // ============================================================
 const evolutionSteps = [
   { id: "01", title: "Fondations", subtitle: "Logique pure", desc: "Avant de peindre, il faut savoir fabriquer la toile. Apprentissage de l'architecture mémoire.", techs: ["Algo", "C", "Matlab"], x: 15, y: 15, mx: 25, my: 12 },
-  { id: "02", title: "Virage Web", subtitle: "Premiers pixels", desc: "Découverte du navigateur, interfaces visuelles, compréhension du DOM sans framework.", techs: ["HTML5", "CSS3", "JS"], x: 35, y: 30, mx: 75, my: 27 },
+  { id: "02", title: "Virage Web", subtitle: "Premiers pixels", desc: "Découverte du navigateur, interfaces visuelles, compréhension du DOM sans framework.", techs: ["HTML5", "CSS3", "JS"], x: 35, y: 38, mx: 75, my: 27 },
   { id: "03", title: "Logiciel", subtitle: "Mécanique lourde", desc: "Création de vrais moteurs, jeux 2D et traitement de grosses bases de données.", techs: ["Java", "Python", "SQL"], x: 60, y: 20, mx: 35, my: 35 },
   { id: "04", title: "Fullstack", subtitle: "Écosystème", desc: "Architectures complètes, IA (NLP), plateformes de bout en bout.", techs: ["React", "Node", "Mongo"], x: 82, y: 45, mx: 82, my: 53 },
   { id: "05", title: "Avancées", subtitle: "BaaS & Front", desc: "Frameworks modernes SSR, BaaS pour le temps réel sécurisé.", techs: ["Next.js", "Firebase"], x: 65, y: 65, mx: 15, my: 62 },
@@ -465,7 +465,7 @@ export default function Evolution() {
       {/* ============================================================
           ================  VERSION DESKTOP (>= lg)  ================
           ============================================================ */}
-      <div className="hidden lg:flex relative z-10 w-full h-full flex-row p-12 gap-10">
+      <div className="hidden lg:flex relative z-10 w-full h-full flex-row py-12 pl-3 pr-12 gap-10">
         <div className="relative flex-[0.34] h-full flex flex-col justify-end pb-12">
           <GiantTitle isVisible={!showOverlay} className="text-[7.5vw] mb-4">
             MON<br /><span className="bg-green-500 text-black px-1">ÉVOLUTION</span>
