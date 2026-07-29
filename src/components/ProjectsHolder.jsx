@@ -8,7 +8,7 @@ import ProjectCard from "./ProjectCard";
 import logo1 from "../assets/logo1.jpg";
 import back1 from "../assets/back1.jpg";
 import back1Vid from "../assets/back1.mp4";
-import phone1 from "../assets/phone1.jpg";
+import phone1 from "../assets/phone11.jpg";
 import phone1Vid from "../assets/phone1.mp4";
 
 import logo2 from "../assets/logo2.png";
@@ -22,7 +22,7 @@ import backve from "../assets/back.jpg";
 import backv from "../assets/backv.jpg";
 import backveVid from "../assets/backve.mp4";
 import backvVid from "../assets/backv.mp4";
-import phoneve from "../assets/phoneve.jpg";
+import phoneve from "../assets/phoneve1.jpg";
 import phoneveVid from "../assets/phoneve.mp4";
 
 import back41 from "../assets/seenIT.jpg";
@@ -292,9 +292,9 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
       {/* Repositionné juste sous la pill de la navbar (top-3/left-3 côté mobile) */}
       <button
         onClick={() => onClose(current)}
-        className="absolute top-16 left-3 z-50 flex items-center justify-center w-11 h-11 bg-[#ef4444] rounded-full shadow-lg border border-white/20 active:scale-90 transition-transform"
+        className="absolute top-14 left-3 z-50 flex items-center justify-center w-10 h-10 bg-[#ef4444] rounded-2xl shadow-lg border border-white/20 active:scale-90 transition-transform"
       >
-        <ArrowLeft className="text-white" size={22} strokeWidth={3} />
+        <ArrowLeft className="text-white" size={18} strokeWidth={3} />
       </button>
 
       <div
