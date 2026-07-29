@@ -12,8 +12,8 @@ import emailjs from "@emailjs/browser";
 const emailAddress = "moundirbechikh03@gmail.com";
 const links = {
   github: "https://github.com/Moundirbechikh",
-  linkedin: "https://www.linkedin.com/in/TON-LIEN-LINKEDIN", // <-- à remplacer
-  whatsapp: "https://wa.me/213782638109",
+  linkedin: "https://www.linkedin.com/in/bechikh-moundir-0380692aa?utm_source=share_via&utm_content=profile&utm_medium=member_android", // <-- à remplacer
+  whatsapp: "https://wa.me/213797252963",
   instagram: "https://www.instagram.com/moundir_bech?igsh=c25yaGl3dGM5NTFz",
 };
 
