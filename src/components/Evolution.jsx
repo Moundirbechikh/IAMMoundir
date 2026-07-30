@@ -6,13 +6,62 @@ import { Compass, Map, Mountain, Waves, Anchor, Skull, TreePine } from "lucide-r
 // DONNÉES — 7 étapes, positions adaptées pour AUCUN débordement
 // ============================================================
 const evolutionSteps = [
-  { id: "01", title: "Fondations", subtitle: "Logique pure", desc: "Avant de peindre, il faut savoir fabriquer la toile. Apprentissage de l'architecture mémoire.", techs: ["Algo", "C", "Matlab"], x: 15, y: 15, mx: 25, my: 12 },
-  { id: "02", title: "Virage Web", subtitle: "Premiers pixels", desc: "Découverte du navigateur, interfaces visuelles, compréhension du DOM sans framework.", techs: ["HTML5", "CSS3", "JS"], x: 35, y: 38, mx: 75, my: 27 },
-  { id: "03", title: "Logiciel", subtitle: "Mécanique lourde", desc: "Création de vrais moteurs, jeux 2D et traitement de grosses bases de données.", techs: ["Java", "Python", "SQL"], x: 60, y: 20, mx: 35, my: 35 },
-  { id: "04", title: "Fullstack", subtitle: "Écosystème", desc: "Architectures complètes, IA (NLP), plateformes de bout en bout.", techs: ["React", "Node", "Mongo"], x: 82, y: 45, mx: 82, my: 53 },
-  { id: "05", title: "Avancées", subtitle: "BaaS & Front", desc: "Frameworks modernes SSR, BaaS pour le temps réel sécurisé.", techs: ["Next.js", "Firebase"], x: 65, y: 65, mx: 15, my: 62 },
-  { id: "06", title: "Data Science", subtitle: "Données", desc: "Analyse statistique, clustering, réduction de dimension avancée.", techs: ["Streamlit", "K-Means"], x: 45, y: 80, mx: 71, my: 76 },
-  { id: "07", title: "Cloud", subtitle: "Production", desc: "Environnements de production, serveurs, déploiement complet.", techs: ["Render", "Vercel"], x: 22, y: 58, mx: 20, my: 88 },
+  { 
+    id: "01", 
+    title: "Fondations & Logique", 
+    subtitle: "Algorithmique pure", 
+    desc: "Compréhension de la complexité algorithmique, du calcul scientifique et des bases de données relationnelles.", 
+    techs: ["Algorithmique","C", "Matlab", "MySQL"], 
+    x: 15, y: 15, mx: 25, my: 12 
+  },
+  { 
+    id: "02", 
+    title: "Web Traditionnel & POO", 
+    subtitle: "L'interface prend forme", 
+    desc: "Apprentissage de la POO avec Java et création des premières interfaces visuelles et systèmes CRUD.", 
+    techs: ["HTML/CSS", "vanila js", "PHP","java"], 
+    x: 35, y: 38, mx: 75, my: 27 
+  },
+  { 
+    id: "03", 
+    title: "Python & Data", 
+    subtitle: "Calculs & Recommandation", 
+    desc: "Manipulation de données, calculs avancés et création de tableaux de bord interactifs.", 
+    techs: ["Python","Csv", "Pandas", "Streamlit"], 
+    x: 60, y: 20, mx: 35, my: 35 
+  },
+  { 
+    id: "04", 
+    title: "Passion Frontend", 
+    subtitle: "L'ère React & BaaS", 
+    desc: "Spécialisation dans la création d'interfaces dynamiques. Utilisation de Backend-as-a-Service et premiers déploiements cloud.", 
+    techs: ["React", "Supabase", "Vercel"], 
+    x: 82, y: 45, mx: 82, my: 53 
+  },
+  { 
+    id: "05", 
+    title: "Data Analysis & Infra", 
+    subtitle: "Modèles & Conteneurs", 
+    desc: "Analyse de données (K-Means, ACP) et initiation à la conteneurisation pour les environnements de base de données.", 
+    techs: ["Machine Learning", "Docker", "PostgreSQL"], 
+    x: 65, y: 65, mx: 15, my: 62 
+  },
+  { 
+    id: "06", 
+    title: "Fullstack JavaScript", 
+    subtitle: "De l'UI à l'API", 
+    desc: "Développement d'applications complètes de bout en bout avec Node.js, et hébergement web fluide.", 
+    techs: ["Node.js", "MongoDB", "Express"], 
+    x: 45, y: 80, mx: 71, my: 76 
+  },
+  { 
+    id: "07", 
+    title: "Fullstack Avancé", 
+    subtitle: "Architecture & Déploiement", 
+    desc: "Création de Web Services robustes en Spring Boot et maîtrise de la mise en production sur des serveurs cloud.", 
+    techs: ["Spring Boot", "Web Services", "Render"], 
+    x: 22, y: 58, mx: 20, my: 88 
+  },
 ];
 
 // ============================================================
