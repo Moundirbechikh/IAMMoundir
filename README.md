@@ -1,19 +1,10 @@
-<table>
-<tr>
-<td width="50%" valign="middle">
+<img src="./src/assets/readme1.png" alt="Aperçu complet du portfolio" width="100%"/>
 
 # MOUNDIR — PORTFOLIO
 
 **Un portfolio pensé comme une expérience, pas comme une page web.**
 
 React · Framer Motion · Tailwind CSS · Vite
-
-</td>
-<td width="40%" align="right">
-<img src="./src/assets/readme.png" alt="Aperçu mobile du portfolio" width="260"/>
-</td>
-</tr>
-</table>
 
 ---
 
@@ -89,58 +80,3 @@ Chaque section suit la même mécanique en trois temps : **overlay d'intro → a
 **`useIsDesktop`** : détecte le breakpoint via `matchMedia`, utilisé pour adapter le comportement de la navbar et du scroll selon le device.
 
 ## Structure du projet
-
-```
-src/
-├── App.jsx                     # Orchestration du rail plein écran + config des sections
-├── hooks/
-│   ├── useFullPageScroll.js    # Navigation wheel/clavier desktop, verrouillage anti-chevauchement
-│   └── useIsDesktop.js         # Détection de breakpoint
-├── components/
-│   ├── Navbar.jsx               # Pill flottante : ColorSweep, SlotReel, NavHint
-│   ├── SlotReel.jsx             # Effet tambour pour le libellé de section
-│   ├── Hero.jsx
-│   ├── About.jsx
-│   ├── ProjectsHolder.jsx
-│   ├── ProjectCard.jsx
-│   ├── Evolution.jsx
-│   ├── ArchiveHolder.jsx
-│   ├── ArchiveCard.jsx
-│   └── Contact.jsx
-└── assets/                      # Médias (images, vidéos de preview)
-```
-
-## Installation
-
-```bash
-git clone <url-du-repo>
-cd <nom-du-dossier>
-npm install
-npm run dev
-```
-
-Build de production :
-```bash
-npm run build
-```
-
-Le formulaire de contact utilise EmailJS. Les identifiants (`SERVICE_ID`, `TEMPLATE_ID`, `PUBLIC_KEY`) se trouvent dans `Contact.jsx` — à déplacer en variables d'environnement (`.env` + `import.meta.env.VITE_...`) si le repo doit rester public avec des clés propres.
-
-## Performance
-
-Le fond en grille pointillée de chaque section était initialement composé de ~160 `<div>` React générés à chaque montage. Il a été remplacé par un motif SVG unique répété nativement en `background-image` CSS : rendu visuel identique, coût de calcul quasi nul. Ce point était particulièrement sensible sur mobile, où les versions desktop et mobile de chaque section restent montées en parallèle dans le DOM (masquées en CSS via `hidden`/`md:hidden`) tant qu'un rendu conditionnel via `useIsDesktop` n'est pas en place à ce niveau.
-
-## Roadmap
-
-- [ ] Rendu conditionnel desktop/mobile par section (éviter le double montage des deux versions)
-- [ ] Variables d'environnement pour les clés EmailJS
-- [ ] Lazy loading des assets vidéo hors-écran
-
----
-
-<div align="center">
-
-**Moundir Bechikh** — Développeur fullstack, Oran, Algérie
-Master 2 SITW — Université Oran 1 Ahmed Ben Bella
-
-</div>
