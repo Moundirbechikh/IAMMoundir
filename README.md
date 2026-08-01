@@ -10,7 +10,7 @@ React · Framer Motion · Tailwind CSS · Vite
 
 </td>
 <td width="42%" align="right">
-<img src="./assets/readme.png" alt="Aperçu mobile du portfolio" width="260"/>
+<img src="./src/assets/readme.png" alt="Aperçu mobile du portfolio" width="260"/>
 </td>
 </tr>
 </table>
