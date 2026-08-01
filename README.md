@@ -1,6 +1,6 @@
 <table>
 <tr>
-<td width="58%" valign="middle">
+<td width="50%" valign="middle">
 
 # MOUNDIR — PORTFOLIO
 
@@ -9,7 +9,7 @@
 React · Framer Motion · Tailwind CSS · Vite
 
 </td>
-<td width="42%" align="right">
+<td width="40%" align="right">
 <img src="./src/assets/readme.png" alt="Aperçu mobile du portfolio" width="260"/>
 </td>
 </tr>
