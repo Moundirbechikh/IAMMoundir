@@ -1,12 +1,19 @@
-<div align="center">
+<table>
+<tr>
+<td width="58%" valign="middle">
 
-# MOUNDIR — Portfolio
+# MOUNDIR — PORTFOLIO
 
-*Un portfolio pensé comme une expérience, pas comme une page web.*
+**Un portfolio pensé comme une expérience, pas comme une page web.**
 
-**React** · **Framer Motion** · **Tailwind CSS** · **Vite**
+React · Framer Motion · Tailwind CSS · Vite
 
-</div>
+</td>
+<td width="42%" align="right">
+<img src="./readme.png" alt="Aperçu mobile du portfolio" width="260"/>
+</td>
+</tr>
+</table>
 
 ---
 
