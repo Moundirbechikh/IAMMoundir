@@ -13,19 +13,26 @@ import back8 from "../assets/back8.png";
 import back9Vid from "../assets/back9.mp4";
 import back11Vid from "../assets/back11.mp4";
 
+// ============================================================
+// BACKGROUND GRID — OPTIMISÉ
+// Avant : 160 <div> React montés en permanence (coûteux sur mobile,
+// surtout multiplié par 6 sections qui restent toutes montées dans le DOM
+// en parallèle, desktop + mobile en même temps).
+// Après : un seul <div>, motif dessiné une fois en SVG et répété par le
+// navigateur via background-image (aucun calcul JS/React, juste du
+// compositing GPU). Le comportement isBlurred (flou/opacité au clic sur
+// une carte) est conservé à l'identique, mais ne coûte plus qu'un seul
+// filter CSS au lieu de 160.
+// ============================================================
 function BackgroundGrid({ isBlurred }) {
   return (
     <div
-      className={`absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center transition-all duration-700 ${
-        isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"
-      }`}
-    >
-      <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-4 md:gap-6 justify-center content-center rotate-[-35deg]">
-        {Array.from({ length: 160 }).map((_, i) => (
-          <div key={i} className="w-24 h-24 md:w-32 md:h-32 border-2 border-dashed border-white/10 rounded-xl" />
-        ))}
-      </div>
-    </div>
+      className={`absolute -inset-[60%] z-0 pointer-events-none rotate-[-35deg] transition-all duration-700
+                 bg-[length:112px_112px] md:bg-[length:152px_152px]
+                 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27112%27%20height=%27112%27%3E%3Crect%20x=%278%27%20y=%278%27%20width=%2796%27%20height=%2796%27%20rx=%2712%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
+                 md:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27152%27%20height=%27152%27%3E%3Crect%20x=%2712%27%20y=%2712%27%20width=%27128%27%20height=%27128%27%20rx=%2716%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
+                 ${isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"}`}
+    />
   );
 }
 
