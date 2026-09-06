@@ -4,7 +4,7 @@
 </p>
 
 <h1 align="center">
-  <img src="./src/logo.png" alt="Logo" width="20%" valign="middle" />
+  <img src="./public/logo.png" alt="Logo" width="20%" valign="middle" />
 </h1>
 
 <p align="center">
