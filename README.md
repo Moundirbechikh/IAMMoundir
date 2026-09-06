@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="./src/assets/readme1.png" alt="Aperçu complet du portfolio" width="100%" />
+  <img src="./src/assets/readme1.png" alt="Version desktop" height="420" />
+  <img src="./public/Mobile.jpg" alt="Version mobile" height="420" />
 </p>
 
 <h1 align="center">
@@ -99,9 +100,10 @@ Chaque section suit la même mécanique en trois temps : **overlay d'intro → a
 ```
 portfolio/
 ├── public/
-│   └── Logo.png                 # Logo utilisé dans ce README et le favicon
+│   ├── logo.png                  # Logo utilisé dans ce README et le favicon
+│   └── Mobile.jpg                # Capture de la version mobile, utilisée dans ce README
 └── src/
-    ├── App.jsx                  # Orchestration du rail plein écran + config des sections
+    ├── App.jsx                   # Orchestration du rail plein écran + config des sections
     ├── hooks/
     │   ├── useFullPageScroll.js  # Navigation wheel/clavier desktop, verrouillage anti-chevauchement
     │   └── useIsDesktop.js       # Détection de breakpoint
