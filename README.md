@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="./src/assets/readme1.png" alt="Version desktop" height="320" />
-  <img src="./public/Mobile.jpg" alt="Version mobile" height="320" />
+  <img src="./src/assets/readme1.png" alt="Version desktop" height="280" />
+  <img src="./public/Mobile.jpg" alt="Version mobile" height="280" />
 </p>
 
 <h1 align="center">
