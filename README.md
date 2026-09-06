@@ -3,8 +3,7 @@
 </p>
 
 <h1 align="center">
-  <img src="./public/Logo.png" alt="Logo" width="42" valign="middle" />
-  MOUNDIR — PORTFOLIO
+  <img src="./public/logo.png" alt="Logo" width="42" valign="middle" />
 </h1>
 
 <p align="center">
