@@ -62,65 +62,36 @@ function IntroOverlay({ startAnimation }) {
 
   useEffect(() => {
     if (startAnimation) {
-      setPhase(1);
-      const t = setTimeout(() => setPhase(2), 1500);
-      return () => clearTimeout(t);
+      const t = setTimeout(() => setPhase(1), 120);
+      const hide = setTimeout(() => setPhase(2), 650);
+      return () => {
+        clearTimeout(t);
+        clearTimeout(hide);
+      };
     }
   }, [startAnimation]);
-
-  const phrases = ["Mes archives ?", "My Archives?", "Mis Archivos?", "Meine Archive?", "I Miei Archivi?"];
 
   return (
     <motion.div
       exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden flex items-center justify-center pointer-events-none"
+      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
     >
-      <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-5 md:gap-7 justify-center content-center rotate-[-35deg]">
-        {Array.from({ length: 130 }).map((_, i) => {
-          const hasText = i % 4 === 0;
-          const stacked = i % 6 === 0;
-          return (
-            <div key={i} className="relative w-24 h-24 md:w-36 md:h-36">
-              {stacked && phase >= 1 && (
-                <div
-                  className={`absolute -bottom-3 -right-3 w-full h-full rounded-xl border-2 transition-all duration-300 ${
-                    phase === 1 ? "border-gray-400/25" : "border-gray-300/60 bg-gray-500/30"
-                  }`}
-                />
-              )}
-              <div
-                className={`relative w-full h-full flex items-center justify-center rounded-xl border-2 transition-all duration-300 ${
-                  phase === 0
-                    ? "border-transparent bg-transparent"
-                    : phase === 1
-                    ? "border-gray-400/50 bg-transparent"
-                    : "border-gray-300 border-solid bg-gray-300"
-                }`}
-              >
-                {phase === 1 && (
-                  <span
-                    className={`font-black text-center px-1.5 text-lg md:text-2xl text-white ${
-                      hasText ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    {phrases[i % phrases.length]}
-                  </span>
-                )}
-                {phase === 2 && (
-                  <motion.div
-                    initial={{ scale: 0.2, opacity: 0, rotate: -15 }}
-                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 11, delay: (i % 10) * 0.02 }}
-                  >
-                    <Archive className="w-10 h-10 md:w-14 md:h-14 text-black" strokeWidth={2.2} />
-                  </motion.div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <div
+        className="absolute -inset-[35%] rotate-[-35deg]"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%23d1d5db' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
+          backgroundSize: "112px 112px",
+        }}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 12 }}
+        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-black bg-gray-300 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(209,213,219,0.18)]"
+      >
+        Mes archives
+      </motion.div>
     </motion.div>
   );
 }
@@ -133,7 +104,7 @@ export default function ArchiveHolder() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 2500);
+      const timer = setTimeout(() => setShowOverlay(false), 800);
       return () => clearTimeout(timer);
     }
   }, [isInView]);

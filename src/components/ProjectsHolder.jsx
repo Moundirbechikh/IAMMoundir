@@ -1,36 +1,29 @@
 // components/ProjectsHolder.jsx
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { FolderKanban, ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 
 // --- IMPORTS ASSETS ---
 import logo1 from "../assets/logo1.jpg";
 import back1 from "../assets/back1.jpg";
 import back1Vid from "../assets/back1.mp4";
-import phone1 from "../assets/phone11.jpg";
-import phone1Vid from "../assets/phone1.mp4";
 
 import logo2 from "../assets/logo2.png";
 import back2 from "../assets/back2.jpg";
 import back2Vid from "../assets/back2.mp4";
-import phone2 from "../assets/phone2.jpg";
-import phone2Vid from "../assets/phone2.mp4";
 
 import logo3 from "../assets/logo.png";
 import backve from "../assets/back.jpg";
 import backv from "../assets/backv.jpg";
 import backveVid from "../assets/backve.mp4";
 import backvVid from "../assets/backv.mp4";
-import phoneve from "../assets/phoneve1.jpg";
-import phoneveVid from "../assets/phoneve.mp4";
 
 import back41 from "../assets/seenIT.jpg";
 import logo4 from "../assets/logoSeenIt.png";
 import back4Vid from "../assets/seenIT1.mp4";
 
 import seenIT1 from "../assets/seenIT.jpg";
-import seenITphone from "../assets/seenITphone.jpg";
 import seenIT2 from "../assets/seenIT1.jpg";
 import seenIT2Vid from "../assets/seenIT1.mp4";
 import seenIT3 from "../assets/seenIT2.jpg";
@@ -44,29 +37,27 @@ import seenIT6Vid from "../assets/seenIT5.mp4";
 
 import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
-import phone14 from "../assets/phone14.jpg";
 import back14Vid from "../assets/back14.mp4";
-import phone14Vid from "../assets/phone14.mp4";
 
 const projects = [
   {
     id: "01", title: "MaResturant", tech: "React / Node.js / MongoDB",
     desc: "Portail gastronomique haut de gamme, parcours immersif et accents rouges.",
     link: "https://ma-resturant.vercel.app/", font: "cursive", accent: "#b91c1c", titleColor: "#fff",
-    logo: logo1, poster: back1, video: back1Vid, posterM: phone1, videoM: phone1Vid,
+    logo: logo1, poster: back1, video: back1Vid,
   },
   {
     id: "02", title: "RecommandIT", tech: "Python / Node.js / React / MongoDB",
     desc: "Moteur de recommandation de films basé sur le machine learning, interface épurée.",
     link: "https://recommand-it.vercel.app/", font: "'Parisienne', cursive", accent: "#1e293b", titleColor: "#fff",
-    logo: logo2, poster: back2, video: back2Vid, posterM: phone2, videoM: phone2Vid,
+    logo: logo2, poster: back2, video: back2Vid,
   },
   {
     id: "03", title: "MyNewLife", tech: "Fullstack / React / Node.js / MongoDB",
     desc: "Organisation numérique et gestion de vie au quotidien pour un futur plus serein.",
     link: "https://my-new-life-blond.vercel.app/", font: "'Lobster', cursive",
     accent: "#365314", altAccent: "#6b21a8", titleColor: "#fff",
-    logo: logo3, poster: backve, video: backveVid, posterM: phoneve, videoM: phoneveVid,
+    logo: logo3, poster: backve, video: backveVid,
     themes: [
       { id: "lime", accent: "#365314", titleColor: "#fff", poster: backve, video: backveVid },
       { id: "purple", accent: "#6b21a8", titleColor: "#fff", poster: backv, video: backvVid },
@@ -76,8 +67,8 @@ const projects = [
     id: "04", title: "SeenIt", tech: "React / Tailwind / MangoDB / Node.js",
     desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
     link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
-    accent: "#09090B", titleColor: "#E11D48", // défaut = crimson (cohérent avec themes[0])
-    logo: logo4, poster: seenIT1, video: back4Vid, posterM: seenITphone, videoM: seenITphone,
+    accent: "#09090B", titleColor: "#E11D48",
+    logo: logo4, poster: seenIT1, video: back4Vid,
     themes: [
       { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
       { id: "midnight", accent: "#0F172A", titleColor: "#F59E0B", poster: seenIT2, video: seenIT2Vid },
@@ -91,7 +82,7 @@ const projects = [
     id: "05", title: "Unicheck", tech: "React / Tailwind / Spring Boot / PostgreSQL",
     desc: "Présence académique par QR dynamique et vérification GPS, contrôle admin centralisé.",
     link: "https://unicheck-drab.vercel.app", font: "'Manrope', sans-serif", accent: "#022017", titleColor: "#fff",
-    logo: logo14, poster: back14, video: back14Vid, posterM: phone14, videoM: phone14Vid,
+    logo: logo14, poster: back14, video: back14Vid,
   },
 ];
 
@@ -150,48 +141,39 @@ function GiantTitle({ isVisible, className = "", children }) {
 // ==========================================
 function IntroOverlay({ startAnimation }) {
   const [phase, setPhase] = useState(0);
-  const [itemCount, setItemCount] = useState(130);
-
-  useEffect(() => {
-    // Moins de cases sur petit écran = moins de layout/paint = transition plus fluide
-    const update = () => setItemCount(window.innerWidth < 768 ? 70 : 130);
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
 
   useEffect(() => {
     if (startAnimation) {
-      setPhase(1);
-      const t = setTimeout(() => setPhase(2), 1100); // était 1500
-      return () => clearTimeout(t);
+      const t = setTimeout(() => setPhase(1), 120);
+      const hide = setTimeout(() => setPhase(2), 650);
+      return () => {
+        clearTimeout(t);
+        clearTimeout(hide);
+      };
     }
   }, [startAnimation]);
 
-  const phrases = ["Mes projets ?", "My Projects?", "Mis Proyectos?", "Meine Projekte?", "I Miei Progetti?"];
   return (
     <motion.div
       exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden flex items-center justify-center pointer-events-none"
+      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
     >
-      <div className="absolute w-[200vw] h-[200vh] flex flex-wrap gap-5 md:gap-7 justify-center content-center rotate-[-35deg]">
-        {Array.from({ length: itemCount }).map((_, i) => {
-          const hasText = i % 4 === 0;
-          const stacked = i % 6 === 0;
-          return (
-            <div key={i} className="relative w-24 h-24 md:w-36 md:h-36">
-              {stacked && phase >= 1 && (
-                <div className={`absolute -bottom-3 -right-3 w-full h-full rounded-xl border-2 transition-all duration-200 ${phase === 1 ? "border-red-400/25" : "border-red-400/60 bg-red-500/30"}`} />
-              )}
-              <div className={`relative w-full h-full flex items-center justify-center rounded-xl border-2 transition-all duration-200 ${phase === 0 ? "border-transparent bg-transparent" : phase === 1 ? "border-red-400/50 bg-transparent" : "border-red-500 border-solid bg-red-500"}`}>
-                {phase === 1 && <span className={`font-black text-center px-1.5 text-lg md:text-2xl text-white ${hasText ? "opacity-100" : "opacity-0"}`}>{phrases[i % phrases.length]}</span>}
-                {phase === 2 && <motion.div initial={{ scale: 0.2, opacity: 0, rotate: -15 }} animate={{ scale: 1, opacity: 1, rotate: 0 }} transition={{ duration: 0.25 }}><FolderKanban className="w-14 h-14 text-black" strokeWidth={2.2} /></motion.div>}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <div
+        className="absolute -inset-[35%] rotate-[-35deg]"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%23ef4444' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
+          backgroundSize: "112px 112px",
+        }}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 12 }}
+        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-black bg-red-500 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(239,68,68,0.18)]"
+      >
+        Mes projets
+      </motion.div>
     </motion.div>
   );
 }
@@ -262,7 +244,7 @@ function VibeCard({ project, theme }) {
 }
 
 // ==========================================
-// VUE DÉTAIL MOBILE — uniquement capture téléphone (posterM), couleurs du site
+// VUE DÉTAIL MOBILE — affichage en image uniquement, aucune vidéo
 // ==========================================
 function ProjectDetailGallery({ startIndex = 0, onClose }) {
   const scrollRef = useRef(null);
@@ -307,7 +289,7 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
           <div key={project.id} className="relative w-full h-full flex-shrink-0 snap-center">
             {/* Uniquement la capture téléphone, cadrée sur le haut de l'écran */}
             <img
-              src={project.posterM || project.poster}
+              src={project.poster}
               className="absolute inset-0 w-full h-full object-cover object-top"
               alt={project.title}
             />
@@ -376,7 +358,7 @@ export default function ProjectsHolder() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 2000); // était 2500
+      const timer = setTimeout(() => setShowOverlay(false), 800);
       return () => clearTimeout(timer);
     }
   }, [isInView]);

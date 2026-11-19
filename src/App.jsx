@@ -43,7 +43,7 @@ function App() {
         className="flex flex-col w-full h-full"
         style={{ willChange: "transform" }}
         animate={{ y: `-${index * 100}%` }}
-        transition={{ type: "tween", duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
+        transition={{ type: "tween", duration: 0.32, ease: [0.65, 0, 0.35, 1] }}
       >
         {sections.map(({ id, Component, className = "" }, i) => (
           <section

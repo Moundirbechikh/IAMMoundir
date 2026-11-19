@@ -25,6 +25,17 @@ function useThemeCycle(themes, intervalMs = 8000, defaultId = "crimson") {
 
 export default function ProjectCard({ project, index, isActive, isBlurred, onClick }) {
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 767px)").matches : false
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = (event) => setIsMobile(event.matches);
+    media.addEventListener("change", update);
+    update(media);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   const activeTheme = useThemeCycle(project.themes);
   const current = activeTheme ? { ...project, ...activeTheme } : project;
@@ -97,7 +108,7 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
 
           <div className="relative flex-1 bg-[#111] w-full overflow-hidden">
             <AnimatePresence mode="sync">
-              {current.video ? (
+              {current.video && !isMobile ? (
                 <motion.video
                   key={current.video}
                   initial={{ opacity: 0 }}
@@ -108,6 +119,8 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
                   autoPlay
                   loop
                   muted
+                  playsInline
+                  preload="metadata"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               ) : (
@@ -119,7 +132,7 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
                   transition={{ duration: 0.8, ease: "easeInOut" }}
                   src={current.poster}
                   className="absolute inset-0 w-full h-full object-cover"
-                  alt=""
+                  alt={project.title}
                 />
               )}
             </AnimatePresence>
