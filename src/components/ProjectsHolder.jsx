@@ -140,39 +140,33 @@ function GiantTitle({ isVisible, className = "", children }) {
 // OVERLAY D'INTRO — légèrement optimisé (moins de cases sur mobile, timings resserrés)
 // ==========================================
 function IntroOverlay({ startAnimation }) {
-  const [phase, setPhase] = useState(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (startAnimation) {
-      const t = setTimeout(() => setPhase(1), 120);
-      const hide = setTimeout(() => setPhase(2), 650);
-      return () => {
-        clearTimeout(t);
-        clearTimeout(hide);
-      };
+      const show = setTimeout(() => setVisible(true), 60);
+      return () => clearTimeout(show);
     }
   }, [startAnimation]);
 
   return (
     <motion.div
-      exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
     >
-      <div
-        className="absolute -inset-[35%] rotate-[-35deg]"
-        style={{
-          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%23ef4444' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
-          backgroundSize: "112px 112px",
-        }}
-      />
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 12 }}
-        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-black bg-red-500 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(239,68,68,0.18)]"
+        initial={{ opacity: 0, scale: 0.92, y: 10 }}
+        animate={visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
+        transition={{ duration: 0.25, ease: [0.65, 0, 0.35, 1] }}
+        className="relative flex flex-col items-start -rotate-2"
       >
-        Mes projets
+        <span className="font-cartoon text-[9vw] md:text-[3.2vw] leading-none text-white">
+          MES
+        </span>
+        <span className="font-cartoon text-[18vw] md:text-[9vw] leading-[0.82] text-black bg-red-500 px-4 pb-1 shadow-[8px_8px_0_rgba(0,0,0,0.35)]">
+          PROJETS
+        </span>
       </motion.div>
     </motion.div>
   );
@@ -468,15 +462,15 @@ export default function ProjectsHolder() {
         <BackgroundGrid />
 
         <div className="relative flex-shrink-0 flex flex-col items-start z-10 pt-16 pb-2">
-          <motion.p
+          <motion.span
             initial={{ opacity: 0, y: 6 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative z-10 text-[9vw] sm:text-[4vw] uppercase tracking-wide text-black bg-red-500 px-1 "
+            className="font-cartoon text-[9vw] sm:text-[4vw] leading-none text-white"
           >
-            Mes
-          </motion.p>
-          <GiantTitle isVisible={!showOverlay} className="text-[22vw] sm:text-[14vw] mb-2 text-white">
+            MES
+          </motion.span>
+          <GiantTitle isVisible={!showOverlay} className="text-[18vw] sm:text-[12vw] mb-2 text-black bg-red-500 px-3 pb-1">
             PROJETS
           </GiantTitle>
           <motion.div
