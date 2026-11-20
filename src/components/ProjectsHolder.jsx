@@ -39,28 +39,42 @@ import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
 import back14Vid from "../assets/back14.mp4";
 
+import phone2 from "../assets/phone2.jpg";
+import phone11 from "../assets/phone11.jpg";
+import phone14 from "../assets/phone14.jpg";
+import phonev from "../assets/phonev.jpg";
+import phoneve from "../assets/phoneve.jpg";
+import phoneve1 from "../assets/phoneve1.jpg";
+import seenITphone from "../assets/seenITphone.jpg";
+
+// --- IMAGES MOBILE SPÉCIFIQUES ---
+// Les captures téléphone sont séparées des posters/vidéos desktop.
+
+// Durée pendant laquelle le titre reste seul au milieu avant que la section s'affiche (en ms)
+const INTRO_DURATION = 650;
+
 const projects = [
   {
     id: "01", title: "MaResturant", tech: "React / Node.js / MongoDB",
     desc: "Portail gastronomique haut de gamme, parcours immersif et accents rouges.",
     link: "https://ma-resturant.vercel.app/", font: "cursive", accent: "#b91c1c", titleColor: "#fff",
-    logo: logo1, poster: back1, video: back1Vid,
+    logo: logo1, poster: back1, video: back1Vid, phone: phone11,
   },
   {
     id: "02", title: "RecommandIT", tech: "Python / Node.js / React / MongoDB",
     desc: "Moteur de recommandation de films basé sur le machine learning, interface épurée.",
     link: "https://recommand-it.vercel.app/", font: "'Parisienne', cursive", accent: "#1e293b", titleColor: "#fff",
-    logo: logo2, poster: back2, video: back2Vid,
+    logo: logo2, poster: back2, video: back2Vid, phone: phone2,
   },
   {
     id: "03", title: "MyNewLife", tech: "Fullstack / React / Node.js / MongoDB",
     desc: "Organisation numérique et gestion de vie au quotidien pour un futur plus serein.",
     link: "https://my-new-life-blond.vercel.app/", font: "'Lobster', cursive",
     accent: "#365314", altAccent: "#6b21a8", titleColor: "#fff",
-    logo: logo3, poster: backve, video: backveVid,
+    logo: logo3, poster: backve, video: backveVid, phone: phoneve,
     themes: [
-      { id: "lime", accent: "#365314", titleColor: "#fff", poster: backve, video: backveVid },
-      { id: "purple", accent: "#6b21a8", titleColor: "#fff", poster: backv, video: backvVid },
+      { id: "lime", accent: "#365314", titleColor: "#fff", poster: backve, video: backveVid, phone: phoneve },
+      { id: "purple", accent: "#6b21a8", titleColor: "#fff", poster: backv, video: backvVid, phone: phoneve1 },
     ],
   },
   {
@@ -68,7 +82,7 @@ const projects = [
     desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
     link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
     accent: "#09090B", titleColor: "#E11D48",
-    logo: logo4, poster: seenIT1, video: back4Vid,
+    logo: logo4, poster: seenIT1, video: back4Vid, phone: seenITphone,
     themes: [
       { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
       { id: "midnight", accent: "#0F172A", titleColor: "#F59E0B", poster: seenIT2, video: seenIT2Vid },
@@ -82,7 +96,7 @@ const projects = [
     id: "05", title: "Unicheck", tech: "React / Tailwind / Spring Boot / PostgreSQL",
     desc: "Présence académique par QR dynamique et vérification GPS, contrôle admin centralisé.",
     link: "https://unicheck-drab.vercel.app", font: "'Manrope', sans-serif", accent: "#022017", titleColor: "#fff",
-    logo: logo14, poster: back14, video: back14Vid,
+    logo: logo14, poster: back14, video: back14Vid, phone: phone14,
   },
 ];
 
@@ -137,7 +151,12 @@ function GiantTitle({ isVisible, className = "", children }) {
 }
 
 // ==========================================
-// OVERLAY D'INTRO — légèrement optimisé (moins de cases sur mobile, timings resserrés)
+// OVERLAY D'INTRO — MODIFIÉ
+// Au début, il n'y a que le titre "MES PROJETS" au milieu de l'écran.
+// C'est exactement le même titre que le GiantTitle (même police, mêmes tailles,
+// même bloc rouge), sans rotation ni ombre :
+//   - desktop : text-[8vw] (xl:text-[9vw]), PROJETS sans padding
+//   - mobile  : text-[18vw] (sm:text-[12vw]), PROJETS avec px-2 pb-1
 // ==========================================
 function IntroOverlay({ startAnimation }) {
   const [visible, setVisible] = useState(false);
@@ -152,22 +171,20 @@ function IntroOverlay({ startAnimation }) {
   return (
     <motion.div
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
+      transition={{ duration: 0.18 }}
       className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
     >
-      <motion.div
+      <motion.h2
         initial={{ opacity: 0, scale: 0.92, y: 10 }}
         animate={visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
-        transition={{ duration: 0.25, ease: [0.65, 0, 0.35, 1] }}
-        className="relative flex flex-col items-start -rotate-2"
+        transition={{ duration: 0.22, ease: [0.65, 0, 0.35, 1] }}
+        className="font-cartoon uppercase text-white inline-block leading-[0.85]
+                   text-[18vw] sm:text-[12vw] md:text-[8vw] xl:text-[12vw]"
       >
-        <span className="font-cartoon text-[9vw] md:text-[3.2vw] leading-none text-white">
-          MES
-        </span>
-        <span className="font-cartoon text-[18vw] md:text-[9vw] leading-[0.82] text-black bg-red-500 px-4 pb-1 shadow-[8px_8px_0_rgba(0,0,0,0.35)]">
-          PROJETS
-        </span>
-      </motion.div>
+        MES
+        <br />
+        <span className="bg-red-500 text-black px-2 pb-1 md:px-0 md:pb-0">PROJETS</span>
+      </motion.h2>
     </motion.div>
   );
 }
@@ -210,29 +227,36 @@ function CardColorSweep({ targetColor }) {
 function VibeCard({ project, theme }) {
   const current = theme ? { ...project, ...theme } : project;
   return (
-    <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/15">
-      <CardColorSweep targetColor={current.accent} />
+    <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/15 bg-black">
       <AnimatePresence mode="wait">
-        <motion.div
-          key={`${project.id}-${current.accent}`}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.3 }}
-          className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4 text-center"
-        >
-          <div className="w-11 h-11 sm:w-14 sm:h-14 bg-white rounded-lg p-2 shadow-lg mb-2 flex-shrink-0">
+        <motion.img
+          key={`${project.id}-${current.phone || project.phone}`}
+          src={current.phone || project.phone}
+          alt={project.title}
+          initial={{ opacity: 0, scale: 1.03 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
+      </AnimatePresence>
+
+      <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4 pt-12 bg-gradient-to-t from-black/95 via-black/75 to-transparent">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg p-1.5 shadow-lg shrink-0">
             <img src={project.logo} className="w-full h-full object-contain" alt="" />
           </div>
-          <h3
-            className="text-2xl sm:text-3xl leading-none font-black mb-1.5 px-1"
-            style={{ fontFamily: project.font, color: current.titleColor }}
-          >
-            {project.title}
-          </h3>
-          <p className="text-white/90 text-[11px] sm:text-xs leading-snug px-2 line-clamp-3">{project.desc}</p>
-        </motion.div>
-      </AnimatePresence>
+          <div className="min-w-0">
+            <h3
+              className="text-xl sm:text-2xl leading-none truncate"
+              style={{ fontFamily: project.font, color: current.titleColor }}
+            >
+              {project.title}
+            </h3>
+            <p className="mt-1 text-[10px] sm:text-xs text-white/90 line-clamp-2">{project.desc}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -283,7 +307,7 @@ function ProjectDetailGallery({ startIndex = 0, onClose }) {
           <div key={project.id} className="relative w-full h-full flex-shrink-0 snap-center">
             {/* Uniquement la capture téléphone, cadrée sur le haut de l'écran */}
             <img
-              src={project.poster}
+              src={project.phone}
               className="absolute inset-0 w-full h-full object-cover object-top"
               alt={project.title}
             />
@@ -352,7 +376,7 @@ export default function ProjectsHolder() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 800);
+      const timer = setTimeout(() => setShowOverlay(false), INTRO_DURATION);
       return () => clearTimeout(timer);
     }
   }, [isInView]);
@@ -377,18 +401,7 @@ export default function ProjectsHolder() {
 
   return (
     <div ref={sectionRef} className="w-full h-full relative">
-      <div className="hidden">
-        {projects.map((p) => (
-          <div key={p.id}>
-            <img src={p.poster} loading="eager" alt="" />
-            {p.themes?.map((t) => (
-              <img key={t.id} src={t.poster} loading="eager" alt="" />
-            ))}
-          </div>
-        ))}
-      </div>
-
-      {/* DESKTOP (>= md) — INCHANGÉ */}
+      {/* DESKTOP (>= md) */}
       <section className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row px-6 py-6 gap-6">
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
@@ -461,17 +474,16 @@ export default function ProjectsHolder() {
         </AnimatePresence>
         <BackgroundGrid />
 
-        <div className="relative flex-shrink-0 flex flex-col items-start z-10 pt-16 pb-2">
-          <motion.span
-            initial={{ opacity: 0, y: 6 }}
-            animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-            transition={{ duration: 0.3, delay: 0.05 }}
-            className="font-cartoon text-[9vw] sm:text-[4vw] leading-none text-white"
-          >
+        <motion.div
+          initial={false}
+          animate={{ opacity: showOverlay ? 0 : 1 }}
+          transition={{ duration: 0.25 }}
+          className="relative shrink-0 flex flex-col items-start z-10 pt-16 pb-2"
+        >
+          <GiantTitle isVisible={!showOverlay} className="text-[18vw] sm:text-[12vw] mb-2">
             MES
-          </motion.span>
-          <GiantTitle isVisible={!showOverlay} className="text-[18vw] sm:text-[12vw] mb-2 text-black bg-red-500 px-3 pb-1">
-            PROJETS
+            <br />
+            <span className="bg-red-500 text-black px-2 pb-1">PROJETS</span>
           </GiantTitle>
           <motion.div
             initial={{ opacity: 0, y: 6 }}
@@ -486,19 +498,24 @@ export default function ProjectsHolder() {
               Ceci est une sélection de mes projets mis en ligne (pas l'intégralité de mes codes).
             </p>
           </motion.div>
-        </div>
+        </motion.div>
 
-        <div className="relative flex-1 min-h-0 flex flex-col z-10 pb-3 pt-4 gap-4">
+        <motion.div
+          initial={false}
+          animate={{ opacity: showOverlay ? 0 : 1 }}
+          transition={{ duration: 0.25 }}
+          className="relative flex-1 min-h-0 flex flex-col z-10 pb-3 pt-4 gap-4"
+        >
           <div className="relative flex-1 min-h-0">
             <VibeCard project={activeProject} theme={activeTheme} />
           </div>
           <button
             onClick={() => setGalleryOpen(true)}
-            className="flex-shrink-0 self-center font-cartoon uppercase tracking-wide text-lg bg-red-500 text-white px-8 py-3 rounded-full shadow-lg mt-2 active:scale-95 transition-transform"
+            className="shrink-0 self-center font-cartoon uppercase tracking-wide text-lg bg-red-500 text-white px-8 py-3 rounded-full shadow-lg mt-2 active:scale-95 transition-transform"
           >
             Voir Les Projets
           </button>
-        </div>
+        </motion.div>
       </section>
 
       <AnimatePresence>
