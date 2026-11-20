@@ -166,40 +166,40 @@ function GiantTitle({ isVisible, className = "", children }) {
 }
 
 function EvolutionIntroOverlay({ startAnimation }) {
-  const [phase, setPhase] = useState(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (startAnimation) {
-      const t = setTimeout(() => setPhase(1), 120);
-      const hide = setTimeout(() => setPhase(2), 650);
-      return () => {
-        clearTimeout(t);
-        clearTimeout(hide);
-      };
+      const show = setTimeout(() => setVisible(true), 60);
+      return () => clearTimeout(show);
     }
   }, [startAnimation]);
 
   return (
     <motion.div
-      exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none bg-[#080808]"
     >
       <div
-        className="absolute -inset-[35%] rotate-[-35deg]"
+        className="absolute -inset-[35%] rotate-[-35deg] opacity-60"
         style={{
           backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%2322c55e' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
           backgroundSize: "112px 112px",
         }}
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 12 }}
-        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-black bg-green-500 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(34,197,94,0.18)]"
+
+      <motion.h2
+        initial={{ opacity: 0, scale: 0.92, y: 10 }}
+        animate={visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
+        transition={{ duration: 0.22, ease: [0.65, 0, 0.35, 1] }}
+        className="font-cartoon uppercase text-white inline-block leading-[0.85] text-center
+                   text-[18vw] sm:text-[12vw] md:text-[8vw] xl:text-[9vw]"
       >
-        Mon parcours
-      </motion.div>
+        MON
+        <br />
+        <span className="bg-green-500 text-black px-2 pb-1 md:px-0 md:pb-0">ÉVOLUTION</span>
+      </motion.h2>
     </motion.div>
   );
 }
@@ -490,7 +490,7 @@ export default function Evolution() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 800);
+      const timer = setTimeout(() => setShowOverlay(false), 650);
       return () => clearTimeout(timer);
     }
   }, [isInView]);

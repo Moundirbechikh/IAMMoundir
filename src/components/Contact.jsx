@@ -110,40 +110,40 @@ function BackgroundGrid() {
 }
 
 function IntroOverlay({ startAnimation }) {
-  const [phase, setPhase] = useState(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (startAnimation) {
-      const t = setTimeout(() => setPhase(1), 120);
-      const hide = setTimeout(() => setPhase(2), 650);
-      return () => {
-        clearTimeout(t);
-        clearTimeout(hide);
-      };
+      const show = setTimeout(() => setVisible(true), 60);
+      return () => clearTimeout(show);
     }
   }, [startAnimation]);
 
   return (
     <motion.div
-      exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none bg-[#080808]"
     >
       <div
-        className="absolute -inset-[35%] rotate-[-35deg]"
+        className="absolute -inset-[35%] rotate-[-35deg] opacity-60"
         style={{
           backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%233b82f6' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
           backgroundSize: "112px 112px",
         }}
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 12 }}
-        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-white bg-blue-500 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(59,130,246,0.18)]"
+
+      <motion.h2
+        initial={{ opacity: 0, scale: 0.92, y: 10 }}
+        animate={visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
+        transition={{ duration: 0.22, ease: [0.65, 0, 0.35, 1] }}
+        className="relative z-10 font-cartoon uppercase text-white inline-block leading-[0.85] text-center
+                   text-[18vw] sm:text-[12vw] md:text-[8vw] xl:text-[9vw]"
       >
-        Me contacter
-      </motion.div>
+        ME
+        <br />
+        <span className="bg-blue-500 text-black px-2 pb-1 md:px-0 md:pb-0">CONTACTER</span>
+      </motion.h2>
     </motion.div>
   );
 }
@@ -320,7 +320,7 @@ export default function Contact() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 800);
+      const timer = setTimeout(() => setShowOverlay(false), 650);
       return () => clearTimeout(timer);
     }
   }, [isInView]);
@@ -434,81 +434,88 @@ export default function Contact() {
         <AnimatePresence>{showOverlay && <IntroOverlay key="intro-contact-m" startAnimation={isInView} />}</AnimatePresence>
         <BackgroundGrid />
 
-        <AnimatePresence mode="wait">
-          {mobileView === "info" ? (
-            <motion.div
-              key="info"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-              className="relative z-10 flex-1 flex flex-col justify-center min-h-0"
-            >
-              <GiantTitle isVisible={!showOverlay} className="text-[20vw] mb-2">
-                ME<br /><span className="bg-blue-500 text-black">CONTACTER</span>
-              </GiantTitle>
+        <motion.div
+          initial={false}
+          animate={{ opacity: showOverlay ? 0 : 1 }}
+          transition={{ duration: 0.25 }}
+          className="relative z-10 flex-1 min-h-0 flex"
+        >
+          <AnimatePresence mode="wait">
+            {mobileView === "info" ? (
+              <motion.div
+                key="info"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="relative z-10 flex-1 flex flex-col justify-center min-h-0"
+              >
+                <GiantTitle isVisible={!showOverlay} className="text-[20vw] mb-2">
+                  ME<br /><span className="bg-blue-500 text-black">CONTACTER</span>
+                </GiantTitle>
 
-              <p className="font-cartoon text-[5.5vw] text-white/50 leading-relaxed uppercase mb-4">
-                Une idée, un projet ? Écris-moi ou passe par les réseaux.
-              </p>
+                <p className="font-cartoon text-[5.5vw] text-white/50 leading-relaxed uppercase mb-4">
+                  Une idée, un projet ? Écris-moi ou passe par les réseaux.
+                </p>
 
-              <div className="flex flex-col gap-2.5 mb-4">
-                <div className="flex items-center items-start flex-col gap-2.5">
-                  <div className="relative flex items-center gap-2 bg-[#0c0c0c]/70 rounded-xl px-3 py-2.5 border border-white/10 flex-shrink-0">
-                    <MapPin size={18} className="text-blue-500" />
-                    <span className="text-white/80 font-cartoon uppercase text-[30px]">Oran, DZ</span>
+                <div className="flex flex-col gap-2.5 mb-4">
+                  <div className="flex items-center items-start flex-col gap-2.5">
+                    <div className="relative flex items-center gap-2 bg-[#0c0c0c]/70 rounded-xl px-3 py-2.5 border border-white/10 flex-shrink-0">
+                      <MapPin size={18} className="text-blue-500" />
+                      <span className="text-white/80 font-cartoon uppercase text-[30px]">Oran, DZ</span>
+                    </div>
+                    <MailCard mode="click" className="flex w-[90vw] h-[55px]" />
                   </div>
-                  <MailCard mode="click" className="flex w-[90vw] h-[55px]" />
+                  <div className="flex justify-center items-center gap-2.5">
+                    {socials.map((s) => <SocialKey key={s.label} {...s} />)}
+                  </div>
                 </div>
-                <div className="flex justify-center items-center gap-2.5">
-                  {socials.map((s) => <SocialKey key={s.label} {...s} />)}
+
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setMobileView("form")}
+                  className="relative w-full py-3.5 rounded-xl font-cartoon uppercase tracking-widest text-lg bg-black border border-blue-500/40 text-white flex items-center justify-center gap-2 hover:bg-blue-500 hover:text-black hover:border-blue-500 transition-colors"
+                >
+                  Contact Direct
+                  <ArrowRight size={16} />
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+                className="relative z-10 flex-1 flex flex-col min-h-0"
+              >
+                <button
+                  type="button"
+                  onClick={() => setMobileView("info")}
+                  className="flex items-center gap-2 text-white/60 font-cartoon uppercase text-xs mb-4 w-fit"
+                >
+                  <ArrowLeft size={14} /> Retour
+                </button>
+
+                <h3 className="font-cartoon uppercase text-white text-5xl  text-center">
+                  Envoie ton <span className= "text-black bg-blue-500">message</span>
+                </h3>
+
+                <div className="flex-1 flex flex-col justify-center">
+                  <ContactForm
+                    formRef={formRef}
+                    sendEmail={sendEmail}
+                    isSending={isSending}
+                    sent={sent}
+                    msgLength={msgLength}
+                    onMsgChange={setMsgLength}
+                  />
                 </div>
-              </div>
-
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setMobileView("form")}
-                className="relative w-full py-3.5 rounded-xl font-cartoon uppercase tracking-widest text-lg bg-black border border-blue-500/40 text-white flex items-center justify-center gap-2 hover:bg-blue-500 hover:text-black hover:border-blue-500 transition-colors"
-              >
-                Contact Direct
-                <ArrowRight size={16} />
-              </motion.button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="form"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.3 }}
-              className="relative z-10 flex-1 flex flex-col min-h-0"
-            >
-              <button
-                type="button"
-                onClick={() => setMobileView("info")}
-                className="flex items-center gap-2 text-white/60 font-cartoon uppercase text-xs mb-4 w-fit"
-              >
-                <ArrowLeft size={14} /> Retour
-              </button>
-
-              <h3 className="font-cartoon uppercase text-white text-5xl  text-center">
-                Envoie ton <span className= "text-black bg-blue-500">message</span>
-              </h3>
-
-              <div className="flex-1 flex flex-col justify-center">
-                <ContactForm
-                  formRef={formRef}
-                  sendEmail={sendEmail}
-                  isSending={isSending}
-                  sent={sent}
-                  msgLength={msgLength}
-                  onMsgChange={setMsgLength}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </section>
     </div>
   );

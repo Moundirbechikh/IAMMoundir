@@ -480,10 +480,10 @@ export default function ProjectsHolder() {
           transition={{ duration: 0.25 }}
           className="relative shrink-0 flex flex-col items-start z-10 pt-16 pb-2"
         >
-          <GiantTitle isVisible={!showOverlay} className="text-[18vw] sm:text-[12vw] mb-2">
+          <GiantTitle isVisible={!showOverlay} className="text-[12vw] sm:text-[12vw] mb-2">
             MES
             <br />
-            <span className="bg-red-500 text-black px-2 pb-1">PROJETS</span>
+            <span className="bg-red-500 text-black text-[18vw] sm:text-[12vw]">PROJETS</span>
           </GiantTitle>
           <motion.div
             initial={{ opacity: 0, y: 6 }}
