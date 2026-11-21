@@ -22,6 +22,7 @@ import myNewLifePurpleVid from "../assets/MyNewLife_F.mp4";
 import seenIT1 from "../assets/seenIT.jpg";
 import seenIT2 from "../assets/seenIT1.jpg";
 import logo4 from "../assets/logoSeenIt.png";
+
 import seenItObscureVid from "../assets/Seenit1.mp4";
 import seenItIconicVid from "../assets/Seenit2.mp4";
 
