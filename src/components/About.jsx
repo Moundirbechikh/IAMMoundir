@@ -4,7 +4,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { GraduationCap, Star,Monitor, ChevronUp, ChevronDown } from "lucide-react";
+import { GraduationCap, Star, Monitor, ChevronUp, ChevronDown } from "lucide-react";
 
 function Highlight({ children, delay = 0, className = "" }) {
   return (
@@ -433,40 +433,40 @@ function TechCard({
 }
 
 function IntroOverlay({ startAnimation }) {
-  const [phase, setPhase] = useState(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (startAnimation) {
-      const t = setTimeout(() => setPhase(1), 120);
-      const hide = setTimeout(() => setPhase(2), 650);
-      return () => {
-        clearTimeout(t);
-        clearTimeout(hide);
-      };
+      const show = setTimeout(() => setVisible(true), 60);
+      return () => clearTimeout(show);
     }
   }, [startAnimation]);
 
   return (
     <motion.div
-      exit={{ y: "-100%", opacity: 0 }}
-      transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute inset-0 z-50 bg-[#080808] overflow-hidden pointer-events-none"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none bg-[#080808]"
     >
       <div
-        className="absolute -inset-[35%] rotate-[-35deg]"
+        className="absolute -inset-[35%] rotate-[-35deg] opacity-60"
         style={{
           backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Crect x='8' y='8' width='96' height='96' rx='12' fill='none' stroke='%23facc15' stroke-opacity='0.55' stroke-width='2' stroke-dasharray='7 5'/%3E%3C/svg%3E\")",
           backgroundSize: "112px 112px",
         }}
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 12 }}
-        animate={{ opacity: 1, scale: phase === 2 ? 1.05 : 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-cartoon text-4xl md:text-7xl uppercase text-black bg-yellow-400 px-6 py-3 -rotate-2 shadow-[8px_8px_0_rgba(250,204,21,0.18)]"
+
+      <motion.h2
+        initial={{ opacity: 0, scale: 0.92, y: 10 }}
+        animate={visible ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
+        transition={{ duration: 0.22, ease: [0.65, 0, 0.35, 1] }}
+        className="relative z-10 font-cartoon uppercase text-white text-center leading-[0.88]
+                   text-[14vw] sm:text-[10vw] md:text-[7vw] xl:text-[8vw]"
       >
-        Qui suis-je ?
-      </motion.div>
+        QUI
+        <br />
+        <span className="bg-yellow-400 text-black px-2 pb-1 md:px-3 md:pb-0">SUIS-JE ?</span>
+      </motion.h2>
     </motion.div>
   );
 }
@@ -499,7 +499,7 @@ export default function About() {
 
   useEffect(() => {
     if (isInView) {
-      const timer = setTimeout(() => setShowOverlay(false), 800);
+      const timer = setTimeout(() => setShowOverlay(false), 650);
       return () => clearTimeout(timer);
     }
   }, [isInView]);
@@ -515,7 +515,12 @@ export default function About() {
         <BackgroundGrid />
 
         {/* Partie Gauche Desktop */}
-        <div className="relative flex-[0.45] h-full flex flex-col justify-end items-start pl-4 lg:pl-8 xl:pl-12 z-10">
+        <motion.div
+          initial={false}
+          animate={{ opacity: showOverlay ? 0 : 1 }}
+          transition={{ duration: 0.25 }}
+          className="relative flex-[0.45] h-full flex flex-col justify-end items-start pl-4 lg:pl-8 xl:pl-12 z-10"
+        >
           <motion.p initial={{ opacity: 0, y: 8 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.35, delay: 0.05 }} className="relative z-10 text-4xl lg:text-5xl xl:text-[3.2vw] uppercase tracking-wide text-white/70 mb-2 mt-2">
             {smallIntro}
           </motion.p>
@@ -529,7 +534,7 @@ export default function About() {
             />
           </div>
           <RevealParagraph segments={introSegments} isVisible={!showOverlay} className="relative z-10 text-3xl lg:text-3xl xl:text-[2.6vw] text-start leading-tight normal-case max-w-[95%] mt-4" />
-        </div>
+        </motion.div>
 
         {/* Partie Droite Desktop */}
         <div className="flex flex-col flex-[0.55] h-full py-2 gap-6 z-10">
