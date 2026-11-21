@@ -7,37 +7,27 @@ import ProjectCard from "./ProjectCard";
 // --- IMPORTS ASSETS ---
 import logo1 from "../assets/logo1.jpg";
 import back1 from "../assets/back1.jpg";
-import back1Vid from "../assets/back1.mp4";
+import maRestaurantVid from "../assets/JustBurgers.mp4";
 
 import logo2 from "../assets/logo2.png";
 import back2 from "../assets/back2.jpg";
-import back2Vid from "../assets/back2.mp4";
+import recommendItVid from "../assets/RecommendIt.mp4";
 
 import logo3 from "../assets/logo.png";
-import backve from "../assets/back.jpg";
+import backve from "../assets/backve.jpg";
 import backv from "../assets/backv.jpg";
-import backveVid from "../assets/backve.mp4";
-import backvVid from "../assets/backv.mp4";
-
-import back41 from "../assets/seenIT.jpg";
-import logo4 from "../assets/logoSeenIt.png";
-import back4Vid from "../assets/seenIT1.mp4";
+import myNewLifeGreenVid from "../assets/MyNewLife_M.mp4";
+import myNewLifePurpleVid from "../assets/MyNewLife_F.mp4";
 
 import seenIT1 from "../assets/seenIT.jpg";
 import seenIT2 from "../assets/seenIT1.jpg";
-import seenIT2Vid from "../assets/seenIT1.mp4";
-import seenIT3 from "../assets/seenIT2.jpg";
-import seenIT3Vid from "../assets/seenIT2.mp4";
-import seenIT4 from "../assets/seenIT3.jpg";
-import seenIT4Vid from "../assets/seenIT3.mp4";
-import seenIT5 from "../assets/seenIT4.jpg";
-import seenIT5Vid from "../assets/seenIT4.mp4";
-import seenIT6 from "../assets/seenIT5.jpg";
-import seenIT6Vid from "../assets/seenIT5.mp4";
+import logo4 from "../assets/logoSeenIt.png";
+import seenItObscureVid from "../assets/Seenit1.mp4";
+import seenItIconicVid from "../assets/Seenit2.mp4";
 
 import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
-import back14Vid from "../assets/back14.mp4";
+import unicheckVid from "../assets/Unicheck.mp4";
 
 import phone2 from "../assets/phone2.jpg";
 import phone11 from "../assets/phone11.jpg";
@@ -58,57 +48,51 @@ const projects = [
     id: "01", title: "MaResturant", tech: "React / Node.js / MongoDB",
     desc: "Portail gastronomique haut de gamme, parcours immersif et accents rouges.",
     link: "https://ma-resturant.vercel.app/", font: "cursive", accent: "#b91c1c", titleColor: "#fff",
-    logo: logo1, poster: back1, video: back1Vid, phone: phone11,
+    logo: logo1, poster: back1, video: maRestaurantVid, phone: phone11,
   },
   {
     id: "02", title: "RecommandIT", tech: "Python / Node.js / React / MongoDB",
     desc: "Moteur de recommandation de films basé sur le machine learning, interface épurée.",
     link: "https://recommand-it.vercel.app/", font: "'Parisienne', cursive", accent: "#1e293b", titleColor: "#fff",
-    logo: logo2, poster: back2, video: back2Vid, phone: phone2,
+    logo: logo2, poster: back2, video: recommendItVid, phone: phone2,
   },
   {
     id: "03", title: "MyNewLife", tech: "Fullstack / React / Node.js / MongoDB",
     desc: "Organisation numérique et gestion de vie au quotidien pour un futur plus serein.",
     link: "https://my-new-life-blond.vercel.app/", font: "'Lobster', cursive",
     accent: "#365314", altAccent: "#6b21a8", titleColor: "#fff",
-    logo: logo3, poster: backve, video: backveVid, phone: phoneve,
+    logo: logo3, poster: backve, video: myNewLifeGreenVid, phone: phoneve,
     themes: [
-      { id: "lime", accent: "#365314", titleColor: "#fff", poster: backve, video: backveVid, phone: phoneve },
-      { id: "purple", accent: "#6b21a8", titleColor: "#fff", poster: backv, video: backvVid, phone: phoneve1 },
+      { id: "green", accent: "#365314", titleColor: "#fff", poster: backve, video: myNewLifeGreenVid, phone: phoneve },
+      { id: "purple", accent: "#6b21a8", titleColor: "#fff", poster: backv, video: myNewLifePurpleVid, phone: phoneve1 },
     ],
   },
   {
     id: "04", title: "SeenIt", tech: "React / Tailwind / MangoDB / Node.js",
-    desc: "Plateforme de partage de films et archivage de visionnage, interface immersive et themes différents.",
+    desc: "Plateforme de partage de films et archivage de visionnage, avec deux thèmes immersifs.",
     link: "https://seen-it-gamma.vercel.app/", font: "'Kaushan Script',cursive",
     accent: "#09090B", titleColor: "#E11D48",
-    logo: logo4, poster: seenIT1, video: back4Vid, phone: seenITphone,
+    logo: logo4, poster: seenIT1, video: seenItObscureVid, phone: seenITphone,
     themes: [
-      { id: "crimson", accent: "#09090B", titleColor: "#E11D48", poster: back41, video: back4Vid },
-      { id: "midnight", accent: "#0F172A", titleColor: "#F59E0B", poster: seenIT2, video: seenIT2Vid },
-      { id: "matrix", accent: "#022C22", titleColor: "#10B981", poster: seenIT3, video: seenIT3Vid },
-      { id: "noir", accent: "#0A0A0A", titleColor: "#F5F5F5", poster: seenIT4, video: seenIT4Vid },
-      { id: "vintage", accent: "#292524", titleColor: "#D97706", poster: seenIT5, video: seenIT5Vid },
-      { id: "iconic", accent: "#C9960C", titleColor: "#C9960C", poster: seenIT6, video: seenIT6Vid },
+      { id: "obscure", accent: "#09090B", titleColor: "#E11D48", poster: seenIT1, video: seenItObscureVid },
+      { id: "iconic", accent: "#09090B", titleColor: "#F472B6", poster: seenIT2, video: seenItIconicVid },
     ],
   },
   {
     id: "05", title: "Unicheck", tech: "React / Tailwind / Spring Boot / PostgreSQL",
     desc: "Présence académique par QR dynamique et vérification GPS, contrôle admin centralisé.",
     link: "https://unicheck-drab.vercel.app", font: "'Manrope', sans-serif", accent: "#022017", titleColor: "#fff",
-    logo: logo14, poster: back14, video: back14Vid, phone: phone14,
+    logo: logo14, poster: back14, video: unicheckVid, phone: phone14,
   },
 ];
 
 // Renvoie le thème actif d'un projet pour un "tour" (lap) donné.
-// Le tour 0 démarre TOUJOURS sur le thème "crimson" s'il existe, sinon sur le premier thème.
-// Ex: SeenIt -> crimson, midnight, matrix, noir, vintage, iconic, crimson...
-// Ex: MyNewLife -> lime, purple, lime, purple...
+// Chaque thème démarre sur son premier thème puis alterne avec les thèmes suivants.
+// Ex: SeenIt -> obscur, iconique, obscur...
+// Ex: MyNewLife -> vert, mauve, vert...
 function themeForLap(project, lap) {
   if (!project.themes || !project.themes.length) return null;
-  const crimsonIdx = project.themes.findIndex((t) => t.id === "crimson");
-  const start = crimsonIdx >= 0 ? crimsonIdx : 0;
-  const idx = (start + lap) % project.themes.length;
+  const idx = lap % project.themes.length;
   return project.themes[idx];
 }
 
