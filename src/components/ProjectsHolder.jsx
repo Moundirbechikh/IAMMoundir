@@ -23,8 +23,8 @@ import seenIT1 from "../assets/seenIT.jpg";
 import seenIT2 from "../assets/seenIT1.jpg";
 import logo4 from "../assets/logoSeenIt.png";
 
-import seenItObscureVid from "../assets/Seenit11.mp4";
-import seenItIconicVid from "../assets/Seenit2.mp4";
+import seenItObscureVid from "../assets/Seen1.mp4";
+import seenItIconicVid from "../assets/Seen2.mp4";
 
 import logo14 from "../assets/logo14.png";
 import back14 from "../assets/back14.jpg";
