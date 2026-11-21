@@ -32,7 +32,6 @@ import unicheckVid from "../assets/Unicheck.mp4";
 import phone2 from "../assets/phone2.jpg";
 import phone11 from "../assets/phone11.jpg";
 import phone14 from "../assets/phone14.jpg";
-import phonev from "../assets/phonev.jpg";
 import phoneve from "../assets/phoneve.jpg";
 import phoneve1 from "../assets/phoneve1.jpg";
 import seenITphone from "../assets/seenITphone.jpg";
