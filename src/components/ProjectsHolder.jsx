@@ -37,6 +37,11 @@ import phoneve from "../assets/phoneve.jpg";
 import phoneve1 from "../assets/phoneve1.jpg";
 import seenITphone from "../assets/seenITphone.jpg";
 
+import myNewStyleLogo from "../assets/MyNewStyleLogo.png";
+import myNewStylePoster from "../assets/MyNewStyle.jpg";
+import myNewStyleVid from "../assets/MyNewStyle.mp4";
+import myNewStylePhone from "../assets/MyNewStylephone.jpg";
+
 // --- IMAGES MOBILE SPÉCIFIQUES ---
 // Les captures téléphone sont séparées des posters/vidéos desktop.
 
@@ -83,6 +88,12 @@ const projects = [
     desc: "Présence académique par QR dynamique et vérification GPS, contrôle admin centralisé.",
     link: "https://unicheck-drab.vercel.app", font: "'Manrope', sans-serif", accent: "#022017", titleColor: "#fff",
     logo: logo14, poster: back14, video: unicheckVid, phone: phone14,
+  },
+  {
+    id: "06", title: "MyNewStyle", tech: "React / Tailwind / Node.js / Express / MongoDB",
+    desc: "Boutique de vêtements complète avec catalogue, panier, commandes, comptes utilisateurs, avis clients et espace d'administration.",
+    link: "https://my-new-style-five.vercel.app/", font: "'Plus Jakarta Sans', 'Tajawal', sans-serif", accent: "#161f33", titleColor: "#fff",
+    logo: myNewStyleLogo, poster: myNewStylePoster, video: myNewStyleVid, phone: myNewStylePhone,
   },
 ];
 

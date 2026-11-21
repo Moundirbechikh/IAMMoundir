@@ -4,5 +4,6 @@
   /* Les variables de style cartoon */
   --font-cartoon: "Bangers", system-ui;
   --font-body: "Fredoka", sans-serif;
-  --shadow-cartoon: 12px 12px 0px 0px rgba(0,0,0,1);
+  --shadow-cartoon: 12px 12px 0px 0px rgba(0, 0, 0, 1);
+  --font-clean: "Plus Jakarta Sans", "Tajawal", sans-serif;
 }

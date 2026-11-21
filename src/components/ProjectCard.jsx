@@ -41,11 +41,12 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
   const current = activeTheme ? { ...project, ...activeTheme } : project;
 
   const positions = [
-    { top: "19%", left: "25%", rotate: -6 },
-    { top: "18%", left: "75%", rotate: 5 },
-    { top: "52%", left: "48%", rotate: 2 },
-    { top: "85%", left: "28%", rotate: -3 },
-    { top: "85%", left: "76%", rotate: -2 },
+    { top: "2%", left: "2%", rotate: -4 },
+    { top: "2%", left: "52%", rotate: 3 },
+    { top: "35%", left: "2%", rotate: 3 },
+    { top: "35%", left: "52%", rotate: -3 },
+    { top: "68%", left: "2%", rotate: -2 },
+    { top: "68%", left: "52%", rotate: 4 },
   ];
 
   const basePos = positions[index] || positions[2];
@@ -58,11 +59,11 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
       animate={{
         top: isActive ? "50%" : basePos.top,
         left: isActive ? "50%" : basePos.left,
-        x: "-50%",
-        y: "-50%",
+        x: isActive ? "-50%" : "0%",
+        y: isActive ? "-50%" : "0%",
         rotate: isActive ? 0 : basePos.rotate,
-        width: isActive ? "90%" : "28vw",
-        height: isActive ? "80%" : "14vw",
+        width: isActive ? "90%" : "46%",
+        height: isActive ? "80%" : "28%",
         zIndex: isActive ? 50 : 10,
         filter: isBlurred ? "blur(12px) brightness(0.2)" : "blur(0px) brightness(1)",
         boxShadow: isActive ? `0 0 80px 15px ${current.accent}70` : "0 25px 50px -12px rgba(0,0,0,0.5)",
@@ -71,7 +72,7 @@ export default function ProjectCard({ project, index, isActive, isBlurred, onCli
       className={`absolute overflow-hidden flex flex-col group ${
         isActive ? "bg-black rounded-xl border border-white/20" : "bg-black border-2 border-[#222] cursor-pointer"
       }`}
-      style={{ minWidth: isActive ? "600px" : "300px" }}
+      style={{ minWidth: isActive ? "600px" : "0px" }}
     >
       {isActive ? (
         <>
