@@ -5,9 +5,10 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 
 // --- IMPORTS ASSETS ---
-import logo1 from "../assets/logo1.jpg";
-import back1 from "../assets/back1.jpg";
-import maRestaurantVid from "../assets/JustBurgers.mp4";
+import logo1 from "../assets/LogoJustBurgers.png";
+import back1 from "../assets/JustBurgers.jpg";
+import justBurgersVid from "../assets/JustBurgers.mp4";
+import phone11 from "../assets/JustBurgersphone.jpg";
 
 import logo2 from "../assets/logo2.png";
 import back2 from "../assets/back2.jpg";
@@ -19,8 +20,8 @@ import backv from "../assets/backv.jpg";
 import myNewLifeGreenVid from "../assets/MyNewLife_M.mp4";
 import myNewLifePurpleVid from "../assets/MyNewLife_F.mp4";
 
-import seenIT1 from "../assets/seenIT.jpg";
-import seenIT2 from "../assets/seenIT1.jpg";
+import seenIT1 from "../assets/seenIT1.jpg";
+import seenIT2 from "../assets/seenIT5.jpg";
 import logo4 from "../assets/logoSeenIt.png";
 
 import seenItObscureVid from "../assets/Seen1.mp4";
@@ -31,7 +32,6 @@ import back14 from "../assets/back14.jpg";
 import unicheckVid from "../assets/Unicheck.mp4";
 
 import phone2 from "../assets/phone2.jpg";
-import phone11 from "../assets/phone11.jpg";
 import phone14 from "../assets/phone14.jpg";
 import phoneve from "../assets/phoneve.jpg";
 import phoneve1 from "../assets/phoneve1.jpg";
@@ -45,10 +45,10 @@ const INTRO_DURATION = 650;
 
 const projects = [
   {
-    id: "01", title: "MaResturant", tech: "React / Node.js / MongoDB",
-    desc: "Portail gastronomique haut de gamme, parcours immersif et accents rouges.",
-    link: "https://ma-resturant.vercel.app/", font: "cursive", accent: "#b91c1c", titleColor: "#fff",
-    logo: logo1, poster: back1, video: maRestaurantVid, phone: phone11,
+    id: "01", title: "Just Burgers", tech: "React / Tailwind / Google Apps Script / Google Sheets",
+    desc: "Application web de commande en ligne et à table, avec gestion complète du menu, des tables et des commandes.",
+    link: "https://justburgers.vercel.app/", font: "'Bricolage Grotesque', sans-serif", accent: "#C62F1D", titleColor: "#fff",
+    logo: logo1, poster: back1, video: justBurgersVid, phone: phone11,
   },
   {
     id: "02", title: "RecommandIT", tech: "Python / Node.js / React / MongoDB",
@@ -75,7 +75,7 @@ const projects = [
     logo: logo4, poster: seenIT1, video: seenItObscureVid, phone: seenITphone,
     themes: [
       { id: "obscure", accent: "#09090B", titleColor: "#E11D48", poster: seenIT1, video: seenItObscureVid },
-      { id: "iconic", accent: "#09090B", titleColor: "#F472B6", poster: seenIT2, video: seenItIconicVid },
+      { id: "iconic", accent: "#09090B", titleColor: "#C9960C", poster: seenIT2, video: seenItIconicVid },
     ],
   },
   {

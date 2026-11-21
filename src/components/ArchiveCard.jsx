@@ -124,9 +124,13 @@ export default function ArchiveCard({
           } ${isActive ? "opacity-100" : "opacity-0"}`}
         >
           <h3
-            className={`text-white font-cartoon uppercase -rotate-1 drop-shadow-lg leading-tight ${
+            className={`font-cartoon uppercase -rotate-1 drop-shadow-lg leading-tight ${
               isFocused ? "text-2xl mb-3" : "text-base md:text-xl mb-1 md:mb-2"
             }`}
+            style={{
+              fontFamily: project.font || undefined,
+              color: project.accent || undefined,
+            }}
           >
             {project.title}
           </h3>

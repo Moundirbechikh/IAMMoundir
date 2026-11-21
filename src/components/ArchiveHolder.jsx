@@ -1,6 +1,5 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Archive } from "lucide-react";
 import ArchiveCard from "./ArchiveCard";
 
 // --- IMPORTS ASSETS ---
@@ -8,7 +7,7 @@ import back12 from "../assets/back13.mp4";
 import back5 from "../assets/back5.mp4";
 import back6 from "../assets/back6.jpg";
 import back7 from "../assets/back7.jpg";
-import back10Vid from "../assets/back10.mp4";
+import maRestaurentVid from "../assets/MaRestaurent.mp4";
 import back8 from "../assets/back8.png";
 import back9Vid from "../assets/back9.mp4";
 import back11Vid from "../assets/back11.mp4";
@@ -143,9 +142,9 @@ export default function ArchiveHolder() {
       mTop: "38%", mLeft: "70%", mRotate: -7,
     },
     {
-      id: "A-05", date: "Oct. 2025", type: "wide", isVideo: true, title: "My New Style",
-      purpose: "Une application e-commerce hyper classe pour vendre des habits classiques. Design épuré.",
-      how: "Next.js + Firebase", media: back10Vid,
+      id: "A-05", date: "Oct. 2025", type: "wide", isVideo: true, title: "MaResturant",
+      purpose: "Portail gastronomique haut de gamme offrant une expérience immersive, avec une présentation raffinée du restaurant et ses menus. https://ma-resturant.vercel.app/",
+      how: "React + Node.js + MongoDB", media: maRestaurentVid,
       top: "50%", left: "52%", rotate: 3, zIndex: 25,
       mTop: "54%", mLeft: "32%", mRotate: -9,
     },
