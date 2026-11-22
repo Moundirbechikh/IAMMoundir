@@ -21,7 +21,7 @@ const evolutionSteps = [
     subtitle: "L'interface prend forme", 
     desc: "Apprentissage de la POO avec Java et création des premières interfaces visuelles et systèmes CRUD.", 
     techs: ["HTML/CSS", "vanila js", "PHP","java"], 
-    x: 35, y: 38, mx: 75, my: 27 
+    x: 35, y: 38, mx: 70, my: 22 
   },
   { 
     id: "03", 
