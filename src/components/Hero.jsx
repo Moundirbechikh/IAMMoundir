@@ -91,7 +91,7 @@ export default function Hero({ sections = [], onNavigate }) {
   const smileRevealed = useRevealOnOverlap(plaqueRef, smileRef, plaqueX, plaqueY);
 
   // ============================================================
-  // PARALLAX TACTILE ET CONTRAINTES — MOBILE
+  // PARALLAX TACTILE ET CONTRAINTES — MOBILE (Optimisé rAF & Swipe)
   // ============================================================
   const mobileSectionRef = useRef(null);
   const rawPlaqueXM = useMotionValue(0);
@@ -101,6 +101,8 @@ export default function Hero({ sections = [], onNavigate }) {
   const plaqueYM = useSpring(rawPlaqueYM, { stiffness: 45, damping: 14, mass: 0.6 });
 
   const followEnabledM = useRef(false);
+  const rafIdM = useRef(null);
+  const pointerPosM = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -111,16 +113,23 @@ export default function Hero({ sections = [], onNavigate }) {
 
   const handlePointerMoveMobile = (e) => {
     if (!followEnabledM.current || !mobileSectionRef.current) return;
-    const rect = mobileSectionRef.current.getBoundingClientRect();
+    pointerPosM.current = { x: e.clientX, y: e.clientY };
 
-    const dx = e.clientX - rect.left - rect.width / 2;
-    const dy = e.clientY - rect.top - rect.height / 2;
+    if (!rafIdM.current) {
+      rafIdM.current = requestAnimationFrame(() => {
+        rafIdM.current = null;
+        if (!mobileSectionRef.current) return;
+        const rect = mobileSectionRef.current.getBoundingClientRect();
+        const dx = pointerPosM.current.x - rect.left - rect.width / 2;
+        const dy = pointerPosM.current.y - rect.top - rect.height / 2;
 
-    const maxX = rect.width * 0.24;
-    const maxY = rect.height * 0.39;
+        const maxX = rect.width * 0.24;
+        const maxY = rect.height * 0.39;
 
-    rawPlaqueXM.set(clamp(dx, maxX));
-    rawPlaqueYM.set(clamp(dy, maxY));
+        rawPlaqueXM.set(clamp(dx, maxX));
+        rawPlaqueYM.set(clamp(dy, maxY));
+      });
+    }
   };
 
   const { scrollYProgress: scrollProgressM } = useScroll({
@@ -729,16 +738,38 @@ function MiniHighlight({ children, delay = 0 }) {
 }
 
 // ============================================================
-// CARTE MOBILE
+// CARTE MOBILE (Séparation Tap vs Swipe pour éviter les faux clics lors du scroll)
 // ============================================================
 function MobileCard({ cardData, children, revealContent, topTitle, centerBody, onCtaClick }) {
   const [isOpen, setIsOpen] = useState(false);
-  const handleClick = () => {
-    setIsOpen((v) => !v);
+  const touchStartRef = useRef({ x: 0, y: 0 });
+
+  const handleTouchStart = (e) => {
+    const t = e.touches[0];
+    touchStartRef.current = { x: t.clientX, y: t.clientY };
   };
+
+  const handleTouchEnd = (e) => {
+    const t = e.changedTouches[0];
+    const dx = Math.abs(t.clientX - touchStartRef.current.x);
+    const dy = Math.abs(t.clientY - touchStartRef.current.y);
+
+    // Si le mouvement est inférieur à 10px, c'est un tap intentionnel et non un swipe/scroll
+    if (dx < 10 && dy < 10) {
+      setIsOpen((v) => !v);
+    }
+  };
+
   return (
     <motion.div
-      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onClick={() => {
+        // Fallback desktop ou pointer classique si testé sur émulateur souris
+        if (!('ontouchstart' in window)) {
+          setIsOpen((v) => !v);
+        }
+      }}
       whileTap={{ scale: 0.96 }}
       animate={{ borderColor: isOpen ? cardData.frameColor : "rgba(255,255,255,0.55)" }}
       transition={{ duration: 0.3 }}
