@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Compass, Map, Mountain, Waves, Anchor, Skull, TreePine } from "lucide-react";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 // ============================================================
 // DONNÉES — 7 étapes, positions adaptées pour AUCUN débordement
@@ -148,15 +149,19 @@ function BackgroundGrid() {
   );
 }
 
-function GiantTitle({ isVisible, className = "", children }) {
+function GiantTitle({ isVisible, isMobile = false, className = "", children }) {
   return (
     <motion.h2
       initial={{ opacity: 0, scale: 0.7, y: 30 }}
-      animate={isVisible ? { opacity: 1, scale: 1, y: [0, 0, -4, 0] } : { opacity: 0, scale: 0.7, y: 30 }}
+      animate={isVisible
+        ? (isMobile ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, scale: 1, y: [0, 0, -4, 0] })
+        : { opacity: 0, scale: 0.7, y: 30 }}
       transition={{
         opacity: { type: "spring", stiffness: 55, damping: 12, delay: 0.1 },
         scale: { type: "spring", stiffness: 55, damping: 12, delay: 0.1 },
-        y: { duration: 4.5, delay: 1, repeat: Infinity, ease: "easeInOut" },
+        y: isMobile
+          ? { duration: 0.18, ease: "easeOut" }
+          : { duration: 4.5, delay: 1, repeat: Infinity, ease: "easeInOut" },
       }}
       className={`font-cartoon uppercase text-white px-0 inline-block leading-[0.85] ${className}`}
     >
@@ -224,12 +229,12 @@ function CompassRose({ size = 110, opacity = 0.28 }) {
 
 const TORN_CLIP = "polygon(2% 4%,8% 1%,15% 3%,22% 0%,30% 2%,40% 0%,50% 3%,60% 1%,70% 3%,80% 0%,90% 2%,98% 4%,99% 12%,97% 22%,100% 32%,98% 42%,100% 52%,97% 62%,99% 72%,96% 82%,99% 92%,97% 98%,90% 99%,80% 97%,70% 100%,60% 98%,50% 100%,40% 97%,30% 99%,20% 97%,10% 100%,2% 97%,0% 90%,3% 80%,0% 70%,2% 60%,0% 50%,3% 40%,0% 30%,2% 20%,0% 10%)";
 
-function Parchment() {
+function Parchment({ isMobile = false }) {
   return (
     <>
-      <div className="absolute inset-0 -z-10 opacity-90" style={{ background: "linear-gradient(135deg,#a67c52,#8b643a)", clipPath: TORN_CLIP, transform: "rotate(1.6deg) scale(1.02)", filter: "blur(2px)" }} />
-      <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 18% 28%, rgba(90,65,40,.18), transparent 26%), radial-gradient(circle at 82% 68%, rgba(90,65,40,.15), transparent 30%), radial-gradient(circle at 55% 15%, rgba(90,65,40,.12), transparent 22%), radial-gradient(circle at 30% 85%, rgba(90,65,40,.14), transparent 24%), linear-gradient(135deg, #ebd8af, #dfc99b 55%, #d4b882)", clipPath: TORN_CLIP, boxShadow: "inset 0 0 120px rgba(60,40,15,.5), inset 0 0 30px rgba(60,40,15,.4)", transform: "rotate(-1.4deg)" }} />
-      <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-25" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, clipPath: TORN_CLIP, transform: "rotate(-1.4deg)" }} />
+      <div className="absolute inset-0 -z-10 opacity-90" style={{ background: "linear-gradient(135deg,#a67c52,#8b643a)", clipPath: TORN_CLIP, transform: "rotate(1.6deg) scale(1.02)", filter: isMobile ? "none" : "blur(2px)" }} />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 18% 28%, rgba(90,65,40,.18), transparent 26%), radial-gradient(circle at 82% 68%, rgba(90,65,40,.15), transparent 30%), radial-gradient(circle at 55% 15%, rgba(90,65,40,.12), transparent 22%), radial-gradient(circle at 30% 85%, rgba(90,65,40,.14), transparent 24%), linear-gradient(135deg, #ebd8af, #dfc99b 55%, #d4b882)", clipPath: TORN_CLIP, boxShadow: isMobile ? "none" : "inset 0 0 120px rgba(60,40,15,.5), inset 0 0 30px rgba(60,40,15,.4)", transform: "rotate(-1.4deg)" }} />
+      {!isMobile && <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-25" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`, clipPath: TORN_CLIP, transform: "rotate(-1.4deg)" }} />}
     </>
   );
 }
@@ -385,7 +390,9 @@ function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
     >
       <motion.div
         animate={{ scale: isActive ? 1.15 : 1, backgroundColor: isActive ? "#22c55e" : "#f4e9cf", color: isActive ? "#000" : "#3f2d1c" }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        transition={isMobile
+          ? { duration: 0.16, ease: "easeOut" }
+          : { type: "spring", stiffness: 400, damping: 25 }}
         className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-[#3f2d1c] flex items-center justify-center font-cartoon text-xl sm:text-2xl shadow-xl cursor-pointer"
       >
         {step.id}
@@ -398,24 +405,28 @@ function StepMarker({ step, isMobile, isActive, onEnter, onLeave, onClick }) {
       <AnimatePresence>
         {isActive && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 15 }}
+            initial={{ opacity: 0, scale: isMobile ? 0.96 : 0.8, y: isMobile ? 6 : 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            transition={{ type: "spring", stiffness: 350, damping: 22 }}
+            exit={{ opacity: 0, scale: isMobile ? 0.96 : 0.8, y: isMobile ? 6 : 10 }}
+            transition={isMobile
+              ? { duration: 0.16, ease: "easeOut" }
+              : { type: "spring", stiffness: 350, damping: 22 }}
             style={isMobile ? getMobilePanelStyle(step.mx, step.my) : getDesktopPanelStyle(step.x, step.y)}
-            className="absolute z-50 min-h-[170px] flex flex-col items-start justify-start pt-3 pb-5 px-5 bg-[#0c0c0c] rounded-lg shadow-2xl pointer-events-auto cursor-default"
-            onClick={(e) => isMobile && e.stopPropagation()} 
+            className={`absolute z-50 min-h-[170px] flex flex-col items-start justify-start pt-3 pb-5 px-5 rounded-lg pointer-events-auto cursor-default ${isMobile ? "bg-[#dfc99b] shadow-lg" : "bg-[#0c0c0c] shadow-2xl"}`}
+            onClick={(e) => isMobile && e.stopPropagation()}
           >
             <AnimatedFrame hoverColor="#22c55e" />
             
-            <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-10">
-              <div className="absolute w-[260%] h-[260%] top-[-80%] left-[-80%] rotate-[-35deg] flex flex-col">
-                <motion.div variants={barOuterTop} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-top" />
-                <motion.div variants={barInnerTop} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-top" />
-                <motion.div variants={barInnerBottom} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-bottom" />
-                <motion.div variants={barOuterBottom} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-bottom" />
+            {!isMobile && (
+              <div className="absolute -inset-2 overflow-hidden rounded-[4px] pointer-events-none z-10">
+                <div className="absolute w-[260%] h-[260%] top-[-80%] left-[-80%] rotate-[-35deg] flex flex-col">
+                  <motion.div variants={barOuterTop} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-top" />
+                  <motion.div variants={barInnerTop} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-top" />
+                  <motion.div variants={barInnerBottom} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-bottom" />
+                  <motion.div variants={barOuterBottom} initial="initial" animate="animate" className="w-full h-[25%] bg-green-500 origin-bottom" />
+                </div>
               </div>
-            </div>
+            )}
 
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
@@ -481,6 +492,7 @@ const generateWavyPath = (steps, isMobile) => {
 // ============================================================
 export default function Evolution() {
   const sectionRef = useRef(null);
+  const isDesktop = useIsDesktop(1024);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const [showOverlay, setShowOverlay] = useState(true);
   
@@ -505,8 +517,8 @@ export default function Evolution() {
   };
 
   // Appel de notre nouvelle fonction au lieu du simple join
-  const routeDesktop = generateWavyPath(evolutionSteps, false);
-  const routeMobile = generateWavyPath(evolutionSteps, true);
+  const routeDesktop = useMemo(() => generateWavyPath(evolutionSteps, false), []);
+  const routeMobile = useMemo(() => generateWavyPath(evolutionSteps, true), []);
 
   return (
     <div ref={sectionRef} className="relative w-full h-[100dvh] bg-[#080808] font-cartoon text-white overflow-hidden select-none">
@@ -519,7 +531,8 @@ export default function Evolution() {
       {/* ============================================================
           ================  VERSION DESKTOP (>= lg)  ================
           ============================================================ */}
-      <div className="hidden lg:flex relative z-10 w-full h-full flex-row py-12 pl-3 pr-12 gap-10">
+      {isDesktop && (
+      <div className="flex relative z-10 w-full h-full flex-row py-12 pl-3 pr-12 gap-10">
         <div className="relative flex-[0.34] h-full flex flex-col justify-end pb-12">
           <GiantTitle isVisible={!showOverlay} className="text-[7.5vw] mb-4">
             MON<br /><span className="bg-green-500 text-black px-1">ÉVOLUTION</span>
@@ -541,7 +554,7 @@ export default function Evolution() {
         <div className="relative flex-[0.66] h-full flex items-center justify-center">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={!showOverlay ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }} transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.2 }} className="relative w-full h-[92%] max-w-[900px]">
             <Pin />
-            <Parchment />
+            <Parchment isMobile={false} />
             <CompassRose />
             <MapDoodles isMobile={false} />
 
@@ -568,21 +581,23 @@ export default function Evolution() {
           </motion.div>
         </div>
       </div>
+      )}
 
       {/* ============================================================
           ================  VERSION MOBILE (< lg)  ===================
           ============================================================ */}
-      <div className="flex lg:hidden relative z-10 w-full h-full flex-col px-4 pt-16 pb-3">
+      {!isDesktop && (
+      <div className="flex relative z-10 w-full h-full flex-col px-4 pt-16 pb-3">
         <div className="flex-shrink-0 flex flex-col items-start z-10 pb-2">
           <motion.p initial={{ opacity: 0, y: 6 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }} transition={{ duration: 0.3, delay: 0.05 }} className="relative z-10 text-[9vw] sm:text-[4vw] uppercase tracking-wide font-cartoon text-black bg-green-500 px-1 leading-none">Mon</motion.p>
-          <GiantTitle isVisible={!showOverlay} className="text-[20vw] sm:text-[14vw] mb-2 text-white">ÉVOLUTION</GiantTitle>
+          <GiantTitle isVisible={!showOverlay} isMobile={true} className="text-[20vw] sm:text-[14vw] mb-2 text-white">ÉVOLUTION</GiantTitle>
           <motion.p initial={{ opacity: 0, y: 6 }} animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }} transition={{ duration: 0.4, delay: 0.4 }} className="font-cartoon text-[13px] text-white/80 uppercase mt-2 max-w-[95%] leading-snug">Une carte de mon parcours technique — touche un lieu pour le révéler.</motion.p>
         </div>
 
         <div className="relative flex-1 min-h-0 pt-4" onClick={() => setActiveMobile(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={!showOverlay ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.92 }} transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.15 }} className="relative w-full h-full max-w-[420px] mx-auto">
             <Pin />
-            <Parchment />
+            <Parchment isMobile={true} />
             <CompassRose size={70} opacity={0.22} />
             <MapDoodles isMobile={true} />
 
@@ -615,6 +630,7 @@ export default function Evolution() {
           <Map className="w-3 h-3 text-green-500" /> Touche chaque lieu
         </div>
       </div>
+      )}
     </div>
   );
 }
