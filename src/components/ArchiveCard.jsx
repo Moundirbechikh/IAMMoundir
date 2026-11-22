@@ -18,12 +18,22 @@ export default function ArchiveCard({
   }, [isActiveInParent]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      const playPromise = videoRef.current.play();
+    if (!videoRef.current) return;
+
+    const video = videoRef.current;
+    video.muted = true;
+
+    if ((isFocused || (!isMobile && isActive)) && project.isVideo) {
+      const playPromise = video.play();
       if (playPromise !== undefined) playPromise.catch(() => {});
+    } else {
+      video.pause();
     }
-  }, []);
+
+    return () => {
+      video.pause();
+    };
+  }, [isActive, isFocused, isMobile, project.isVideo]);
 
   const isWide = project.type === "wide";
 
@@ -103,6 +113,7 @@ export default function ArchiveCard({
           <video
             ref={videoRef}
             src={project.media}
+            preload="metadata"
             loop
             muted
             playsInline

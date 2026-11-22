@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import ArchiveCard from "./ArchiveCard";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 // --- IMPORTS ASSETS ---
 import back12 from "../assets/back13.mp4";
@@ -27,7 +28,7 @@ function BackgroundGrid({ isBlurred }) {
   return (
     <div
       className={`absolute -inset-[60%] z-0 pointer-events-none rotate-[-35deg] transition-all duration-700
-                 bg-[length:112px_112px] md:bg-[length:152px_152px]
+                 bg-size-[112px_112px] md:bg-size-[152px_152px]
                  bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27112%27%20height=%27112%27%3E%3Crect%20x=%278%27%20y=%278%27%20width=%2796%27%20height=%2796%27%20rx=%2712%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
                  md:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27152%27%20height=%27152%27%3E%3Crect%20x=%2712%27%20y=%2712%27%20width=%27128%27%20height=%27128%27%20rx=%2716%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
                  ${isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"}`}
@@ -98,6 +99,7 @@ function IntroOverlay({ startAnimation }) {
 export default function ArchiveHolder() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isDesktop = useIsDesktop(768);
   const [showOverlay, setShowOverlay] = useState(true);
   const [activeId, setActiveId] = useState(null);
 
@@ -176,65 +178,68 @@ export default function ArchiveHolder() {
   return (
     <div ref={sectionRef} className="w-full h-full relative">
       {/* --- DESKTOP (inchangé) --- */}
-      <section
-        onClick={handleBackgroundClick}
-        className="hidden md:flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row py-6 gap-6"
-      >
-        <AnimatePresence>
-          {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
-        </AnimatePresence>
-
-        <BackgroundGrid isBlurred={activeId !== null} />
-
-        <div
-          className={`relative flex-[0.24] h-full flex flex-col justify-end items-start pl-8 lg:pl-6 xl:pl-4 z-10 transition-all duration-500 ${
-            activeId ? "blur-md opacity-40" : ""
-          }`}
+      {isDesktop && (
+        <section
+          onClick={handleBackgroundClick}
+          className="flex relative w-full h-screen bg-[#080808] overflow-hidden font-cartoon text-white flex-row py-6 gap-6"
         >
-          <GiantTitle isVisible={!showOverlay} className="text-[8.5vw] xl:text-[9vw] mb-4">
-            Mes <br />
-            <span className="bg-gray-400 text-black">ARCHIVES</span>
-          </GiantTitle>
+          <AnimatePresence>
+            {showOverlay && <IntroOverlay key="intro" startAnimation={isInView} />}
+          </AnimatePresence>
 
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
-            transition={{ duration: 0.4, delay: 0.4 }}
-            className="relative z-10 text-base xl:text-[1.7vw] mb-12 text-white/80 leading-relaxed max-w-[92%] normal-case space-y-3"
+          <BackgroundGrid isBlurred={activeId !== null} />
+
+          <div
+            className={`relative flex-[0.24] h-full flex flex-col justify-end items-start pl-8 lg:pl-6 xl:pl-4 z-10 transition-all duration-500 ${
+              activeId ? "blur-md opacity-40" : ""
+            }`}
           >
-            <p>
-              Chaque projet ici raconte une étape de <span className="bg-gray-400 text-black">ma progression.</span> Des premières lignes de code aux architectures complexes, c'est la trace visible de <span className="bg-gray-400 text-black">mon apprentissage</span> constant <span className="bg-gray-400 text-black">en développement</span> et en design.
-            </p>
-          </motion.div>
-        </div>
+            <GiantTitle isVisible={!showOverlay} className="text-[8.5vw] xl:text-[9vw] mb-4">
+              Mes <br />
+              <span className="bg-gray-400 text-black">ARCHIVES</span>
+            </GiantTitle>
 
-        <div className="relative flex-[0.76] h-full z-10 pr-4">
-          {oldProjects.map((proj) => (
-            <div
-              key={proj.id}
-              style={{
-                position: "absolute",
-                top: proj.top,
-                left: proj.left,
-                transform: "translate(-50%, -50%)",
-                zIndex: activeId === proj.id ? 999 : proj.zIndex,
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="relative z-10 text-base xl:text-[1.7vw] mb-12 text-white/80 leading-relaxed max-w-[92%] normal-case space-y-3"
             >
-              <ArchiveCard
-                project={proj}
-                isMobile={false}
-                onActive={() => setActiveId(proj.id)}
-                isActiveInParent={activeId === proj.id}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+              <p>
+                Chaque projet ici raconte une étape de <span className="bg-gray-400 text-black">ma progression.</span> Des premières lignes de code aux architectures complexes, c'est la trace visible de <span className="bg-gray-400 text-black">mon apprentissage</span> constant <span className="bg-gray-400 text-black">en développement</span> et en design.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="relative flex-[0.76] h-full z-10 pr-4">
+            {oldProjects.map((proj) => (
+              <div
+                key={proj.id}
+                style={{
+                  position: "absolute",
+                  top: proj.top,
+                  left: proj.left,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: activeId === proj.id ? 999 : proj.zIndex,
+                }}
+              >
+                <ArchiveCard
+                  project={proj}
+                  isMobile={false}
+                  onActive={() => setActiveId(proj.id)}
+                  isActiveInParent={activeId === proj.id}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* --- MOBILE --- */}
-      <section
+      {!isDesktop && (
+        <section
         onClick={handleBackgroundClick}
-        className="flex md:hidden relative w-full h-[100dvh] bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 pt-8 pb-3"
+        className="flex relative w-full h-dvh bg-[#080808] overflow-hidden font-cartoon text-white flex-col px-4 pt-8 pb-3"
       >
         <AnimatePresence>
           {showOverlay && <IntroOverlay key="intro-mobile" startAnimation={isInView} />}
@@ -243,7 +248,7 @@ export default function ArchiveHolder() {
         <BackgroundGrid isBlurred={activeId !== null} />
 
         <div
-          className={`relative flex-shrink-0 flex flex-col items-start mt-5 z-10 transition-all duration-500 ${
+          className={`relative shrink-0 flex flex-col items-start mt-5 z-10 transition-all duration-500 ${
             activeId ? "blur-md opacity-40" : ""
           }`}
         >
@@ -299,7 +304,7 @@ export default function ArchiveHolder() {
                 e.stopPropagation();
                 setActiveId(null);
               }}
-              className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 backdrop-blur-sm px-6"
+              className="fixed inset-0 z-1000 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6"
             >
               <motion.div
                 initial={{ scale: 0.7, opacity: 0 }}
@@ -327,6 +332,7 @@ export default function ArchiveHolder() {
           )}
         </AnimatePresence>
       </section>
+      )}
     </div>
   );
 }
