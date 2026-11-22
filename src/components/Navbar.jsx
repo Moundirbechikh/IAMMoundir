@@ -113,16 +113,16 @@ function Navbar({ sections, activeIndex, onNavigate, isDesktop }) {
           <ColorSweep targetColor={current.color} />
           <div className="relative z-10 flex flex-col">
             <button onClick={goUp} disabled={!canGoUp} aria-label="Section précédente" className={`flex items-center justify-center w-5 h-4 md:w-7 md:h-6 rounded-full transition-colors ${canGoUp ? `${iconColor} ${iconHover}` : iconDisabled}`}>
-              <ChevronUp size={11} strokeWidth={3} className="md:hidden" />
+              <ChevronUp size={12} strokeWidth={3} className="md:hidden" />
               <ChevronUp size={15} strokeWidth={3} className="hidden md:block" />
             </button>
             <button onClick={goDown} disabled={!canGoDown} aria-label="Section suivante" className={`flex items-center justify-center w-5 h-4 md:w-7 md:h-6 rounded-full transition-colors ${canGoDown ? `${iconColor} ${iconHover}` : iconDisabled}`}>
-              <ChevronDown size={11} strokeWidth={3} className="md:hidden" />
+              <ChevronDown size={12} strokeWidth={3} className="md:hidden" />
               <ChevronDown size={15} strokeWidth={3} className="hidden md:block" />
             </button>
           </div>
           <div className="relative z-10 flex-1 flex justify-center">
-            <SlotReel text={current.label} direction={direction} className={`h-[1.1em] font-cartoon uppercase tracking-tight text-center transition-colors duration-300 ${textColor} text-lg min-w-[80px] md:text-3xl md:min-w-[150px]`} />
+            <SlotReel text={current.label} direction={direction} className={`h-[1.8em] font-cartoon uppercase tracking-tight text-center transition-colors pt-2 duration-300 ${textColor} text-2xl min-w-[95px] md:text-4xl md:pt-4 md:min-w-[150px]`} />
           </div>
         </motion.div>
         <AnimatePresence>

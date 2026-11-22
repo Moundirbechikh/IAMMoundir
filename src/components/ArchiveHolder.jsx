@@ -253,10 +253,10 @@ export default function ArchiveHolder() {
           }`}
         >
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={!showOverlay ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="relative z-10 text-[9vw] uppercase text-black bg-gray-300 px-0"
+            className="relative z-10 text-[9vw] uppercase text-black bg-gray-300 -px-1 -py-2 "
           >
             Mes
           </motion.p>
