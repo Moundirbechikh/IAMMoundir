@@ -77,7 +77,6 @@ export default function ArchiveCard({
       scale: 1,
       rotate: project.rotate,
       opacity: isActiveInParent ? 0 : isBlurred ? 0.35 : 1,
-      filter: isBlurred ? "blur(4px)" : "blur(0px)",
     };
   } else {
     cardAnimate = {
@@ -88,7 +87,7 @@ export default function ArchiveCard({
     };
   }
 
-  const mediaStyles = `w-full h-full object-cover transition-all duration-500 ${
+  const mediaStyles = `w-full h-full object-cover ${isMobile ? "transition-opacity duration-150" : "transition-all duration-500"} ${
     isActive
       ? "grayscale-0 opacity-100"
       : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-40"
@@ -103,7 +102,9 @@ export default function ArchiveCard({
       onHoverEnd={!isMobile ? () => setIsActive(false) : undefined}
       onClick={handleInteraction}
       animate={cardAnimate}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      transition={isMobile
+        ? { duration: 0.16, ease: "easeOut" }
+        : { type: "spring", stiffness: 300, damping: 25 }}
       className={`relative ${
         isFocused ? "cursor-default" : "cursor-pointer"
       } bg-white p-2 pb-7 md:p-3 md:pb-12 shadow-2xl border border-black/5 origin-center group ${cardWidth} ${cardHeight}`}

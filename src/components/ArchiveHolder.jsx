@@ -27,11 +27,11 @@ import back11Vid from "../assets/back11.mp4";
 function BackgroundGrid({ isBlurred }) {
   return (
     <div
-      className={`absolute -inset-[60%] z-0 pointer-events-none rotate-[-35deg] transition-all duration-700
+      className={`absolute -inset-[60%] z-0 pointer-events-none rotate-[-35deg] md:transition-all md:duration-700
                  bg-size-[112px_112px] md:bg-size-[152px_152px]
                  bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27112%27%20height=%27112%27%3E%3Crect%20x=%278%27%20y=%278%27%20width=%2796%27%20height=%2796%27%20rx=%2712%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
                  md:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27152%27%20height=%27152%27%3E%3Crect%20x=%2712%27%20y=%2712%27%20width=%27128%27%20height=%27128%27%20rx=%2716%27%20fill=%27none%27%20stroke=%27%23ffffff%27%20stroke-opacity=%270.1%27%20stroke-width=%272%27%20stroke-dasharray=%276%204%27/%3E%3C/svg%3E')]
-                 ${isBlurred ? "blur-md opacity-30" : "blur-0 opacity-100"}`}
+                 ${isBlurred ? "md:blur-md md:opacity-30 opacity-100" : "md:blur-0 opacity-100"}`}
     />
   );
 }
@@ -248,8 +248,8 @@ export default function ArchiveHolder() {
         <BackgroundGrid isBlurred={activeId !== null} />
 
         <div
-          className={`relative shrink-0 flex flex-col items-start mt-5 z-10 transition-all duration-500 ${
-            activeId ? "blur-md opacity-40" : ""
+          className={`relative shrink-0 flex flex-col items-start mt-5 z-10 md:transition-all md:duration-500 ${
+            activeId ? "md:blur-md md:opacity-40" : ""
           }`}
         >
           <motion.p
@@ -300,17 +300,18 @@ export default function ArchiveHolder() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveId(null);
               }}
-              className="fixed inset-0 z-1000 flex items-center justify-center bg-black/70 backdrop-blur-sm px-6"
+              className="fixed inset-0 z-1000 flex items-center justify-center bg-black/70 px-6"
             >
               <motion.div
                 initial={{ scale: 0.7, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <ArchiveCard
