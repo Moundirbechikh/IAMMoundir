@@ -7,10 +7,6 @@ export function useFullPageScroll(sectionCount, { cooldown = 600, breakpoint = 1
   const lastWheelTime = useRef(0);
   const isDesktop = useRef(window.innerWidth >= breakpoint);
 
-  // Pour le swipe mobile
-  const touchStartY = useRef(0);
-  const touchStartX = useRef(0);
-
   const goTo = useCallback(
     (next) => {
       if (isAnimating.current) return;
@@ -57,45 +53,17 @@ export function useFullPageScroll(sectionCount, { cooldown = 600, breakpoint = 1
       if (["ArrowUp", "PageUp"].includes(e.key)) goTo(index - 1);
     };
 
-    // Touch / Swipe — mobile uniquement (< breakpoint)
-    const handleTouchStart = (e) => {
-      if (isDesktop.current) return;
-      const t = e.touches[0];
-      touchStartX.current = t.clientX;
-      touchStartY.current = t.clientY;
-    };
-
-    const handleTouchEnd = (e) => {
-      if (isDesktop.current) return;
-      if (isAnimating.current) return;
-
-      const t = e.changedTouches[0];
-      const deltaX = t.clientX - touchStartX.current;
-      const deltaY = t.clientY - touchStartY.current;
-
-      // On s'assure que le mouvement vertical est supérieur au mouvement horizontal (swipe vertical)
-      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 40) {
-        if (deltaY < 0) {
-          // Swipe vers le haut -> section suivante
-          goTo(index + 1);
-        } else {
-          // Swipe vers le bas -> section précédente
-          goTo(index - 1);
-        }
-      }
-    };
+    // Sur mobile, le swipe tactile automatique entre sections est désactivé
+    // pour éviter les changements de page intempestifs et les rafraîchissements.
+    // La navigation sur mobile se fait uniquement via la Navbar ou les boutons dédiés.
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKey);
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
       mq.removeEventListener("change", updateDesktop);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKey);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [index, goTo, breakpoint]);
 
